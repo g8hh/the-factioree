@@ -1,8 +1,8 @@
 let modInfo = {
-	name: "The ??? Tree",
+	name: "The Factoree",
 	id: "mymod",
 	author: "nobody",
-	pointsName: "points",
+	pointsName: "ores",
 	discordName: "",
 	discordLink: "",
 	changelogLink: "https://github.com/Acamaeda/The-Modding-Tree/blob/master/changelog.md",
@@ -33,8 +33,11 @@ function canGenPoints(){
 function getPointGen() {
 	if(!canGenPoints())
 		return new Decimal(0)
-
-	let gain = new Decimal(1)
+	var extractorbuyables = buyableEffect("e", 11).mul(buyableEffect("e", 12).mul(buyableEffect("e", 13)))
+	let gain = player.e.points.mul(extractorbuyables)
+	if (hasUpgrade("e", 11)) gain = gain.mul(2)
+	if (hasUpgrade("e", 13)) gain = gain.mul(upgradeEffect("e", 13))
+	if (hasUpgrade("e", 14)) gain = gain.mul(upgradeEffect("e", 14))
 	return gain
 }
 
@@ -57,5 +60,5 @@ function isEndgame() {
 
 // You can change this if you have things that can be messed up by long tick lengths
 function maxTickLength() {
-	return(3600000) // Default is 1 hour which is just arbitrarily large
+	return(60000) // Default is 1 hour which is just arbitrarily large
 }
