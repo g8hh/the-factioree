@@ -285,9 +285,6 @@ function gameLoop(diff) {
 
 	addTime(diff)
 	player.points = player.points.add(tmp.pointGen.times(diff)).max(0)
-	var pointdiff = new Decimal(player.points);
-    player.points = player.points.div(Decimal.pow(Math.pow(1.1, diff), player.f.allocated));
-    player.f.metals = player.f.metals.add(Decimal.pow(2, player.f.allocated).mul(0.03).mul(pointdiff.sub(player.points)));
 
 	for (x = 0; x <= maxRow; x++){
 		for (item in TREE_LAYERS[x]) {

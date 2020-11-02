@@ -19,13 +19,30 @@ addLayer("f", {
         exponent: 1.5,
         gainMult() { // Calculate the multiplier for main currency from bonuses
             mult = new Decimal(1)
-            mult = mult.div(player.f.points.sub(5).max(1).sqrt())
             return mult
         },
         gainExp() { // Calculate the exponent on main currency from bonuses
-            return new Decimal(1)
+            return Decimal.div(1, player.f.points.sub(4).max(1)).pow(0.1)
         },
         row: 0, // Row the layer is in on the tree (0 is the first row)
+        upgrades: {
+            rows: 1,
+            cols: 1,
+            11: {
+                title: "181",
+                description: `Gain x% of extractor gain on prestige per second where x is based on your allocated furnaces.`,
+                cost: 9,
+                unlocked() {
+                    return player.e.milestones.includes("1")
+                },
+                effect() {
+                    return Decimal.pow(1.3, player.f.allocated).mul(2).sub(2)
+                },
+                effectDisplay() {
+                    return `${format(this.effect())}%`
+                }
+            }
+        },
         milestones: {
             0: {
                 requirementDescription: "1 furnace",
@@ -42,8 +59,11 @@ addLayer("f", {
             {key: "f", description: "Reset for furnaces", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
         ],
         layerShown(){return player.e.milestones.includes("0")},
-        tabFormat: ["main-display",
-            "prestige-button", "milestones", ["raw-html", function () {
+        tabFormat: {
+            "Main": {
+                content: ["main-display",
+                "prestige-button", "milestones",
+                ["raw-html", function () {
                 return player.f.points.gte(1) ? `You have ${format(player.f.metals)} metals.
                 <br><br>
                 You have ${player.f.allocated} allocated furnaces.
@@ -52,9 +72,24 @@ addLayer("f", {
                 <br><br>
                 <input oninput="player.f.allocated = new Decimal(this.value)" type="range" min="0" max="${player.f.points}" step="0" value= "${player.f.allocated}">
                 <br>You lose a certain amount of ores per second, but your furnaces convert them into metals. 
-                Your points are divided by ${format(Decimal.pow(1.1, player.f.allocated))} per second, but for every point you lose you gain ${format(Decimal.pow(2, player.f.allocated).mul(0.003))} metals.` : ""
-            }]
-        ]
+                Your points are divided by ${format(Decimal.pow(1.1, player.f.allocated))} per second, but for every point you lose you gain ${format(Decimal.pow(2, player.f.allocated).mul(0.003))} metals.
+                <br>` : ""
+                }]]
+            },
+            "Upgrades": {
+                content: ["main-display", "prestige-button", "upgrades"],
+                unlocked() {
+                    player.e.milestones.includes("1")
+                }
+            }
+        },
+        update(diff) {
+            var pointdiff = new Decimal(player.points);
+            player.points = player.points.div(Decimal.pow(Math.pow(1.1, diff), player.f.allocated));
+            player.f.metals = player.f.metals.add(Decimal.pow(2, player.f.allocated).mul(0.03).mul(pointdiff.sub(player.points)));
+            player.f.allocated = player.f.allocated.min(player.f.points)
+            if (hasUpgrade("f", 11)) player.e.points = player.e.points.add(tmp.e.resetGain.mul(0.01).mul(diff).mul(upgradeEffect("f", 11)))
+        }
 })
 addLayer("e", {
         name: "extractor", // This is optional, only used in a few places, If absent it just uses the layer id.
@@ -145,6 +180,14 @@ addLayer("e", {
                     return player.f.metals.add(20).log(20)
                 }
             },
+            23: {
+                title: "Scaling",
+                description: "Scaled motor scaling starts later, and is weakened.",
+                cost: 1e12,
+                unlocked() {
+                    return player.f.milestones.includes("0")
+                }
+            },
         },
         milestones: {
             0: {
@@ -158,6 +201,19 @@ addLayer("e", {
                 },
                 unlocked() {
                     return hasUpgrade("e", 14)
+                }
+            },
+            1: {
+                requirementDescription: "1e14 extractors",
+                effectDescription: "Unlock furnace upgrades.",
+                done() {
+                    return player.e.points.gte(1e14)
+                },
+                style: {
+                    width: "300px"
+                },
+                unlocked() {
+                    return hasUpgrade("e", 23)
                 }
             }
         },
@@ -227,7 +283,7 @@ addLayer("e", {
                     <h2>Effect:</h2><h3> ${format(buyableEffect("e", 13))}</h3>`
                 },
                 cost() {
-                    return Decimal.pow(20, getBuyableAmount("e", 13).add(getBuyableAmount("e", 13).sub(3).pow(3))).mul(1e7)
+                    return Decimal.pow(20, getBuyableAmount("e", 13).add(getBuyableAmount("e", 13).sub(hasUpgrade("e", 23)?5:3).pow(hasUpgrade("e", 23)?2.5:3))).mul(1e7)
                 },
                 buy() {
                     if (this.canAfford()) {
@@ -236,7 +292,7 @@ addLayer("e", {
                     }
                 },
                 effect() {
-                    return Decimal.pow(1.2, getBuyableAmount("e", 13))
+                    return Decimal.pow(1.5, getBuyableAmount("e", 13))
                 },
                 unlocked() {
                     return hasUpgrade("e", 21)
