@@ -337,7 +337,7 @@ addLayer("e", {
             24: {
                 title: "Self improvement",
                 description: "Self-generating's formula is better.",
-                cost: 5e16,
+                cost: 3e15,
                 unlocked() {
                     return player.f.milestones.includes("0")
                 }
