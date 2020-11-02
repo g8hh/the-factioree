@@ -142,7 +142,7 @@ addLayer("e", {
                     return player.f.milestones.includes("0")
                 },
                 effect() {
-                    return player.f.metals.log(20)
+                    return player.f.metals.add(20).log(20)
                 }
             },
         },
