@@ -198,6 +198,20 @@ h1, h2, h3, b, input {
 	border: 4px solid;
 	border-color: rgba(0, 0, 0, 0.125);
 }
+.flame {
+	height: 120px;
+	width: 180px;
+	border-radius: 25%;
+	border: 4px solid;
+	border-color: rgba(0, 0, 0, 0.125);
+}
+.flame.yes {
+	background-color: #ff6600;
+	cursor: pointer;
+}
+.flame.yes:hover {
+	box-shadow: 0px 0px 5px 1px #ffffff;
+}
 
 .upg {
 	height: 120px;
