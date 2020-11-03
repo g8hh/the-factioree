@@ -34,7 +34,7 @@ function getPointGen() {
 	if(!canGenPoints())
 		return new Decimal(0);
 	var extractorbuyables = buyableEffect("e", 11).mul(buyableEffect("e", 12).mul(buyableEffect("e", 13)));
-	let gain = player.e.points.mul(extractorbuyables);
+	let gain = player.e.points.mul(extractorbuyables).max(player.e.upgrades.length);
 	if (hasUpgrade("e", 11)) gain = gain.mul(2);
 	if (hasUpgrade("e", 13)) gain = gain.mul(upgradeEffect("e", 13));
 	if (hasUpgrade("e", 14)) gain = gain.mul(upgradeEffect("e", 14));
