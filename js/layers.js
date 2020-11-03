@@ -34,14 +34,14 @@ addLayer("f", {
             rows: 4,
             cols: 2,
             11: {
-                title: "Builder study 181",
+                title: "181",
                 description: `Gain x% of extractor gain on prestige per second where x is based on your allocated furnaces.`,
                 cost: 9,
                 unlocked() {
                     return player.e.milestones.includes("1")
                 },
                 effect() {
-                    return Decimal.pow(1.3, player.f.allocated).mul(2).sub(2)
+                    return Decimal.pow(1.3, player.f.allocated).mul(2).sub(2).min(100000)
                 },
                 effectDisplay() {
                     return `${format(this.effect())}%`
