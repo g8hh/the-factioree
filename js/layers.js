@@ -2,7 +2,7 @@ var testNumber = 0;
 addLayer("f", {
         name: "furnace", // This is optional, only used in a few places, If absent it just uses the layer id.
         symbol: "F", // This appears on the layer's node. Default is the id with the first letter capitalized
-        position: 0, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
+        position: 1, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
         startData() { return {
             unlocked: false,
             points: new Decimal(0),
@@ -73,6 +73,7 @@ addLayer("f", {
                     if (hasUpgrade("f", 22)) embergain = embergain.mul(upgradeEffect("f", 22));
                     if (hasUpgrade("f", 32)) embergain = embergain.mul(100);
                     if (hasUpgrade("e", 33)) embergain = embergain.mul(upgradeEffect("e", 33));
+                    embergain = embergain.mul(tmp.m.effect.sqrt());
                     return embergain
                 },
                 effectDisplay() {
@@ -197,12 +198,12 @@ addLayer("f", {
                     return `<br><br><h3>Boost ember gain.</h3><br>
                     <h2>Currently:</h2><h3> ${`${format(getBuyableAmount("f", 11), 0)}${getBuyableAmount("f", 12).eq(0)?
                     "":
-                    `+${format(buyableEffect("f", 12).sqrt().sub(1))}`}`}</h3>
+                    `+${format(getBuyableAmount("f", 12).mul(1.5))}`}`}</h3>
                     <h2>Cost:</h2><h3> ${format(this.cost())} fiery embers</h3>
                     <h2>Effect:</h2><h3> x${format(this.effect())}</h3>`
                 },
                 cost() {
-                    return Decimal.pow(4, getBuyableAmount("f", 11).pow(2).div(4).add(getBuyableAmount("f", 11)).pow(layers.f.flameEffect())).mul(100)
+                    return Decimal.pow(4, getBuyableAmount("f", 11).sub(50).max(0).pow(3).add(getBuyableAmount("f", 11).pow(2).div(4).add(getBuyableAmount("f", 11)).pow(layers.f.flameEffect()))).mul(100)
                 },
                 buy() {
                     if (this.canAfford()) {
@@ -211,7 +212,7 @@ addLayer("f", {
                     }
                 },
                 effect() {
-                    return Decimal.pow(Decimal.mul(1.5, hasUpgrade("f", 42)?1.1:1), getBuyableAmount("f", 11).add(buyableEffect("f", 12).sqrt().sub(1)))
+                    return Decimal.pow(Decimal.mul(1.5, hasUpgrade("f", 42)?1.1:1), getBuyableAmount("f", 11).add(getBuyableAmount("f", 12).mul(1.5)))
                 },
                 canAfford() {
                     return player.f.embers.gte(this.cost())
@@ -226,7 +227,7 @@ addLayer("f", {
                     return `<br><br><h3>Boost ember gain, and gives extra levels to the previous upgrade.</h3><br>
                     <h2>Currently:</h2><h3> ${`${format(getBuyableAmount("f", 12), 0)}${getBuyableAmount("f", 13).eq(0)?
                     "":
-                    `+${format(getBuyableAmount("f", 13).mul(0.2))}`}`}</h3>
+                    `+${format(getBuyableAmount("f", 13).mul(0.25))}`}`}</h3>
                     <h2>Cost:</h2><h3> ${format(this.cost())} fiery embers</h3>
                     <h2>Effect:</h2><h3> x${format(this.effect())}</h3>`
                 },
@@ -240,7 +241,7 @@ addLayer("f", {
                     }
                 },
                 effect() {
-                    return Decimal.pow(2, getBuyableAmount("f", 12).add(getBuyableAmount("f", 13).mul(0.2)))
+                    return Decimal.pow(2, getBuyableAmount("f", 12).add(getBuyableAmount("f", 13).mul(0.25)))
                 },
                 canAfford() {
                     return player.f.embers.gte(this.cost())
@@ -258,7 +259,7 @@ addLayer("f", {
                     <h2>Effect:</h2><h3> ${format(this.effect())}</h3>`
                 },
                 cost() {
-                    return Decimal.pow(10, getBuyableAmount("f", 13).pow(3).div(5).add(getBuyableAmount("f", 13)).pow(layers.f.flameEffect())).mul(500000)
+                    return Decimal.pow(10, getBuyableAmount("f", 13).sub(15).max(0).pow(4.5).add(getBuyableAmount("f", 13).pow(3).div(5).add(getBuyableAmount("f", 13)).pow(layers.f.flameEffect()))).mul(500000)
                 },
                 buy() {
                     if (this.canAfford()) {
@@ -316,7 +317,7 @@ addLayer("f", {
         hotkeys: [
             {key: "f", description: "Reset for furnaces", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
         ],
-        layerShown(){return player.e.milestones.includes("0")},
+        layerShown(){return player.e.milestones.includes("0")||layers.m.layerShown()},
         tabFormat: {
             "Main": {
                 content: ["main-display",
@@ -367,7 +368,7 @@ addLayer("f", {
             if (hasUpgrade("f", 21)) player.f.embers = player.f.embers.add(upgradeEffect("f", 21).mul(diff))
         },
         flameEffect() {
-            return Decimal.div(1, player.f.flame.div(hasUpgrade("f", 31)?7:10).add(1).pow(0.5))
+            return Decimal.div(1, player.f.flame.div(hasUpgrade("f", 31)?6:10).add(1).pow(0.5))
         }
 })
 addLayer("e", {
@@ -376,7 +377,7 @@ addLayer("e", {
         position: 0, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
         startData() { return {
             unlocked: true,
-			points: new Decimal(0),
+            points: new Decimal(0),
         }},
         color: "#887799",
         requires: new Decimal(10), // Can be a function that takes requirement increases into account
@@ -636,6 +637,151 @@ addLayer("e", {
                 content: ["main-display", "prestige-button", ["raw-html", "<br>"], "milestones"],
                 unlocked() {
                     return hasUpgrade("e", 14)
+                }
+            }
+        }
+})
+addLayer("m", {
+        name: "manufacturers", // This is optional, only used in a few places, If absent it just uses the layer id.
+        symbol: "M", // This appears on the layer's node. Default is the id with the first letter capitalized
+        position: 0, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
+        startData() { return {
+            unlocked: false,
+            points: new Decimal(0),
+            autoFurnace: false,
+            autoFAlloc: false,
+            autoEBuyable: false,
+            autoEmber: false,
+            autoFlame: false
+        }},
+        color: "#8f1402",
+        requires: new Decimal("1e1080"), // Can be a function that takes requirement increases into account
+        resource: "manufacturers", // Name of prestige currency
+        baseResource: "metals", // Name of resource prestige is based on
+        baseAmount() {return player.f.metals}, // Get the current amount of baseResource
+        type: "static", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
+        base() {
+            return player.m.points.add(1).mul(1e85)
+        },
+        exponent: 1,
+        gainMult() { // Calculate the multiplier for main currency from bonuses
+            mult = new Decimal(1)
+            return mult
+        },
+        gainExp() { // Calculate the exponent on main currency from bonuses
+            return new Decimal(1)
+        },
+        row: 1, // Row the layer is in on the tree (0 is the first row)
+        hotkeys: [
+            {key: "m", description: "Reset for manufacturers", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
+        ],
+        effect() {
+            return Decimal.pow(1e6, player.m.points)
+        },
+        effectDescription() {
+            return `boosting ore gains by ${format(this.effect())} and ember gains by ${format(this.effect().sqrt())}`
+        },
+        layerShown(){return player.m.unlocked||player.points.gte("1e1000")},
+        upgrades: {
+            rows: 3,
+            cols: 4,
+            11: {
+                title: "nothing",
+                description: "does literally nothing.",
+                cost: 10
+            }
+        },
+        milestones: {
+            0: {
+                requirementDescription: "Manufacturer of furnaces (1 manufacturer)",
+                effectDescription: "Automate furnaces and allocated furnaces respectively.",
+                toggles: [["m", "autoFurnace"], ["m", "autoFAlloc"]],
+                done() {
+                    return player.m.points.gte(1)
+                },
+                style: {
+                    width: "500px"
+                }
+            },
+            1: {
+                requirementDescription: "Manufacturer of parts (3 manufacturer)",
+                effectDescription: "Automate extractor buyables.",
+                toggles: [["m", "autoEBuyable"]],
+                done() {
+                    return player.m.points.gte(3)
+                },
+                style: {
+                    width: "500px"
+                }
+            },
+            2: {
+                requirementDescription: "Manufacturer of flames (5 manufacturer)",
+                effectDescription: "Automate embers and flame respectively.",
+                toggles: [["m", "autoEmber"], ["m", "autoFlame"]],
+                done() {
+                    return player.m.points.gte(5)
+                },
+                style: {
+                    width: "500px"
+                }
+            }
+        },
+        buyables: {
+            rows: 1,
+            cols: 3,
+            11: {
+                title: "Does nothing",
+                display() {
+                    return `<br><br><h3>Literally does nothing stop.</h3><br>
+                    <h2>Currently:</h2><h3> ${format(getBuyableAmount("m", 11), 0)} aaaaa why are you buying this</h3>
+                    <h2>Cost:</h2><h3> ${format(this.cost())} metals</h3>
+                    <h2>Effect:</h2><h3> x${format(this.effect())}</h3>`
+                },
+                cost() {
+                    return Decimal.pow(10, 10000000000)
+                },
+                buy() {
+                    if (this.canAfford()) {
+                        player.f.metals = player.f.metals.sub(this.cost())
+                        setBuyableAmount("e", 11, getBuyableAmount("e", 11).add(1))
+                    }
+                },
+                effect() {
+                    return 1
+                },
+                unlocked() {
+                    return hasUpgrade("e", 21)
+                },
+                canAfford() {
+                    return player.m.points.gte(this.cost())
+                }
+            }
+        },
+        branches: ["f"],
+        tabFormat: {
+            "Main": {
+                content: ["main-display", "prestige-button", ["raw-html", "<br>"], "buyables", ["raw-html", "<br>"], "upgrades"]
+            },
+            "Milestones": {
+                content: ["main-display", "prestige-button", ["raw-html", "<br>"], "milestones"]
+            }
+        },
+        automate() {
+            if (player.m.autoFurnace) doReset("f");
+            if (player.m.autoFAlloc) player.f.allocated = player.f.points;
+            if (player.m.autoEBuyable) {
+                for (var i = 11; i <= 13; i++) {
+                    for (var j = 0; j < 40; j++) {
+                        layers.e.buyables[i].buy()
+                    }
+                }
+            }
+            if (player.m.autoFlame) layers.f.clickables[11].onClick();
+            if (player.m.autoEmber) {
+                for (var i = 11; i <= 13; i++) {
+                    for (var j = 0; j < 40; j++) {
+                        layers.f.buyables[i].buy()
+                    }
                 }
             }
         }

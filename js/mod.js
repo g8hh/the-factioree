@@ -1,18 +1,18 @@
 let modInfo = {
 	name: "The Factoree",
-	id: "mymod",
-	author: "nobody",
+	id: "factoreemod",
+	author: "Dystopia#4937",
 	pointsName: "ores",
 	discordName: "",
 	discordLink: "",
 	changelogLink: "https://github.com/Acamaeda/The-Modding-Tree/blob/master/changelog.md",
-    offlineLimit: 1,  // In hours
+    offlineLimit: 100000000,  // In hours
     initialStartPoints: new Decimal (10) // Used for hard resets and new players
 }
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.0",
+	num: "0.3",
 	name: "Literally nothing",
 }
 
@@ -40,16 +40,7 @@ function getPointGen() {
 	if (hasUpgrade("e", 14)) gain = gain.mul(upgradeEffect("e", 14));
 	gain = gain.mul(buyableEffect("f", 13));
 	if (hasUpgrade("e", 32)) gain = gain.mul(upgradeEffect("e", 32));
-	return gain
-}
-function getPointg() {
-	var extractorbuyables = buyableEffect("e", 11).mul(buyableEffect("e", 12).mul(buyableEffect("e", 13)));
-	let gain = player.e.points.mul(extractorbuyables);
-	if (hasUpgrade("e", 11)) gain = gain.mul(2);
-	if (hasUpgrade("e", 13)) gain = gain.mul(upgradeEffect("e", 13));
-	if (hasUpgrade("e", 14)) gain = gain.mul(upgradeEffect("e", 14));
-	gain = gain.pow(buyableEffect("f", 13));
-	if (hasUpgrade("e", 32)) gain = gain.mul(upgradeEffect("e", 32));
+	gain = gain.mul(tmp.m.effect)
 	return gain
 }
 
