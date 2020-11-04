@@ -198,7 +198,7 @@ addLayer("f", {
                     return `<br><br><h3>Boost ember gain.</h3><br>
                     <h2>Currently:</h2><h3> ${`${format(getBuyableAmount("f", 11), 0)}${getBuyableAmount("f", 12).eq(0)?
                     "":
-                    `+${format(getBuyableAmount("f", 12).mul(1.5))}`}`}</h3>
+                    `+${format(getBuyableAmount("f", 12).mul(1.5).add(getBuyableAmount("f", 13).mul(2)))}`}`}</h3>
                     <h2>Cost:</h2><h3> ${format(this.cost())} fiery embers</h3>
                     <h2>Effect:</h2><h3> x${format(this.effect())}</h3>`
                 },
@@ -212,7 +212,7 @@ addLayer("f", {
                     }
                 },
                 effect() {
-                    return Decimal.pow(Decimal.mul(1.5, hasUpgrade("f", 42)?1.1:1), getBuyableAmount("f", 11).add(getBuyableAmount("f", 12).mul(1.5)))
+                    return Decimal.pow(Decimal.mul(1.5, hasUpgrade("f", 42)?1.1:1), getBuyableAmount("f", 11).add(getBuyableAmount("f", 12).mul(1.5).add(getBuyableAmount("f", 13).mul(2))))
                 },
                 canAfford() {
                     return player.f.embers.gte(this.cost())
@@ -253,13 +253,13 @@ addLayer("f", {
             13: {
                 title: "Point speed",
                 display() {
-                    return `<br><br><h3>Boost point gain, and gives extra levels to the previous upgrade.</h3><br>
+                    return `<br><br><h3>Boost point gain, and gives extra levels to the previous upgrades.</h3><br>
                     <h2>Currently:</h2><h3> ${format(getBuyableAmount("f", 13), 0)}</h3>
                     <h2>Cost:</h2><h3> ${format(this.cost())} fiery embers</h3>
                     <h2>Effect:</h2><h3> ${format(this.effect())}</h3>`
                 },
                 cost() {
-                    return Decimal.pow(10, getBuyableAmount("f", 13).sub(15).max(0).pow(4.5).add(getBuyableAmount("f", 13).pow(3).div(5).add(getBuyableAmount("f", 13)).pow(layers.f.flameEffect()))).mul(500000)
+                    return Decimal.pow(10, getBuyableAmount("f", 13).sub(10).max(0).pow(4.5).add(getBuyableAmount("f", 13).pow(3).div(5).add(getBuyableAmount("f", 13)).pow(layers.f.flameEffect()))).mul(500000)
                 },
                 buy() {
                     if (this.canAfford()) {
@@ -520,7 +520,7 @@ addLayer("e", {
                 requirementDescription: "5e4 extractors",
                 effectDescription: "Unlock furnaces.",
                 done() {
-                    return player.e.points.gte(5e4)
+                    return player.e.points.gte(5e4)||player.m.points.gt(0)
                 },
                 style: {
                     width: "300px"
@@ -533,7 +533,7 @@ addLayer("e", {
                 requirementDescription: "1e14 extractors",
                 effectDescription: "Unlock furnace upgrades.",
                 done() {
-                    return player.e.points.gte(1e14)
+                    return player.e.points.gte(1e14)||player.m.points.gt(0)
                 },
                 style: {
                     width: "300px"
@@ -723,37 +723,6 @@ addLayer("m", {
                 },
                 style: {
                     width: "500px"
-                }
-            }
-        },
-        buyables: {
-            rows: 1,
-            cols: 3,
-            11: {
-                title: "Does nothing",
-                display() {
-                    return `<br><br><h3>Literally does nothing stop.</h3><br>
-                    <h2>Currently:</h2><h3> ${format(getBuyableAmount("m", 11), 0)} aaaaa why are you buying this</h3>
-                    <h2>Cost:</h2><h3> ${format(this.cost())} metals</h3>
-                    <h2>Effect:</h2><h3> x${format(this.effect())}</h3>`
-                },
-                cost() {
-                    return Decimal.pow(10, 10000000000)
-                },
-                buy() {
-                    if (this.canAfford()) {
-                        player.f.metals = player.f.metals.sub(this.cost())
-                        setBuyableAmount("e", 11, getBuyableAmount("e", 11).add(1))
-                    }
-                },
-                effect() {
-                    return 1
-                },
-                unlocked() {
-                    return hasUpgrade("e", 21)
-                },
-                canAfford() {
-                    return player.m.points.gte(this.cost())
                 }
             }
         },
