@@ -20,6 +20,9 @@ addLayer("f", {
         base() {
             return player.f.points.sub(30).max(0).pow(0.5).add(3)
         },
+        canBuyMax() {
+            return hasUpgrade("m", 12)
+        },
         exponent: 1.5,
         gainMult() { // Calculate the multiplier for main currency from bonuses
             mult = new Decimal(1)
@@ -203,7 +206,7 @@ addLayer("f", {
                     <h2>Effect:</h2><h3> x${format(this.effect())}</h3>`
                 },
                 cost() {
-                    return Decimal.pow(4, getBuyableAmount("f", 11).sub(50).max(0).pow(3).add(getBuyableAmount("f", 11).pow(2).div(4).add(getBuyableAmount("f", 11)).pow(layers.f.flameEffect()))).mul(100)
+                    return Decimal.pow(4, getBuyableAmount("f", 11).sub(50).max(0).pow(3).div(3).add(getBuyableAmount("f", 11).pow(2).div(4).add(getBuyableAmount("f", 11)).pow(layers.f.flameEffect()))).mul(100)
                 },
                 buy() {
                     if (this.canAfford()) {
@@ -287,16 +290,19 @@ addLayer("f", {
             11: {
                 display() {
                     return `<span>Gain <b>1</b> flame.<br>
-                    ${format(player.f.embers)}/${format(Decimal.pow(20, player.f.flame.pow(2).div(hasUpgrade("f", 41)?4:2)).mul(5e8))} fiery embers</span>`
+                    ${format(player.f.embers)}/${format(this.cost())} fiery embers</span>`
                 },
                 canClick() {
-                    return player.f.embers.gte(Decimal.pow(20, player.f.flame.pow(2).div(hasUpgrade("f", 41)?4:2)).mul(5e8))
+                    return player.f.embers.gte(this.cost())
                 },
                 onClick() {
-                    if (player.f.embers.gte(Decimal.pow(20, player.f.flame.pow(2).div(hasUpgrade("f", 41)?4:2)).mul(5e8))) {
-                        player.f.embers = player.f.embers.sub(Decimal.pow(20, player.f.flame.pow(2).div(hasUpgrade("f", 41)?4:2)).mul(5e8))
+                    if (player.f.embers.gte(this.cost())) {
+                        player.f.embers = player.f.embers.sub(this.cost())
                         player.f.flame = player.f.flame.add(1)
                     }
+                },
+                cost() {
+                    return Decimal.pow(20, player.f.flame.pow(2).div(hasUpgrade("f", 41)?4:2)).mul(5e8)
                 },
                 style(){
                     return {
@@ -365,7 +371,11 @@ addLayer("f", {
             player.f.metals = player.f.metals.add(Decimal.pow(2, player.f.allocated.min(16)).mul(Decimal.pow(1.2, player.f.allocated.sub(16).min(16).max(0))).mul(Decimal.pow(player.f.allocated.sub(32).max(1), 0.3)).mul(0.003).mul(pointdiff.sub(player.points)))
             player.f.allocated = player.f.allocated.min(player.f.points)
             if (hasUpgrade("f", 11)) player.e.points = player.e.points.add(tmp.e.resetGain.mul(0.01).mul(diff).mul(upgradeEffect("f", 11)));
-            if (hasUpgrade("f", 21)) player.f.embers = player.f.embers.add(upgradeEffect("f", 21).mul(diff))
+            if (hasUpgrade("f", 21)) player.f.embers = player.f.embers.add(upgradeEffect("f", 21).mul(diff));
+            player.m.savedFUpgrades = player.f.upgrades;
+        },
+        doReset() {
+            if (hasUpgrade("m", 12)) player.f.upgrades = player.n.savedFUpgrades;
         },
         flameEffect() {
             return Decimal.div(1, player.f.flame.div(hasUpgrade("f", 31)?6:10).add(1).pow(0.5))
@@ -385,7 +395,9 @@ addLayer("e", {
         baseResource: "ores", // Name of resource prestige is based on
         baseAmount() {return player.points}, // Get the current amount of baseResource
         type: "normal", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
-        exponent: 0.5, // Prestige currency exponent
+        exponent() {
+            return hasUpgrade("e", 41)?0.55:0.5
+        }, // Prestige currency exponent
         gainMult() { // Calculate the multiplier for main currency from bonuses
             mult = new Decimal(1)
             if (hasUpgrade("e", 12)) mult = mult.mul(2)
@@ -401,7 +413,7 @@ addLayer("e", {
         ],
         layerShown(){return true},
         upgrades: {
-            rows: 3,
+            rows: 4,
             cols: 4,
             11: {
                 title: "Efficiency",
@@ -512,6 +524,38 @@ addLayer("e", {
                 cost: 1e275,
                 unlocked() {
                     return player.f.milestones.includes("1")&&player.f.flame.gt(0)
+                }
+            },
+            41: {
+                title: "More Optimization",
+                description: "The exponent for extractor gain is better.",
+                cost: "1e620",
+                unlocked() {
+                    return hasUpgrade("m", 11)
+                }
+            },
+            42: {
+                title: "Even More Optimization",
+                description: "Allocated furnaces only divide ore gain by 1.01 but metal gain stays the same as if it was 1.1.",
+                cost: "2e1000000",
+                unlocked() {
+                    return hasUpgrade("m", 11)
+                }
+            },
+            43: {
+                title: "meme now laugh",
+                description: "Plcaeholder gaming",
+                cost: "2.69e420420420",
+                unlocked() {
+                    return hasUpgrade("m", 11)
+                }
+            },
+            44: {
+                title: "Placeholder gaming",
+                description: "Placeholder gaming",
+                cost: "3e1415926535",
+                unlocked() {
+                    return hasUpgrade("m", 11)
                 }
             },
         },
@@ -639,6 +683,12 @@ addLayer("e", {
                     return hasUpgrade("e", 14)
                 }
             }
+        },
+        update() {
+            player.m.savedEUpgrades = player.e.upgrades
+        },
+        doReset(layer) {
+            if (hasUpgrade("m", 11)) player.e.upgrades = player.m.savedEUpgrades;
         }
 })
 addLayer("m", {
@@ -652,7 +702,9 @@ addLayer("m", {
             autoFAlloc: false,
             autoEBuyable: false,
             autoEmber: false,
-            autoFlame: false
+            autoFlame: false,
+            savedEUpgrades: [],
+            savedFUpgrades: []
         }},
         color: "#8f1402",
         requires: new Decimal("1e1080"), // Can be a function that takes requirement increases into account
@@ -686,10 +738,15 @@ addLayer("m", {
             rows: 3,
             cols: 4,
             11: {
-                title: "nothing",
-                description: "does literally nothing.",
-                cost: 10
-            }
+                title: "Extractor Manufacturer",
+                description: "Unlock more extractor upgrades, and keep them on reset.",
+                cost: 2
+            },
+            12: {
+                title: "Furnace Quality Control",
+                description: "Keep furnace upgrades, and you can buy max furnaces.",
+                cost: 7
+            },
         },
         milestones: {
             0: {
