@@ -72,6 +72,7 @@ addLayer("f", {
                     var embergain = player.f.points.mul(100).mul(buyableEffect("f", 11)).mul(buyableEffect("f", 12))
                     if (hasUpgrade("f", 22)) embergain = embergain.mul(upgradeEffect("f", 22));
                     if (hasUpgrade("f", 32)) embergain = embergain.mul(100);
+                    if (hasUpgrade("e", 33)) embergain = embergain.mul(upgradeEffect("e", 33));
                     return embergain
                 },
                 effectDisplay() {
@@ -96,7 +97,7 @@ addLayer("f", {
                 unlocked() {
                     return player.f.flame.gt(1)||hasUpgrade("f", 31)
                 },
-                currencyDisplayName: "flame and furnaces",
+                currencyDisplayName: "flame",
                 currencyInternalName() {
                     return "flame"
                 },
@@ -114,7 +115,7 @@ addLayer("f", {
                 unlocked() {
                     return player.f.flame.gt(1)||hasUpgrade("f", 31)
                 },
-                currencyDisplayName: "flame and furnaces",
+                currencyDisplayName: "flame",
                 currencyInternalName() {
                     return "flame"
                 },
@@ -132,7 +133,7 @@ addLayer("f", {
                 unlocked() {
                     return hasUpgrade("f", 31)&&hasUpgrade("f", 32)
                 },
-                currencyDisplayName: "flame and furnaces",
+                currencyDisplayName: "flame",
                 currencyInternalName() {
                     return "flame"
                 },
@@ -144,13 +145,13 @@ addLayer("f", {
                 }
             },
             42: {
-                title: "Layers yay",
-                description: "Unlock the next layer which hasn't been implemented yet. (how did you get this many)",
-                cost: 400,
+                title: "Ember boost boost",
+                description: "Multiply the base of ember boost by 1.1.",
+                cost: 7,
                 unlocked() {
                     return hasUpgrade("f", 31)&&hasUpgrade("f", 32)
                 },
-                currencyDisplayName: "flame and furnaces",
+                currencyDisplayName: "flame",
                 currencyInternalName() {
                     return "flame"
                 },
@@ -158,7 +159,7 @@ addLayer("f", {
                     return "f"
                 },
                 style() {
-                    return {backgroundColor: hasUpgrade("f", 42)?"#77bf5f":(player.f.flame.gte(400)?"#ff6600":"bf8f8f")}
+                    return {backgroundColor: hasUpgrade("f", 42)?"#77bf5f":(player.f.flame.gte(7)?"#ff6600":"bf8f8f")}
                 }
             },
         },
@@ -210,7 +211,7 @@ addLayer("f", {
                     }
                 },
                 effect() {
-                    return Decimal.pow(1.5, getBuyableAmount("f", 11).add(buyableEffect("f", 12).sqrt().sub(1)))
+                    return Decimal.pow(Decimal.mul(1.5, hasUpgrade("f", 42)?1.1:1), getBuyableAmount("f", 11).add(buyableEffect("f", 12).sqrt().sub(1)))
                 },
                 canAfford() {
                     return player.f.embers.gte(this.cost())
@@ -266,7 +267,7 @@ addLayer("f", {
                     }
                 },
                 effect() {
-                    return Decimal.pow(1e40, getBuyableAmount("f", 13))
+                    return Decimal.pow(1e25, getBuyableAmount("f", 13))
                 },
                 canAfford() {
                     return player.f.embers.gte(this.cost())
@@ -275,6 +276,42 @@ addLayer("f", {
                     return {backgroundColor: this.canAfford()?"#ff4400":"bf8f8f"}
                 }
             },
+        },
+        clickables: {
+            rows: 1,
+            cols: 1,
+            showMasterButton() {
+                return false
+            },
+            11: {
+                display() {
+                    return `<span>Gain <b>1</b> flame.<br>
+                    ${format(player.f.embers)}/${format(Decimal.pow(20, player.f.flame.pow(2).div(hasUpgrade("f", 41)?4:2)).mul(5e8))} fiery embers</span>`
+                },
+                canClick() {
+                    return player.f.embers.gte(Decimal.pow(20, player.f.flame.pow(2).div(hasUpgrade("f", 41)?4:2)).mul(5e8))
+                },
+                onClick() {
+                    if (player.f.embers.gte(Decimal.pow(20, player.f.flame.pow(2).div(hasUpgrade("f", 41)?4:2)).mul(5e8))) {
+                        player.f.embers = player.f.embers.sub(Decimal.pow(20, player.f.flame.pow(2).div(hasUpgrade("f", 41)?4:2)).mul(5e8))
+                        player.f.flame = player.f.flame.add(1)
+                    }
+                },
+                style(){
+                    return {
+                        height: "120px",
+                        width: "180px",
+                        borderRadius: "25%",
+                        border: "4px solid",
+                        borderColor: "rgba(0, 0, 0, 0.125)",
+                        backgroundColor: this.canClick()?"#ff6600":"#bf8f8f",
+                        font: "400 13.3333px Arial"
+                    }
+                },
+                unlocked() {
+                    return (player.f.embers.gt(500000000)||player.f.flame.gt(0))
+                }
+            }
         },
         hotkeys: [
             {key: "f", description: "Reset for furnaces", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
@@ -291,7 +328,7 @@ addLayer("f", {
                 <br><br>
                 Use the below slider to change allocated furnaces.
                 <br><br>
-                <input oninput="player.f.allocated = new Decimal(this.value)" type="range" min="0" max="${player.f.points}" step="0" value= "${player.f.allocated}">
+                <input oninput="player.f.allocated = new Decimal(this.value)" type="range" min="0" max="${player.f.points}" step="1" style="width: 30em" value="${player.f.allocated}">
                 <br>You lose a certain amount of ores per second, but your furnaces convert them into metals. 
                 Your points are divided by ${format(Decimal.pow(1.1, player.f.allocated))} per second, but for every point you lose you gain ${format(Decimal.pow(2, player.f.allocated.min(16)).mul(Decimal.pow(1.2, player.f.allocated.sub(16).min(16).max(0))).mul(Decimal.pow(player.f.allocated.sub(32).max(1), 0.3)).mul(0.003))} metals.
                 <br>` : ""
@@ -314,12 +351,7 @@ addLayer("f", {
                 "buyables", ["raw-html", function () {
                 return (player.f.embers.gt(500000000)||player.f.flame.gt(0))?`<br>
                 <span>You have </span><h2 style="color: #ff6600; text-shadow: 0px 0px 10px #ff6600;">${format(player.f.flame, 0)}</h2><span> flame, making the cost exponent of all upgrades raised to ${format(layers.f.flameEffect())}.
-                <br><br>
-                <button class="flame ${player.f.embers.gte(Decimal.pow(20, player.f.flame.pow(2).div(hasUpgrade("f", 41)?4:2)).mul(5e8))?"yes":"locked"}" onclick="layers.f.buyFlame()">
-                Gain <b>1</b> flame.
-                <br><br>
-                Req: ${format(player.f.embers)}/${format(Decimal.pow(20, player.f.flame.pow(2).div(hasUpgrade("f", 41)?4:2)).mul(5e8))} fiery embers</button><br><br>`:""
-                }],
+                <br><br>`:""}],"clickables",
                 ["column", [["row", [["upgrade", 31], ["upgrade", 32]]]]], ["column", [["row", [["upgrade", 41], ["upgrade", 42]]]]]],
                 unlocked() {
                     return hasUpgrade("f", 21)
@@ -333,12 +365,6 @@ addLayer("f", {
             player.f.allocated = player.f.allocated.min(player.f.points)
             if (hasUpgrade("f", 11)) player.e.points = player.e.points.add(tmp.e.resetGain.mul(0.01).mul(diff).mul(upgradeEffect("f", 11)));
             if (hasUpgrade("f", 21)) player.f.embers = player.f.embers.add(upgradeEffect("f", 21).mul(diff))
-        },
-        buyFlame() {
-            if (player.f.embers.gte(Decimal.pow(20, player.f.flame.pow(2).div(hasUpgrade("f", 41)?4:2)).mul(5e8))) {
-                player.f.embers = player.f.embers.sub(Decimal.pow(20, player.f.flame.pow(2).div(hasUpgrade("f", 41)?4:2)).mul(5e8))
-                player.f.flame = player.f.flame.add(1)
-            }
         },
         flameEffect() {
             return Decimal.div(1, player.f.flame.div(hasUpgrade("f", 31)?7:10).add(1).pow(0.5))
@@ -451,43 +477,40 @@ addLayer("e", {
             },
             31: {
                 title: "Over-Engineering",
-                description: "Add one to motor's effect base.",
-                cost: 1e30,
+                description: "Add 2 to motor's effect base.",
+                cost: 1e66,
                 unlocked() {
                     return player.f.milestones.includes("1")
                 }
             },
             32: {
                 title: "Forged Extractor",
-                description: "Ember boost boosts ore gain as well.",
-                cost: 2e90,
+                description: "Ember boost boosts ore gain at an increased rate.",
+                cost: 2e114,
                 unlocked() {
                     return player.f.milestones.includes("1")
                 },
                 effect() {
-                    return buyableEffect("f", 11)
+                    return buyableEffect("f", 11).pow(3)
                 }
             },
             33: {
-                title: "Forged Components",
-                description: "All components gain free levels from flame.",
-                cost: 1e170,
+                title: "Friction",
+                description: "Motor boosts ember gain at a reduced rate.",
+                cost: 1e225,
                 unlocked() {
                     return player.f.milestones.includes("1")&&player.f.flame.gt(0)
                 },
                 effect() {
-                    return player.f.flame.mul(2).pow(2)
+                    return buyableEffect("e", 13).pow(0.25)
                 }
             },
             34: {
-                title: "Oil rigs too",
-                description: "Boost ember gain by extractors.",
-                cost: 3e560000,
+                title: "Forged Components",
+                description: "All components gain free levels from flame.",
+                cost: 1e275,
                 unlocked() {
-                    return player.f.milestones.includes("1")
-                },
-                effect() {
-                    return player.points.add(100).log(100)
+                    return player.f.milestones.includes("1")&&player.f.flame.gt(0)
                 }
             },
         },
@@ -540,7 +563,7 @@ addLayer("e", {
                     }
                 },
                 effect() {
-                    return getBuyableAmount("e", 11).add(hasUpgrade("e", 33)?player.f.flame.mul(2).pow(2):0).add(1)
+                    return getBuyableAmount("e", 11).add(hasUpgrade("e", 34)?player.f.flame.mul(2).pow(2):0).add(1)
                 },
                 unlocked() {
                     return hasUpgrade("e", 21)
@@ -567,7 +590,7 @@ addLayer("e", {
                     }
                 },
                 effect() {
-                    return getBuyableAmount("e", 12).add(hasUpgrade("e", 33)?player.f.flame.mul(2).pow(2):0).add(1)
+                    return getBuyableAmount("e", 12).add(hasUpgrade("e", 34)?player.f.flame.mul(2).pow(2):0).add(1)
                 },
                 unlocked() {
                     return hasUpgrade("e", 21)
@@ -594,7 +617,7 @@ addLayer("e", {
                     }
                 },
                 effect() {
-                    return Decimal.pow(Decimal.add(1.5, hasUpgrade("f", 22)?1:0), getBuyableAmount("e", 13).add(hasUpgrade("e", 33)?player.f.flame.mul(2).pow(2):0))
+                    return Decimal.pow(Decimal.add(1.5, hasUpgrade("f", 22)?2:0), getBuyableAmount("e", 13).add(hasUpgrade("e", 34)?player.f.flame.mul(2):0))
                 },
                 unlocked() {
                     return hasUpgrade("e", 21)
