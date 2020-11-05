@@ -18,10 +18,7 @@ addLayer("f", {
 		baseAmount() {return player.points}, // Get the current amount of baseResource
 		type: "static", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
 		base() {
-			return player.f.points.sub(30).max(0).pow(0.5).add(3)
-		},
-		canBuyMax() {
-			return hasUpgrade("m", 12)
+			return player.f.points.sub(30).max(0).pow(hasUpgrade("f", 51)?0.2:0.5).add(3)
 		},
 		exponent: 1.5,
 		gainMult() { // Calculate the multiplier for main currency from bonuses
@@ -34,8 +31,8 @@ addLayer("f", {
 		},
 		row: 0, // Row the layer is in on the tree (0 is the first row)
 		upgrades: {
-			rows: 4,
-			cols: 3,
+			rows: 6,
+			cols: 4,
 			11: {
 				title: "181",
 				description: `Gain x% of extractor gain on prestige per second where x is based on your allocated furnaces.`,
@@ -58,7 +55,7 @@ addLayer("f", {
 					return player.e.milestones.includes("1")
 				},
 				effect() {
-					return player.f.metals.add(1).pow(0.2)
+					return player.f.metals.add(1).pow(hasUpgrade("f", 14)?0.45:0.2)
 				},
 				effectDisplay() {
 					return `/${format(this.effect())}`
@@ -111,6 +108,60 @@ addLayer("f", {
 				cost: 101,
 				unlocked() {
 					return player.m.milestones.includes("0")
+				}
+			},
+			14: {
+				title: "Laundered furnaces",
+				description: `Bribed furnaces has a better effect formula.`,
+				cost: 109,
+				unlocked() {
+					return player.m.milestones.includes("3")
+				}
+			},
+			24: {
+				title: "Point Jerk",
+				description: "Point Acceleration is stronger based on furnaces.",
+				cost: 121,
+				unlocked() {
+					return player.m.milestones.includes("3")
+				},
+				effect() {
+					return player.f.points.add(1)
+				}
+			},
+			51: {
+				title: "Evaded furnaces",
+				description: "Furnace cost scaling base scales better.",
+				cost: 124,
+				unlocked() {
+					return player.m.milestones.includes("3")
+				}
+			},
+			52: {
+				title: "Furnace Fire Pure Teal",
+				description: "Metal gain softcap starts 12 later, and multiply extractor gain by furnaces.",
+				cost: 157,
+				unlocked() {
+					return player.m.milestones.includes("3")
+				},
+				effect() {
+					return Decimal.pow(2, player.f.points)
+				}
+			},
+			53: {
+				title: "placeholder gmong",
+				description: "pcasdfhoel gmsdofns.",
+				cost: 101000,
+				unlocked() {
+					return player.m.milestones.includes("3")
+				}
+			},
+			54: {
+				title: "placeholder gmong",
+				description: "pcasdfhoel gmsdofns.",
+				cost: 101000,
+				unlocked() {
+					return player.m.milestones.includes("3")
 				}
 			},
 			31: {
@@ -329,7 +380,9 @@ addLayer("f", {
 					}
 				},
 				effect() {
-					return Decimal.pow(hasUpgrade("f", 23)?1e30:1e25, getBuyableAmount("f", 13))
+					var mult = new Decimal(hasUpgrade("f", 23)?1e5:1);
+					if (hasUpgrade("f", 23) && hasUpgrade("f", 24)) mult = mult.mul(upgradeEffect("f", 24));
+					return Decimal.pow(mult.mul(1e25), getBuyableAmount("f", 13))
 				},
 				canAfford() {
 					return player.f.embers.gte(this.cost())
@@ -395,12 +448,12 @@ addLayer("f", {
 				<br><br>
 				<input oninput="player.f.allocated = new Decimal(this.value)" type="range" min="0" max="${player.f.points}" step="1" style="width: 30em" value="${player.f.allocated}">
 				<br>You lose a certain amount of ores per second, but your furnaces convert them into metals. 
-				Your points are divided by ${format(Decimal.pow(hasUpgrade("e", 42)?1.001:1.1, player.f.allocated))} per second, but for every point you lose you gain ${format(Decimal.pow(2, player.f.allocated.min(16)).mul(Decimal.pow(1.2, player.f.allocated.sub(16).min(16).max(0))).mul(Decimal.pow(player.f.allocated.sub(32).max(1), 0.3)).mul(0.003).mul(hasUpgrade("f", 13)?upgradeEffect("f", 13):1))} metals.
+				Your points are divided by ${format(Decimal.pow(hasUpgrade("e", 42)?1.001:1.1, player.f.allocated))} per second, but for every point you lose you gain ${format(Decimal.pow(2, player.f.allocated.min(hasUpgrade("f", 52)?28:16)).mul(Decimal.pow(1.2, player.f.allocated.sub(hasUpgrade("f", 52)?28:16).min(hasUpgrade("f", 52)?28:16).max(0))).mul(Decimal.pow(player.f.allocated.sub(hasUpgrade("f", 52)?56:32).max(1), 0.3)).mul(0.003).mul(hasUpgrade("f", 13)?upgradeEffect("f", 13):1))} metals.
 				<br>` : ""
 				}]]
 			},
 			"Upgrades": {
-				content: ["main-display", "prestige-button", ["column", [["row", [["upgrade", 11], ["upgrade", 12], ["upgrade", 13]]]]], ["column", [["row", [["upgrade", 21], ["upgrade", 22], ["upgrade", 23]]]]]],
+				content: ["main-display", "prestige-button", ["column", [["row", [["upgrade", 11], ["upgrade", 12], ["upgrade", 13], ["upgrade", 14]]]]], ["column", [["row", [["upgrade", 21], ["upgrade", 22], ["upgrade", 23], ["upgrade", 24]]]]], ["column", [["row", [["upgrade", 51], ["upgrade", 52], ["upgrade", 53], ["upgrade", 54]]]]]],
 				unlocked() {
 					return player.e.milestones.includes("1")
 				}
@@ -426,7 +479,7 @@ addLayer("f", {
 		update(diff) {
 			var pointdiff = new Decimal(player.points);
 			player.points = player.points.div(Decimal.pow(Decimal.pow(1.1, diff), player.f.allocated))
-			player.f.metals = player.f.metals.add(Decimal.pow(2, player.f.allocated.min(16)).mul(Decimal.pow(1.2, player.f.allocated.sub(16).min(16).max(0))).mul(Decimal.pow(player.f.allocated.sub(32).max(1), 0.3)).mul(0.003).mul(pointdiff.sub(player.points)).mul(hasUpgrade("f", 13)?upgradeEffect("f", 13):1))
+			player.f.metals = player.f.metals.add(Decimal.pow(2, player.f.allocated.min(hasUpgrade("f", 52)?28:16)).mul(Decimal.pow(1.2, player.f.allocated.sub(hasUpgrade("f", 52)?28:16).min(hasUpgrade("f", 52)?28:16).max(0))).mul(Decimal.pow(player.f.allocated.sub(hasUpgrade("f", 52)?56:32).max(1), 0.3)).mul(0.003).mul(pointdiff.sub(player.points)).mul(hasUpgrade("f", 13)?upgradeEffect("f", 13):1))
 			player.f.allocated = player.f.allocated.min(player.f.points)
 			if (hasUpgrade("e", 42)) player.point = pointdiff.div(Decimal.pow(Decimal.pow(1.001, diff), player.f.allocated))
 			if (hasUpgrade("f", 11)) player.e.points = player.e.points.add(tmp.e.resetGain.mul(0.01).mul(diff).mul(upgradeEffect("f", 11)));
@@ -456,8 +509,9 @@ addLayer("e", {
 		}, // Prestige currency exponent
 		gainMult() { // Calculate the multiplier for main currency from bonuses
 			mult = new Decimal(1)
-			if (hasUpgrade("e", 12)) mult = mult.mul(2)
-			if (hasUpgrade("e", 22)) mult = mult.mul(upgradeEffect("e", 22))
+			if (hasUpgrade("e", 12)) mult = mult.mul(2);
+			if (hasUpgrade("e", 22)) mult = mult.mul(upgradeEffect("e", 22));
+			if (hasUpgrade("f", 52)) mult = mult.mul(upgradeEffect("f", 52));
 			return mult
 		},
 		gainExp() { // Calculate the exponent on main currency from bonuses
@@ -476,7 +530,7 @@ addLayer("e", {
 				description: "Extractors produce ores x2 faster.",
 				cost: 10,
 				unlocked() {
-					return player.e.points.gte(5) || hasUpgrade("e", 11)
+					return player.e.points.gte(5) || hasUpgrade("e", 11)||hasUpgrade("m", 11)
 				}
 			},
 			12: {
@@ -484,7 +538,7 @@ addLayer("e", {
 				description: "Double extractor gain.",
 				cost: 50,
 				unlocked() {
-					return player.e.points.gte(15) || hasUpgrade("e", 12)
+					return player.e.points.gte(15) || hasUpgrade("e", 12)||hasUpgrade("m", 11)
 				}
 			},
 			13: {
@@ -495,7 +549,7 @@ addLayer("e", {
 					return hasUpgrade("e", 24) ? player.points.add(1).min("1e1000").pow(0.2).mul(player.points.div("1e1000").max(0).add(1.5).log(1.5).pow(0.5)) : player.points.add(2).log(2)
 				},
 				unlocked() {
-					return hasUpgrade("e", 12)
+					return hasUpgrade("e", 12)||hasUpgrade("m", 11)
 				}
 			},
 			14: {
@@ -506,7 +560,7 @@ addLayer("e", {
 					return Decimal.pow(3, player.e.upgrades.length)
 				},
 				unlocked() {
-					return hasUpgrade("e", 13)
+					return hasUpgrade("e", 13)||hasUpgrade("m", 11)
 				}
 			},
 			21: {
@@ -514,7 +568,7 @@ addLayer("e", {
 				description: "Interact with the core properties of extractors.",
 				cost: 1e5,
 				unlocked() {
-					return player.f.milestones.includes("0")
+					return player.f.milestones.includes("0")||hasUpgrade("m", 11)
 				}
 			},
 			22: {
@@ -522,7 +576,7 @@ addLayer("e", {
 				description: "Metal boost extractor gain.",
 				cost: 2e9,
 				unlocked() {
-					return player.f.milestones.includes("0")
+					return player.f.milestones.includes("0")||hasUpgrade("m", 11)
 				},
 				effect() {
 					return player.f.metals.add(20).min(1e250).log(20).add(player.f.metals.div(1e250).max(0).add(1).log(2000))
@@ -533,7 +587,7 @@ addLayer("e", {
 				description: "Scaled motor scaling starts later, and is weakened.",
 				cost: 1e12,
 				unlocked() {
-					return player.f.milestones.includes("0")
+					return player.f.milestones.includes("0")||hasUpgrade("m", 11)
 				}
 			},
 			24: {
@@ -541,7 +595,7 @@ addLayer("e", {
 				description: "Self-generating's formula is better.",
 				cost: 3e15,
 				unlocked() {
-					return player.f.milestones.includes("0")
+					return player.f.milestones.includes("0")||hasUpgrade("m", 11)
 				}
 			},
 			31: {
@@ -549,7 +603,7 @@ addLayer("e", {
 				description: "Add 2 to motor's effect base.",
 				cost: 1e66,
 				unlocked() {
-					return player.f.milestones.includes("1")
+					return player.f.milestones.includes("1")||hasUpgrade("m", 11)
 				}
 			},
 			32: {
@@ -557,7 +611,7 @@ addLayer("e", {
 				description: "Ember boost boosts ore gain at an increased rate.",
 				cost: 2e114,
 				unlocked() {
-					return player.f.milestones.includes("1")
+					return player.f.milestones.includes("1")||hasUpgrade("m", 11)
 				},
 				effect() {
 					return buyableEffect("f", 11).pow(3)
@@ -568,7 +622,7 @@ addLayer("e", {
 				description: "Motor boosts ember gain at a reduced rate.",
 				cost: 1e225,
 				unlocked() {
-					return player.f.milestones.includes("1")&&player.f.flame.gt(0)
+					return (player.f.milestones.includes("1")&&player.f.flame.gt(0))||hasUpgrade("m", 11)
 				},
 				effect() {
 					return buyableEffect("e", 13).pow(0.25)
@@ -579,7 +633,7 @@ addLayer("e", {
 				description: "All components gain free levels from flame.",
 				cost: 1e275,
 				unlocked() {
-					return player.f.milestones.includes("1")&&player.f.flame.gt(0)
+					return (player.f.milestones.includes("1")&&player.f.flame.gt(0))||hasUpgrade("m", 11)
 				}
 			},
 			41: {
@@ -599,9 +653,9 @@ addLayer("e", {
 				}
 			},
 			43: {
-				title: "meme now laugh",
-				description: "Plcaeholder gaming",
-				cost: "2.69e420420420",
+				title: "Rich In Ores",
+				description: "Improve Depth's effect formula.",
+				cost: "1e875",
 				unlocked() {
 					return hasUpgrade("m", 11)
 				}
@@ -650,7 +704,7 @@ addLayer("e", {
 				title: "Depth",
 				display() {
 					return `<br><br><h3>Increase the depth of extractors.</h3><br>
-					<h2>Currently:</h2><h3> ${format(this.effect().mul(10), 0)}m deep</h3>
+					<h2>Currently:</h2><h3> ${format(getBuyableAmount("e", 11).add(hasUpgrade("e", 34)?player.f.flame.mul(2).pow(2):0).add(1).mul(10), 0)}m deep</h3>
 					<h2>Cost:</h2><h3> ${format(this.cost())} metals</h3>
 					<h2>Effect:</h2><h3> x${format(this.effect())}</h3>`
 				},
@@ -664,7 +718,7 @@ addLayer("e", {
 					}
 				},
 				effect() {
-					return getBuyableAmount("e", 11).add(hasUpgrade("e", 34)?player.f.flame.mul(2).pow(2):0).add(1)
+					return (getBuyableAmount("e", 11).add(hasUpgrade("e", 34)?player.f.flame.mul(2).pow(2):0).add(1)).pow(hasUpgrade("e", 43)?4:1)
 				},
 				unlocked() {
 					return hasUpgrade("e", 21)
@@ -814,7 +868,7 @@ addLayer("m", {
 				}
 			},
 			1: {
-				requirementDescription: "Manufacturer of parts (3 manufacturer)",
+				requirementDescription: "Manufacturer of parts (3 m.)",
 				effectDescription: "Automate extractor buyables.",
 				toggles: [["m", "autoEBuyable"]],
 				done() {
@@ -825,11 +879,21 @@ addLayer("m", {
 				}
 			},
 			2: {
-				requirementDescription: "Manufacturer of flames (5 manufacturer)",
+				requirementDescription: "Manufacturer of flames (5 m.)",
 				effectDescription: "Automate embers and flame respectively.",
 				toggles: [["m", "autoEmber"], ["m", "autoFlame"]],
 				done() {
 					return player.m.points.gte(5)
+				},
+				style: {
+					width: "500px"
+				}
+			},
+			3: {
+				requirementDescription: "Manufacturer of furnace upgrades (7 m.)",
+				effectDescription: "Unlock a lot of furnace and flame upgrades.",
+				done() {
+					return player.m.points.gte(7)
 				},
 				style: {
 					width: "500px"
