@@ -193,7 +193,7 @@ addLayer("f", {
 					return hasUpgrade("f", 41)&&hasUpgrade("f", 42)
 				},
 				effect() {
-					return player.f.embers.pow(0.25)
+					return player.f.embers.add(1).pow(0.25)
 				},
 				currencyDisplayName: "flame",
 				currencyInternalName() {
@@ -395,7 +395,7 @@ addLayer("f", {
 				<br><br>
 				<input oninput="player.f.allocated = new Decimal(this.value)" type="range" min="0" max="${player.f.points}" step="1" style="width: 30em" value="${player.f.allocated}">
 				<br>You lose a certain amount of ores per second, but your furnaces convert them into metals. 
-				Your points are divided by ${format(Decimal.pow(1.1, player.f.allocated))} per second, but for every point you lose you gain ${format(Decimal.pow(2, player.f.allocated.min(16)).mul(Decimal.pow(1.2, player.f.allocated.sub(16).min(16).max(0))).mul(Decimal.pow(player.f.allocated.sub(32).max(1), 0.3)).mul(0.003).mul(hasUpgrade("f", 13)?upgradeEffect("f", 13):1))} metals.
+				Your points are divided by ${format(Decimal.pow(hasUpgrade("e", 42)?1.001:1.1, player.f.allocated))} per second, but for every point you lose you gain ${format(Decimal.pow(2, player.f.allocated.min(16)).mul(Decimal.pow(1.2, player.f.allocated.sub(16).min(16).max(0))).mul(Decimal.pow(player.f.allocated.sub(32).max(1), 0.3)).mul(0.003).mul(hasUpgrade("f", 13)?upgradeEffect("f", 13):1))} metals.
 				<br>` : ""
 				}]]
 			},
@@ -425,9 +425,10 @@ addLayer("f", {
 		},
 		update(diff) {
 			var pointdiff = new Decimal(player.points);
-			player.points = player.points.div(Decimal.pow(Math.pow(1.1, diff), player.f.allocated))
+			player.points = player.points.div(Decimal.pow(Decimal.pow(1.1, diff), player.f.allocated))
 			player.f.metals = player.f.metals.add(Decimal.pow(2, player.f.allocated.min(16)).mul(Decimal.pow(1.2, player.f.allocated.sub(16).min(16).max(0))).mul(Decimal.pow(player.f.allocated.sub(32).max(1), 0.3)).mul(0.003).mul(pointdiff.sub(player.points)).mul(hasUpgrade("f", 13)?upgradeEffect("f", 13):1))
 			player.f.allocated = player.f.allocated.min(player.f.points)
+			if (hasUpgrade("e", 42)) player.point = pointdiff.div(Decimal.pow(Decimal.pow(1.001, diff), player.f.allocated))
 			if (hasUpgrade("f", 11)) player.e.points = player.e.points.add(tmp.e.resetGain.mul(0.01).mul(diff).mul(upgradeEffect("f", 11)));
 			if (hasUpgrade("f", 21)) player.f.embers = player.f.embers.add(upgradeEffect("f", 21).mul(diff));
 			player.m.savedFUpgrades = player.f.upgrades;
@@ -591,8 +592,8 @@ addLayer("e", {
 			},
 			42: {
 				title: "Even More Optimization",
-				description: "Allocated furnaces only divide ore gain by 1.01 but metal gain stays the same as if it was 1.1.",
-				cost: "2e1000000",
+				description: "Allocated furnaces only divide ore gain by 1.001 but metal gain stays the same as if it was 1.1.",
+				cost: "2e860",
 				unlocked() {
 					return hasUpgrade("m", 11)
 				}
@@ -780,7 +781,7 @@ addLayer("m", {
 			{key: "m", description: "m: Reset for manufacturers", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
 		],
 		effect() {
-			return Decimal.pow(1e6, player.m.points)
+			return Decimal.pow(1e6, player.m.points.max(player.m.upgrades.length))
 		},
 		effectDescription() {
 			return `boosting ore gains by ${format(this.effect())} and ember gains by ${format(this.effect().sqrt())}`
