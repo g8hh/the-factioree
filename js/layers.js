@@ -149,11 +149,17 @@ addLayer("f", {
 				}
 			},
 			53: {
-				title: "placeholder gmong",
-				description: "pcasdfhoel gmsdofns.",
-				cost: 101000,
+				title: "Powerful furnaces",
+				description: "Gain free flame levels from furnaces.",
+				cost: 170,
 				unlocked() {
 					return player.m.milestones.includes("3")
+				},
+				effect() {
+					return player.f.points.pow(0.25).floor()
+				},
+				effectDisplay() {
+					return `+${this.effect()}`
 				}
 			},
 			54: {
@@ -246,6 +252,9 @@ addLayer("f", {
 				effect() {
 					return player.f.embers.add(1).pow(0.25)
 				},
+				effectDisplay() {
+					return `/${format(this.effect())}`
+				},
 				currencyDisplayName: "flame",
 				currencyInternalName() {
 					return "flame"
@@ -258,7 +267,7 @@ addLayer("f", {
 				}
 			},
 			43: {
-				title: "placeholer gaming",
+				title: "Extra Flame",
 				description: "Gain 4 extra flame levels.",
 				cost: 10,
 				unlocked() {
@@ -275,6 +284,34 @@ addLayer("f", {
 					return {backgroundColor: hasUpgrade("f", 43)?"#77bf5f":(player.f.flame.gte(10)?"#ff6600":"bf8f8f")}
 				}
 			},
+			34: {
+				title: "Even Flamier",
+				description: "Flame also divide final buyable cost at an increased rate, and all cost scalings scale better.",
+				cost: 17,
+				unlocked() {
+					return player.m.milestones.includes("3")
+				},
+				effect() {
+					return Decimal.pow(2, layers.f.flameEffect().recip()).recip().pow(6)
+				},
+				effectDisplay() {
+					return `/${format(this.effect().recip())}`
+				},
+				style() {
+					return {backgroundColor: hasUpgrade("f", 34)?"#77bf5f":(player.f.flame.gte(17)?"#ff6600":"bf8f8f")}
+				}
+			},
+			44: {
+				title: "Extracting Flames",
+				description: "Flame also make extractor levels cheaper.",
+				cost: 21,
+				unlocked() {
+					return player.m.milestones.includes("3")
+				},
+				style() {
+					return {backgroundColor: hasUpgrade("f", 44)?"#77bf5f":(player.f.flame.gte(17)?"#ff6600":"bf8f8f")}
+				}
+			}
 		},
 		milestones: {
 			0: {
@@ -315,7 +352,7 @@ addLayer("f", {
 					<h2>Effect:</h2><h3> x${format(this.effect())}</h3>`
 				},
 				cost() {
-					return Decimal.pow(4, getBuyableAmount("f", 11).sub(50).max(0).pow(3).div(3).add(getBuyableAmount("f", 11).pow(2).div(4).add(getBuyableAmount("f", 11)).mul(layers.f.flameEffect()))).mul(100)
+					return Decimal.pow(4, getBuyableAmount("f", 11).sub(50).max(0).pow(hasUpgrade("f", 34)?2:3).div(hasUpgrade("f", 34)?5:3).add(getBuyableAmount("f", 11).pow(hasUpgrade("f", 34)?1.5:2).div(hasUpgrade("f", 34)?6:4).add(getBuyableAmount("f", 11)).mul(layers.f.flameEffect()))).mul(100).mul(hasUpgrade("f", 34)?upgradeEffect("f", 34):1)
 				},
 				buy() {
 					if (this.canAfford()) {
@@ -344,7 +381,7 @@ addLayer("f", {
 					<h2>Effect:</h2><h3> x${format(this.effect())}</h3>`
 				},
 				cost() {
-					return Decimal.pow(11.5, getBuyableAmount("f", 12).pow(4).div(10).add(getBuyableAmount("f", 12)).mul(layers.f.flameEffect())).mul(10000)
+					return Decimal.pow(11.5, getBuyableAmount("f", 12).pow(hasUpgrade("f", 34)?2.4:4).div(10).add(getBuyableAmount("f", 12)).mul(layers.f.flameEffect())).mul(10000).mul(hasUpgrade("f", 34)?upgradeEffect("f", 34):1)
 				},
 				buy() {
 					if (this.canAfford()) {
@@ -371,7 +408,7 @@ addLayer("f", {
 					<h2>Effect:</h2><h3> ${format(this.effect())}</h3>`
 				},
 				cost() {
-					return Decimal.pow(10, getBuyableAmount("f", 13).sub(10).max(0).pow(4.5).add(getBuyableAmount("f", 13).pow(3).div(5).add(getBuyableAmount("f", 13)).mul(layers.f.flameEffect()))).mul(500000)
+					return Decimal.pow(10, getBuyableAmount("f", 13).sub(hasUpgrade("f", 34)?15:10).max(0).pow(hasUpgrade("f", 34)?2.6:4.5).add(getBuyableAmount("f", 13).pow(hasUpgrade("f", 34)?1.8:3).div(hasUpgrade("f", 34)?8:5).add(getBuyableAmount("f", 13)).mul(layers.f.flameEffect()))).mul(500000).mul(hasUpgrade("f", 34)?upgradeEffect("f", 34):1)
 				},
 				buy() {
 					if (this.canAfford()) {
@@ -468,9 +505,9 @@ addLayer("f", {
 				}],
 				"buyables", ["raw-html", function () {
 				return (player.f.embers.gt(500000000)||player.f.flame.gt(0))?`<br>
-				<span>You have </span><h2 style="color: #ff6600; text-shadow: 0px 0px 10px #ff6600;">${format(player.f.flame, 0)}</h2><span> flame, making the cost exponent of all ember upgrades divided by ${format(Decimal.div(1,layers.f.flameEffect()))}.
+				<span>You have </span><h2 style="color: #ff6600; text-shadow: 0px 0px 10px #ff6600;">${format(player.f.flame, 0)}</h2>${layers.f.extraFlame().gt(0)?`<h3> + </h3><h2 style="color: #ff6600; text-shadow: 0px 0px 7px #ff6600;">${layers.f.extraFlame()}</h2>`:""}<span> flame, making the cost exponent of all ember upgrades divided by ${format(Decimal.div(1,layers.f.flameEffect()))}.
 				<br><br>`:""}],"clickables",
-				["column", [["row", [["upgrade", 31], ["upgrade", 32], ["upgrade", 33]]]]], ["column", [["row", [["upgrade", 41], ["upgrade", 42], ["upgrade", 43]]]]]],
+				["column", [["row", [["upgrade", 31], ["upgrade", 32], ["upgrade", 33], ["upgrade", 34]]]]], ["column", [["row", [["upgrade", 41], ["upgrade", 42], ["upgrade", 43], ["upgrade", 44]]]]]],
 				unlocked() {
 					return hasUpgrade("f", 21)
 				}
@@ -486,8 +523,11 @@ addLayer("f", {
 			if (hasUpgrade("f", 21)) player.f.embers = player.f.embers.add(upgradeEffect("f", 21).mul(diff));
 			player.m.savedFUpgrades = player.f.upgrades;
 		},
+		extraFlame() {
+			return new Decimal(hasUpgrade("f", 43)?4:0).add(hasUpgrade("f", 53)?upgradeEffect("f", 53):0)
+		},
 		flameEffect() {
-			return Decimal.div(1, player.f.flame.add(hasUpgrade("f", 43)?4:0).div(hasUpgrade("f", 31)?2.5:5).add(1))
+			return Decimal.div(1, player.f.flame.add(this.extraFlame()).div(hasUpgrade("f", 31)?2.5:5).add(1))
 		}
 })
 addLayer("e", {
@@ -709,7 +749,7 @@ addLayer("e", {
 					<h2>Effect:</h2><h3> x${format(this.effect())}</h3>`
 				},
 				cost() {
-					return Decimal.pow(5, getBuyableAmount("e", 11).add(getBuyableAmount("e", 11).sub(20).max(0).pow(2).div(1.5))).mul(1e8)
+					return Decimal.pow(5, getBuyableAmount("e", 11).add(getBuyableAmount("e", 11).sub(20).max(0).pow(2).div(1.5)).mul(hasUpgrade("f", 44)?layers.f.flameEffect():1)).mul(1e8)
 				},
 				buy() {
 					if (this.canAfford()) {
@@ -736,7 +776,7 @@ addLayer("e", {
 					<h2>Effect:</h2><h3> x${format(this.effect())}</h3>`
 				},
 				cost() {
-					return Decimal.pow(10, getBuyableAmount("e", 12).add(getBuyableAmount("e", 12).sub(30).max(0).pow(2).div(1.4))).mul(1e7)
+					return Decimal.pow(10, getBuyableAmount("e", 12).add(getBuyableAmount("e", 12).sub(30).max(0).pow(2).div(1.4)).mul(hasUpgrade("f", 44)?layers.f.flameEffect():1)).mul(1e7)
 				},
 				buy() {
 					if (this.canAfford()) {
@@ -763,7 +803,7 @@ addLayer("e", {
 					<h2>Effect:</h2><h3> x${format(buyableEffect("e", 13))}</h3>`
 				},
 				cost() {
-					return Decimal.pow(20, getBuyableAmount("e", 13).add(getBuyableAmount("e", 13).sub(hasUpgrade("e", 23)?6:3).max(0).pow(hasUpgrade("e", 23)?2.4:3))).mul(1e7)
+					return Decimal.pow(20, getBuyableAmount("e", 13).add(getBuyableAmount("e", 13).sub(hasUpgrade("e", 23)?6:3).max(0).pow(hasUpgrade("e", 23)?2.4:3)).mul(hasUpgrade("f", 44)?layers.f.flameEffect():1)).mul(1e7)
 				},
 				buy() {
 					if (this.canAfford()) {
@@ -851,7 +891,7 @@ addLayer("m", {
 			},
 			12: {
 				title: "Furnace Quality Control",
-				description: "Keep furnace upgrades, and you can buy max furnaces.",
+				description: "Keep furnace upgrades on reset.",
 				cost: 7
 			},
 		},
