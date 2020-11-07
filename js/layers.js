@@ -23,7 +23,8 @@ addLayer("f", {
 		exponent: 1.5,
 		gainMult() { // Calculate the multiplier for main currency from bonuses
 			mult = new Decimal(1)
-			if (hasUpgrade("f", 12)) mult = mult.div(upgradeEffect("f", 12))
+			if (hasUpgrade("f", 12)) mult = mult.div(upgradeEffect("f", 12));
+			if (hasUpgrade("f", 54)) mult = mult.div(upgradeEffect("f", 54));
 			return mult
 		},
 		gainExp() { // Calculate the exponent on main currency from bonuses
@@ -163,11 +164,17 @@ addLayer("f", {
 				}
 			},
 			54: {
-				title: "placeholder gmong",
-				description: "pcasdfhoel gmsdofns.",
-				cost: 101000,
+				title: "Timewall gaming",
+				description: "Divide furnace cost based on time spent in manufacturer reset.",
+				cost: 260,
 				unlocked() {
 					return player.m.milestones.includes("3")
+				},
+				effect() {
+					return Decimal.pow(10, player.e.layerticks)
+				},
+				effectDisplay() {
+					return `/${format(this.effect())}`
 				}
 			},
 			31: {
@@ -464,13 +471,16 @@ addLayer("f", {
 					}
 				},
 				unlocked() {
-					return (player.f.embers.gt(500000000)||player.f.flame.gt(0))
+					return (player.f.embers.gt(500000000)||player.f.flame.gt(0)||(player.f.upgrades.length > 4))
 				}
 			}
 		},
-		hotkeys: [
+		hotkeys: function () {
+			var defaultHotkeys = [
 			{key: "f", description: "f: Reset for furnaces", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
-		],
+			];
+			if (this.clickables[11].unlocked()) defaultHotkeys.push({key: "F", description: "shift+f: Reset for flame", onPress(){if (layers.f.clickables[11].canClick()) layers.f.clickables[11].onClick()}},)
+		},
 		layerShown(){return player.e.milestones.includes("0")||layers.m.layerShown()},
 		tabFormat: {
 			"Main": {
@@ -528,7 +538,17 @@ addLayer("f", {
 		flameEffect() {
 			return Decimal.div(1, player.f.flame.add(this.extraFlame()).div(hasUpgrade("f", 31)?2.5:5).add(1))
 		}
-})
+});
+function buyMaxFurnaces() {
+	var iterations = 0;
+	while (player.points.gte(getNextAt("f"))&&iterations<100000) {
+		player.f.points = player.f.points.add(1);
+		iterations++;
+		Vue.set(tmp.f, "gainExp", layers.f.gainExp());
+		Vue.set(tmp.f, "base", layers.f.base());
+	}
+	if (iterations>0) doReset("f", true);
+}
 addLayer("e", {
 		name: "extractor", // This is optional, only used in a few places, If absent it just uses the layer id.
 		symbol: "E", // This appears on the layer's node. Default is the id with the first letter capitalized
@@ -540,7 +560,9 @@ addLayer("e", {
 			burning: false,
 			canBurn: false,
 			burnTime: 10,
-			burnEffect: new Decimal(0)
+			burnEffect: new Decimal(0),
+			burnOilLoss: new Decimal(0),
+			layerticks: 0
 		}},
 		color: "#887799",
 		requires: new Decimal(10), // Can be a function that takes requirement increases into account
@@ -705,14 +727,14 @@ addLayer("e", {
 				}
 			},
 			44: {
-				title: "Oil industry",
+				title: "Oil Rigs Too",
 				description: "Extractors start producing oil.",
 				cost: "1e1830",
 				unlocked() {
 					return hasUpgrade("m", 11)
 				},
 				effect() {
-					return player.e.points.pow(0.5).mul(buyableEffect("e", 11)).mul(buyableEffect("e", 12)).mul(buyableEffect("e", 12))
+					return player.e.points.pow(0.5).mul(buyableEffect("e", 11)).mul(buyableEffect("e", 12)).mul(buyableEffect("e", 12)).pow(player.e.canBurn?1:0.7)
 				},
 				effectDisplay() {
 					return `${format(this.effect())} oil/s`
@@ -837,13 +859,14 @@ addLayer("e", {
 			cols: 1,
 			11: {
 				display() {
-					return `${player.e.canBurn?"Activate Oil Burning.":"Please wait for your oil to refill until you an activate oil burning again."}`
+					return `${player.e.canBurn?(player.e.burning?"Deactivate Oil Burning.":"Activate Oil Burning."):"Please wait for your oil to refill until you an activate oil burning again."}`
 				},
 				canClick() {
 					return player.e.oil.gt(0) && player.e.canBurn;
 				},
 				onClick() {
 					if (this.canClick()) player.e.burning = !player.e.burning;
+					if (player.e.burning) player.e.burnOilLoss = upgradeEffect("e", 44).mul(2);
 				},
 				cost() {
 					return Decimal.pow(20, player.f.flame.pow(2).div(hasUpgrade("f", 41)?4:2)).mul(5e8).div(hasUpgrade("f", 33)?upgradeEffect("f", 33):1)
@@ -879,7 +902,7 @@ addLayer("e", {
 					(${format(upgradeEffect("e", 44))}/s)
 					<br><br>Activate Oil Burning, which depletes your oil at twice the rate it is produced, but you gain boosts to ore gain and extra ember levels.<br><br>`
 				}], "clickables", ["raw-html", function () {
-					return `<br><br>You are losing ${format(player.e.burning?upgradeEffect("e", 44).mul(2):0)} oil per second, but you gain a x${format(player.e.burnEffect.add(1.2).log(1.2))} boost to ore gain and get ${format(player.e.burnEffect.add(2).log(2).log(3).floor())} extra ember buyable levels.`
+					return `<br><br>You are losing ${format(player.e.burning?player.e.burnOilLoss:0)} oil per second, but you gain a x${format(player.e.burnEffect.add(1.2).log(1.2))} boost to ore gain and get ${format(player.e.burnEffect.add(2).log(2).log(3).floor())} extra ember buyable levels.`
 				}]],
 				unlocked() {
 					return hasUpgrade("e", 44)
@@ -887,22 +910,23 @@ addLayer("e", {
 			}
 		},
 		update(diff) {
-			player.e.oil = player.e.oil.add(hasUpgrade("e", 44)?upgradeEffect("e", 44).mul(diff):0);
+			if (!player.e.burning) player.e.oil = player.e.oil.add(hasUpgrade("e", 44)?upgradeEffect("e", 44).mul(diff):0);
 			if (player.e.burning&&player.e.canBurn) {
-				player.e.oil = player.e.oil.sub(upgradeEffect("e", 44).mul(3).mul(diff)).max(0);
-				player.e.burnEffect = player.e.oil.min(upgradeEffect("e", 44).mul(2));
+				player.e.oil = player.e.oil.sub(player.e.burnOilLoss.mul(diff)).max(0);
+				player.e.burnEffect = player.e.oil.min(player.e.burnOilLoss);
 			} else {
 				player.e.burnEffect = new Decimal(0);
 			}
-			if (player.e.oil.lte(0)) {
+			if (player.e.oil.lte(0) && player.e.layerticks > 0) {
 				player.e.canBurn = false;
 				player.e.burnTime = 0;
 			}
-			if (player.e.burnTime >= 15) player.e.canBurn = true;
+			if (player.e.burnTime >= 10) player.e.canBurn = true;
 			if (!player.e.canBurn) {
 				player.e.burning = false;
 				player.e.burnTime += diff;
 			}
+			player.e.layerticks += diff;
 		}
 })
 addLayer("m", {
@@ -1003,6 +1027,16 @@ addLayer("m", {
 				style: {
 					width: "500px"
 				}
+			},
+			4: {
+				requirementDescription: "Mass production of furnaces (10 m.)",
+				effectDescription: "Auto-Furnace buys max furnaces.",
+				done() {
+					return player.m.points.gte(10)
+				},
+				style: {
+					width: "500px"
+				}
 			}
 		},
 		branches: ["f"],
@@ -1015,7 +1049,7 @@ addLayer("m", {
 			}
 		},
 		automate() {
-			if (player.m.autoFurnace) doReset("f");
+			if (player.m.autoFurnace) player.m.milestones.includes("4")?buyMaxFurnaces():doReset("f");
 			if (player.m.autoFAlloc) player.f.allocated = player.f.points;
 			if (player.m.autoEBuyable) {
 				for (var i = 11; i <= 13; i++) {
