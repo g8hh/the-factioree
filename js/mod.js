@@ -40,7 +40,7 @@ function getPointGen() {
 	if (hasUpgrade("e", 14)) gain = gain.mul(upgradeEffect("e", 14));
 	gain = gain.mul(buyableEffect("f", 13));
 	if (hasUpgrade("e", 32)) gain = gain.mul(upgradeEffect("e", 32));
-	gain = gain.mul(tmp.m.effect)
+	gain = gain.mul(tmp.m.effect).mul(player.e.burnEffect.add(1.2).log(1.2));
 	return gain
 }
 
