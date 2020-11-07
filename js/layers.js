@@ -86,7 +86,7 @@ addLayer("f", {
 				description: `Ember gain multiplied by extractors.`,
 				cost: 25,
 				unlocked() {
-					return getBuyableAmount("f", 11).gte(5)
+					return getBuyableAmount("f", 11).gte(5)||hasUpgrade("m", 11)
 				},
 				effect() {
 					return player.e.points.add(6).log(6)
@@ -475,12 +475,7 @@ addLayer("f", {
 				}
 			}
 		},
-		hotkeys: function () {
-			var defaultHotkeys = [
-			{key: "f", description: "f: Reset for furnaces", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
-			];
-			if (this.clickables[11].unlocked()) defaultHotkeys.push({key: "F", description: "shift+f: Reset for flame", onPress(){if (layers.f.clickables[11].canClick()) layers.f.clickables[11].onClick()}},)
-		},
+		hotkeys: [{key: "f", description: "f: Reset for furnaces", onPress(){if (canReset(this.layer)) doReset(this.layer)}}],
 		layerShown(){return player.e.milestones.includes("0")||layers.m.layerShown()},
 		tabFormat: {
 			"Main": {
@@ -594,18 +589,12 @@ addLayer("e", {
 			11: {
 				title: "Efficiency",
 				description: "Extractors produce ores x2 faster.",
-				cost: 10,
-				unlocked() {
-					return player.e.points.gte(5) || hasUpgrade("e", 11)||hasUpgrade("m", 11)
-				}
+				cost: 10
 			},
 			12: {
 				title: "Optimization",
 				description: "Double extractor gain.",
-				cost: 50,
-				unlocked() {
-					return player.e.points.gte(15) || hasUpgrade("e", 12)||hasUpgrade("m", 11)
-				}
+				cost: 50
 			},
 			13: {
 				title: "Self-generating",
@@ -614,9 +603,6 @@ addLayer("e", {
 				effect() {
 					return hasUpgrade("e", 24) ? player.points.add(1).min("1e1000").pow(0.2).mul(player.points.div("1e1000").max(0).add(1.5).log(1.5).pow(0.5)) : player.points.add(2).log(2)
 				},
-				unlocked() {
-					return hasUpgrade("e", 12)||hasUpgrade("m", 11)
-				}
 			},
 			14: {
 				title: "Meta upgrade",
@@ -750,9 +736,6 @@ addLayer("e", {
 				},
 				style: {
 					width: "300px"
-				},
-				unlocked() {
-					return hasUpgrade("e", 14)
 				}
 			},
 			1: {
@@ -763,9 +746,6 @@ addLayer("e", {
 				},
 				style: {
 					width: "300px"
-				},
-				unlocked() {
-					return hasUpgrade("e", 23)
 				}
 			}
 		},
@@ -887,13 +867,7 @@ addLayer("e", {
 		branches: ["f"],
 		tabFormat: {
 			"Main": {
-				content: ["main-display", "prestige-button", ["raw-html", "<br>"], "buyables", ["raw-html", "<br>"], "upgrades"]
-			},
-			"Milestones": {
-				content: ["main-display", "prestige-button", ["raw-html", "<br>"], "milestones"],
-				unlocked() {
-					return hasUpgrade("e", 14)
-				}
+				content: ["main-display", "prestige-button", ["raw-html", "<br>"], "milestones", ["raw-html", "<br>"], "buyables", ["raw-html", "<br>"], "upgrades"]
 			},
 			"Oil": {
 				content: ["main-display", "prestige-button", ["raw-html", function () {
@@ -917,7 +891,7 @@ addLayer("e", {
 			} else {
 				player.e.burnEffect = new Decimal(0);
 			}
-			if (player.e.oil.lte(0) && player.e.layerticks > 0) {
+			if (player.e.oil.lte(0) && player.e.layerticks > 0 && player.e.burning) {
 				player.e.canBurn = false;
 				player.e.burnTime = 0;
 			}
@@ -985,6 +959,11 @@ addLayer("m", {
 				description: "Keep furnace upgrades on reset.",
 				cost: 7
 			},
+			13: {
+				title: "Placholder.",
+				description: "Placeholder gaming",
+				cost: 700
+			},
 		},
 		milestones: {
 			0: {
@@ -1044,10 +1023,10 @@ addLayer("m", {
 		branches: ["f"],
 		tabFormat: {
 			"Main": {
-				content: ["main-display", "prestige-button", ["raw-html", "<br>"], "buyables", ["raw-html", "<br>"], "upgrades"]
+				content: ["main-display", "prestige-button", ["raw-html", "<br>"], "milestones", ["raw-html", "<br>"], "upgrades"]
 			},
-			"Milestones": {
-				content: ["main-display", "prestige-button", ["raw-html", "<br>"], "milestones"]
+			"Factories": {
+				content: ["main-display", "prestige-button", ["raw-html", "Work in progress<br>"], "buyables"]
 			}
 		},
 		automate() {
