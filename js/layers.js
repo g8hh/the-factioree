@@ -729,7 +729,7 @@ addLayer("e", {
 			44: {
 				title: "Oil Rigs Too",
 				description: "Extractors start producing oil.",
-				cost: "1e1830",
+				cost: "1e1800",
 				unlocked() {
 					return hasUpgrade("m", 11)
 				},
