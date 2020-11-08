@@ -1239,7 +1239,7 @@ addLayer("m", {
 			}
 		},
 		automate() {
-			if (player.m.autoFurnace) player.m.milestones.includes("4")?buyMaxFurnaces():doReset("f");
+			if (player.m.autoFurnace&&canReset("f")) player.m.milestones.includes("4")?buyMaxFurnaces():doReset("f");
 			if (player.m.autoFAlloc) player.f.allocated = player.f.points;
 			if (player.m.autoEBuyable) {
 				for (var i = 11; i <= 13; i++) {
