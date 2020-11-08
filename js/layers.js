@@ -551,6 +551,7 @@ addLayer("f", {
 			}
 		},
 		update(diff) {
+			player.f.points = player.f.points.min(buyableEffect("m", 11).mul(50).add(1000));
 			var pointdiff = new Decimal(player.points);
 			player.points = player.points.div(Decimal.pow(Decimal.pow(1.1, diff), player.f.allocated))
 			player.f.metals = player.f.metals.add((getBuyableAmount("m", 11).gte(5)?Decimal.pow(1.4, player.f.allocated).mul(0.003).mul(hasUpgrade("f", 13)?upgradeEffect("f", 13):1):Decimal.pow(2, player.f.allocated.min(hasUpgrade("f", 52)?28:16)).mul(Decimal.pow(1.2, player.f.allocated.sub(hasUpgrade("f", 52)?28:16).min(hasUpgrade("f", 52)?28:16).max(0))).mul(Decimal.pow(player.f.allocated.sub(hasUpgrade("f", 52)?56:32).max(1), 0.3)).mul(0.003).mul(hasUpgrade("f", 13)?upgradeEffect("f", 13):1)).mul(pointdiff.sub(player.points)))
@@ -558,6 +559,7 @@ addLayer("f", {
 			if (hasUpgrade("e", 42)) player.point = pointdiff.div(Decimal.pow(Decimal.pow(1.001, diff), player.f.allocated))
 			if (hasUpgrade("f", 11)) player.e.points = player.e.points.add(tmp.e.resetGain.mul(0.01).mul(diff).mul(upgradeEffect("f", 11)));
 			if (hasUpgrade("f", 21)) player.f.embers = player.f.embers.add(upgradeEffect("f", 21).mul(diff));
+			if (layers.f.clickables[11].unlocked()) Vue.set(hotkeys, "F", {key: "F", desc: "shift+f: Buy flame", onPress() {layers.f.clickables[11].onClick()}, layer: "f"});
 		},
 		extraFlame() {
 			return new Decimal(hasUpgrade("f", 43)?4:0).add(hasUpgrade("f", 53)?upgradeEffect("f", 53):0)
@@ -571,7 +573,7 @@ addLayer("f", {
 });
 function buyMaxFurnaces() {
 	var iterations = 0;
-	while (player.points.gte(getNextAt("f"))&&iterations<100000) {
+	while (player.points.gte(getNextAt("f"))&&iterations<100000&&canReset("f")) {
 		player.f.points = player.f.points.add(1);
 		iterations++;
 		Vue.set(tmp.f, "gainExp", layers.f.gainExp());
@@ -926,6 +928,7 @@ addLayer("e", {
 				player.e.burnEffect = new Decimal(0);
 			}
 			player.e.layerticks += diff;
+			if (hasUpgrade("e", 44)) Vue.set(hotkeys, "o", {key: "o", desc: "o: Toggle oil burning", onPress() {layers.e.clickables[11].onClick()}, layer: "e"}) 
 		},
 		doReset(resettingLayer) {
 			if (layers[resettingLayer].row > this.row) layerDataReset("e", (hasUpgrade("m", 11)? ["upgrades"] : []))
@@ -1133,9 +1136,10 @@ addLayer("m", {
 			11: {
 				title: "Factory 1",
 				display() {
-					return `<br><h3>Creates a furnace every 5 seconds. (count towards furnace scaling.) Fifth level uncaps ore to metal efficiency.</h3><br>
+					return `<br><h3>Creates a furnace every 5 seconds. (count towards furnace scaling.) Fifth level uncaps ore to metal efficiency. Also increases cap to furnace amount.</h3><br>
 					<h2>Currently:</h2><h3> ${format(this.effect().div(5), 2)}/s</h3>
-					<h2>Cost:</h2><h3> ${format(this.cost())} bricks</h3>`
+					<h2>Cost:</h2><h3> ${format(this.cost())} bricks</h3>
+					<h3>Furnaces harcapped at ${format(this.effect().mul(50).add(1000))}</h3>`
 				},
 				cost() {
 					let T = getBuyableAmount("m", 11).add(getBuyableAmount("m", 12)).add(getBuyableAmount("m", 13)).add(1);
