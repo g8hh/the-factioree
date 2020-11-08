@@ -483,8 +483,9 @@ addLayer("f", {
 				},
 				onClick() {
 					if (player.f.embers.gte(this.cost())) {
-						player.f.embers = player.f.embers.sub(this.cost())
-						player.f.flame = player.f.flame.add(1)
+						player.f.embers = player.f.embers.sub(this.cost());
+						player.f.flame = player.f.flame.add(1);
+						//if (layers.f.hotkeys.)
 					}
 				},
 				cost() {
@@ -587,8 +588,6 @@ addLayer("e", {
 			points: new Decimal(0),
 			oil: new Decimal(0),
 			burning: false,
-			canBurn: false,
-			burnTime: 10,
 			burnEffect: new Decimal(0),
 			burnOilLoss: new Decimal(0),
 			layerticks: 0
@@ -874,10 +873,10 @@ addLayer("e", {
 			cols: 1,
 			11: {
 				display() {
-					return `${player.e.canBurn?(player.e.burning?"Deactivate Oil Burning.":"Activate Oil Burning."):"Please wait for your oil to refill until you an activate oil burning again."}`
+					return `${(player.e.burning?"Deactivate Oil Burning.":"Activate Oil Burning.")}`
 				},
 				canClick() {
-					return player.e.oil.gt(0) && player.e.canBurn;
+					return true
 				},
 				onClick() {
 					if (this.canClick()) player.e.burning = !player.e.burning;
@@ -920,20 +919,11 @@ addLayer("e", {
 		},
 		update(diff) {
 			if (!player.e.burning) player.e.oil = player.e.oil.add(hasUpgrade("e", 44)?upgradeEffect("e", 44).mul(diff):0);
-			if (player.e.burning&&player.e.canBurn) {
+			if (player.e.burning) {
 				player.e.oil = player.e.oil.sub(player.e.burnOilLoss.mul(diff)).max(0);
 				player.e.burnEffect = player.e.oil.min(player.e.burnOilLoss.mul(hasUpgrade("p", 13)?upgradeEffect("p", 13):1));
 			} else {
 				player.e.burnEffect = new Decimal(0);
-			}
-			if (player.e.oil.lte(0) && player.e.layerticks > 0 && player.e.burning) {
-				player.e.canBurn = false;
-				player.e.burnTime = 0;
-			}
-			if (player.e.burnTime >= 10) player.e.canBurn = true;
-			if (!player.e.canBurn) {
-				player.e.burning = false;
-				player.e.burnTime += diff;
 			}
 			player.e.layerticks += diff;
 		},
