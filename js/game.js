@@ -83,7 +83,7 @@ function canReset(layer)
 	if(tmp[layer].type == "normal")
 		return tmp[layer].baseAmount.gte(tmp[layer].requires)
 	else if(tmp[layer].type== "static") {
-		if (layer == "f") return player.points.gte(getNextAt("f")) && buyableEffect("m", 11).mul(hasUpgrade("m", 22)?150:50).add(1000).gt(player.f.points);
+		if (layer == "f") return player.points.gte(getNextAt("f")) && buyableEffect("m", 11).mul(hasUpgrade("m", 22)?100:50).add(1000).gt(player.f.points);
 		return tmp[layer].baseAmount.gte(tmp[layer].nextAt) 
 	}
 	if(tmp[layer].type == "none")

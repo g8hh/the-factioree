@@ -551,7 +551,7 @@ addLayer("f", {
 			}
 		},
 		update(diff) {
-			player.f.points = player.f.points.min(buyableEffect("m", 11).mul(hasUpgrade("m", 22)?150:50).add(1000));
+			player.f.points = player.f.points.min(buyableEffect("m", 11).mul(hasUpgrade("m", 22)?100:50).add(1000));
 			var pointdiff = new Decimal(player.points);
 			player.points = player.points.div(Decimal.pow(Decimal.pow(1.1, diff), player.f.allocated))
 			player.f.metals = player.f.metals.add((getBuyableAmount("m", 11).gte(5)?Decimal.pow(1.4, player.f.allocated.min(2000)).mul(player.f.allocated.sub(1999).max(1).pow(2.5)).mul(0.003).mul(hasUpgrade("f", 13)?upgradeEffect("f", 13):1):Decimal.pow(2, player.f.allocated.min(hasUpgrade("f", 52)?28:16)).mul(Decimal.pow(1.2, player.f.allocated.sub(hasUpgrade("f", 52)?28:16).min(hasUpgrade("f", 52)?28:16).max(0))).mul(Decimal.pow(player.f.allocated.sub(hasUpgrade("f", 52)?56:32).max(1), 0.3)).mul(0.003).mul(hasUpgrade("f", 13)?upgradeEffect("f", 13):1)).mul(pointdiff.sub(player.points)))
@@ -1090,8 +1090,20 @@ addLayer("m", {
 			},
 			22: {
 				title: "Timewalled Gaming again",
-				description: "Factory one raises furnace hardcap to 150 instead of 50 per level.",
+				description: "Factory one raises furnace hardcap to 100 instead of 50 per level.",
 				cost: 50000,
+				currencyDisplayName: "bricks",
+				currencyInternalName() {
+					return "bricks"
+				},
+				currencyLayer() {
+					return "m"
+				}
+			},
+			23: {
+				title: "The Controlled Brick Burner",
+				description: "Oil burning halves oil production instead, and the effects are much more powerful. (Does not do anything)",
+				cost: 2000000,
 				currencyDisplayName: "bricks",
 				currencyInternalName() {
 					return "bricks"
@@ -1176,11 +1188,11 @@ addLayer("m", {
 					return `<br><h3>Creates a furnace every ${hasUpgrade("m", 21)?"1 second":"5 seconds"}. (count towards furnace scaling.) Fifth level uncaps ore to metal efficiency. Also increases cap to furnace amount.</h3><br>
 					<h2>Currently:</h2><h3> ${format(this.effect().div((((!hasUpgrade("m", 21))*4)+1)), 2)}/s</h3>
 					<h2>Cost:</h2><h3> ${format(this.cost())} bricks</h3>
-					<h3>Furnaces harcapped at ${format(this.effect().mul(hasUpgrade("m", 22)?150:50).add(1000))}</h3>`
+					<h3>Furnaces harcapped at ${format(this.effect().mul(hasUpgrade("m", 22)?100:50).add(1000))}</h3>`
 				},
 				cost() {
 					let T = getBuyableAmount("m", 11).add(getBuyableAmount("m", 12)).add(getBuyableAmount("m", 13)).add(1);
-					return T.mul(T.add(1)).mul(T.mul(2).add(1)).mul(2).div(hasUpgrade("p", 11)?upgradeEffect("p", 11):1);
+					return T.mul(T.add(1)).mul(T.mul(2).add(1)).mul(2).mul(T.mul(3).add(2)).div(hasUpgrade("p", 11)?upgradeEffect("p", 11):1);
 				},
 				buy() {
 					if (this.canAfford()) {
@@ -1205,7 +1217,7 @@ addLayer("m", {
 				},
 				cost() {
 					let T = getBuyableAmount("m", 11).add(getBuyableAmount("m", 12)).add(getBuyableAmount("m", 13)).add(5);
-					return T.mul(T.add(1)).mul(T.mul(2).add(1)).mul(4).div(hasUpgrade("p", 11)?upgradeEffect("p", 11):1);
+					return T.mul(T.add(1)).mul(T.mul(2).add(1)).mul(T.mul(3).add(2)).mul(4).div(hasUpgrade("p", 11)?upgradeEffect("p", 11):1);
 				},
 				buy() {
 					if (this.canAfford()) {
@@ -1230,7 +1242,7 @@ addLayer("m", {
 				},
 				cost() {
 					let T = getBuyableAmount("m", 11).add(getBuyableAmount("m", 12)).add(getBuyableAmount("m", 13)).add(3);
-					return T.mul(T.add(1)).mul(T.mul(2).add(1)).mul(4).div(hasUpgrade("p", 11)?upgradeEffect("p", 11):1);
+					return T.mul(T.add(1)).mul(T.mul(2).add(1)).mul(T.mul(3).add(2)).mul(T.mul(4).add(3)).div(3).div(hasUpgrade("p", 11)?upgradeEffect("p", 11):1);
 				},
 				buy() {
 					if (this.canAfford()) {
