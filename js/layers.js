@@ -1176,7 +1176,7 @@ addLayer("m", {
 					return `<br><h3>Creates a furnace every ${hasUpgrade("m", 21)?"1 second":"5 seconds"}. (count towards furnace scaling.) Fifth level uncaps ore to metal efficiency. Also increases cap to furnace amount.</h3><br>
 					<h2>Currently:</h2><h3> ${format(this.effect().div((((!hasUpgrade("m", 21))*4)+1)), 2)}/s</h3>
 					<h2>Cost:</h2><h3> ${format(this.cost())} bricks</h3>
-					<h3>Furnaces harcapped at ${format(this.effect().mul(50).add(1000))}</h3>`
+					<h3>Furnaces harcapped at ${format(this.effect().mul(hasUpgrade("m", 22)?150:50).add(1000))}</h3>`
 				},
 				cost() {
 					let T = getBuyableAmount("m", 11).add(getBuyableAmount("m", 12)).add(getBuyableAmount("m", 13)).add(1);
