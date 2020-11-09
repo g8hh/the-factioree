@@ -1217,7 +1217,7 @@ addLayer("m", {
 				},
 				cost() {
 					let T = getBuyableAmount("m", 11).add(getBuyableAmount("m", 12)).add(getBuyableAmount("m", 13)).add(5);
-					return T.mul(T.add(1)).mul(T.mul(2).add(1)).mul(T.mul(3).add(2)).mul(4).div(hasUpgrade("p", 11)?upgradeEffect("p", 11):1);
+					return T.mul(T.add(1)).mul(T.mul(2).add(1)).mul(T.mul(3).add(2)).mul(2).div(hasUpgrade("p", 11)?upgradeEffect("p", 11):1);
 				},
 				buy() {
 					if (this.canAfford()) {
@@ -1227,7 +1227,7 @@ addLayer("m", {
 					}
 				},
 				effect() {
-					return Decimal.pow(100, getBuyableAmount("m", 12).sub(1).max(0))
+					return Decimal.pow(10000, getBuyableAmount("m", 12).sub(1).max(0))
 				},
 				canAfford() {
 					return player.m.bricks.gte(this.cost())
@@ -1242,7 +1242,7 @@ addLayer("m", {
 				},
 				cost() {
 					let T = getBuyableAmount("m", 11).add(getBuyableAmount("m", 12)).add(getBuyableAmount("m", 13)).add(3);
-					return T.mul(T.add(1)).mul(T.mul(2).add(1)).mul(T.mul(3).add(2)).mul(T.mul(4).add(3)).div(3).div(hasUpgrade("p", 11)?upgradeEffect("p", 11):1);
+					return T.mul(T.add(1)).mul(T.mul(2).add(1)).mul(T.mul(3).add(2)).mul(T.mul(4).add(3)).div(4).div(hasUpgrade("p", 11)?upgradeEffect("p", 11):1);
 				},
 				buy() {
 					if (this.canAfford()) {
@@ -1252,7 +1252,7 @@ addLayer("m", {
 					}
 				},
 				effect() {
-					return getBuyableAmount("m", 13).add(1).pow(2);
+					return getBuyableAmount("m", 13).add(1).pow(2.5);
 				},
 				canAfford() {
 					return player.m.bricks.gte(this.cost())
