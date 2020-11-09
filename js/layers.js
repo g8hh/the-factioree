@@ -625,17 +625,17 @@ addLayer("e", {
 			11: {
 				title: "Efficiency",
 				description: "Extractors produce ores x2 faster.",
-				cost: 10
+				cost: 20
 			},
 			12: {
 				title: "Optimization",
 				description: "Double extractor gain.",
-				cost: 50
+				cost: 100
 			},
 			13: {
 				title: "Self-generating",
 				description: "Gain more ores based on ores.",
-				cost: 300,
+				cost: 500,
 				effect() {
 					return hasUpgrade("e", 24) ? player.points.add(1).min("1e1000").pow(0.2).mul(player.points.div("1e1000").max(0).add(1.5).log(1.5).pow(0.5)) : player.points.add(2).log(2)
 				},
@@ -643,7 +643,7 @@ addLayer("e", {
 			14: {
 				title: "Meta upgrade",
 				description: "Gain more ores based on upgrades.",
-				cost: 3e3,
+				cost: 5e3,
 				effect() {
 					return Decimal.pow(3, player.e.upgrades.length)
 				},
@@ -765,10 +765,10 @@ addLayer("e", {
 		},
 		milestones: {
 			0: {
-				requirementDescription: "5e4 extractors",
+				requirementDescription: "1e5 extractors",
 				effectDescription: "Unlock furnaces.",
 				done() {
-					return player.e.points.gte(5e4)||player.m.points.gt(0)
+					return player.e.points.gte(1e5)||player.m.points.gt(0)
 				},
 				style: {
 					width: "300px"
@@ -1022,9 +1022,11 @@ addLayer("m", {
 			autoEBuyable: false,
 			autoEmber: false,
 			autoFlame: false,
+			autoManu: false,
 			bricks: new Decimal(0),
 			active: new Decimal(0),
-			furnaceTick: 0
+			furnaceTick: 0,
+			usedBricks: new Decimal(0)
 		}},
 		color: "#8f1402",
 		requires: new Decimal("1e1080"), // Can be a function that takes requirement increases into account
@@ -1128,6 +1130,17 @@ addLayer("m", {
 				style: {
 					width: "500px"
 				}
+			},
+			5: {
+				requirementDescription: "Meta Manufacturer (30 m.)",
+				effectDescription: "Automate Manufacturers, and auto manufacturers buys max.",
+				toggles: [["m", "autoManu"]],
+				done() {
+					return player.m.points.gte(30)
+				},
+				style: {
+					width: "500px"
+				}
 			}
 		},
 		buyables: {
@@ -1148,6 +1161,7 @@ addLayer("m", {
 				buy() {
 					if (this.canAfford()) {
 						player.m.bricks = player.m.bricks.sub(this.cost())
+						player.m.usedBricks = player.m.usedBricks.add(this.cost())
 						setBuyableAmount("m", 11, getBuyableAmount("m", 11).add(1))
 					}
 				},
@@ -1172,6 +1186,7 @@ addLayer("m", {
 				buy() {
 					if (this.canAfford()) {
 						player.m.bricks = player.m.bricks.sub(this.cost())
+						player.m.usedBricks = player.m.usedBricks.add(this.cost())
 						setBuyableAmount("m", 12, getBuyableAmount("m", 12).add(1))
 					}
 				},
@@ -1196,6 +1211,7 @@ addLayer("m", {
 				buy() {
 					if (this.canAfford()) {
 						player.m.bricks = player.m.bricks.sub(this.cost())
+						player.m.usedBricks = player.m.usedBricks.add(this.cost())
 						setBuyableAmount("m", 13, getBuyableAmount("m", 13).add(1))
 					}
 				},
@@ -1208,6 +1224,8 @@ addLayer("m", {
 			},
 			respec() {
 				resetBuyables("m");
+				player.m.bricks = player.m.bricks.add(player.m.usedBricks.div(2));
+				player.m.usedBricks = new Decimal(0);
 				doReset("m", true);
 			},
 			showRespec() {
@@ -1256,6 +1274,7 @@ addLayer("m", {
 					}
 				}
 			}
+			if (player.m.autoManu) buyMaxManufacturers();
 		},
 		resetsNothing: false,
 		update(diff) {
@@ -1266,3 +1285,13 @@ addLayer("m", {
 			player.m.furnaceTick = player.m.furnaceTick%5;
 		}
 })
+function buyMaxManufacturers() {
+	var iterations = 0;
+	while (player.points.gte(getNextAt("m"))&&iterations<100000&&canReset("m")) {
+		player.m.points = player.m.points.add(1);
+		iterations++;
+		Vue.set(tmp.m, "exponent", layers.m.exponent());
+		Vue.set(tmp.m, "base", layers.m.base());
+	}
+	if (iterations>0) doReset("m", true);
+}
