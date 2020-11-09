@@ -172,7 +172,7 @@ addLayer("f", {
 					return player.m.milestones.includes("3")
 				},
 				effect() {
-					return Decimal.pow(10, player.e.layerticks)
+					return Decimal.pow(10, player.e.layerticks).min("1e2000")
 				},
 				effectDisplay() {
 					return `/${format(this.effect())}`
@@ -551,7 +551,7 @@ addLayer("f", {
 			}
 		},
 		update(diff) {
-			player.f.points = player.f.points.min(buyableEffect("m", 11).mul(50).add(1000));
+			player.f.points = player.f.points.min(buyableEffect("m", 11).mul(hasUpgrade("m", 22)?150:50).add(1000));
 			var pointdiff = new Decimal(player.points);
 			player.points = player.points.div(Decimal.pow(Decimal.pow(1.1, diff), player.f.allocated))
 			player.f.metals = player.f.metals.add((getBuyableAmount("m", 11).gte(5)?Decimal.pow(1.4, player.f.allocated.min(2000)).mul(player.f.allocated.sub(1999).max(1).pow(2.5)).mul(0.003).mul(hasUpgrade("f", 13)?upgradeEffect("f", 13):1):Decimal.pow(2, player.f.allocated.min(hasUpgrade("f", 52)?28:16)).mul(Decimal.pow(1.2, player.f.allocated.sub(hasUpgrade("f", 52)?28:16).min(hasUpgrade("f", 52)?28:16).max(0))).mul(Decimal.pow(player.f.allocated.sub(hasUpgrade("f", 52)?56:32).max(1), 0.3)).mul(0.003).mul(hasUpgrade("f", 13)?upgradeEffect("f", 13):1)).mul(pointdiff.sub(player.points)))
@@ -1076,6 +1076,30 @@ addLayer("m", {
 				description: "Unlock factories.",
 				cost: 30
 			},
+			21: {
+				title: "Untimewall Gaming",
+				description: "Factory 1's interval is reduced to one second.",
+				cost: 10000,
+				currencyDisplayName: "bricks",
+				currencyInternalName() {
+					return "bricks"
+				},
+				currencyLayer() {
+					return "m"
+				}
+			},
+			22: {
+				title: "Timewalled Gaming again",
+				description: "Factory one raises furnace hardcap to 150 instead of 50 per level.",
+				cost: 50000,
+				currencyDisplayName: "bricks",
+				currencyInternalName() {
+					return "bricks"
+				},
+				currencyLayer() {
+					return "m"
+				}
+			},
 		},
 		milestones: {
 			0: {
@@ -1149,8 +1173,8 @@ addLayer("m", {
 			11: {
 				title: "Factory 1",
 				display() {
-					return `<br><h3>Creates a furnace every 5 seconds. (count towards furnace scaling.) Fifth level uncaps ore to metal efficiency. Also increases cap to furnace amount.</h3><br>
-					<h2>Currently:</h2><h3> ${format(this.effect().div(5), 2)}/s</h3>
+					return `<br><h3>Creates a furnace every ${hasUpgrade("m", 21)?"1 second":"5 seconds"}. (count towards furnace scaling.) Fifth level uncaps ore to metal efficiency. Also increases cap to furnace amount.</h3><br>
+					<h2>Currently:</h2><h3> ${format(this.effect().div((((!hasUpgrade("m", 21))*4)+1)), 2)}/s</h3>
 					<h2>Cost:</h2><h3> ${format(this.cost())} bricks</h3>
 					<h3>Furnaces harcapped at ${format(this.effect().mul(50).add(1000))}</h3>`
 				},
@@ -1224,7 +1248,7 @@ addLayer("m", {
 			},
 			respec() {
 				resetBuyables("m");
-				player.m.bricks = player.m.bricks.add(player.m.usedBricks.div(2));
+				player.m.bricks = player.m.bricks.add(player.m.usedBricks);
 				player.m.usedBricks = new Decimal(0);
 				doReset("m", true);
 			},
@@ -1236,7 +1260,7 @@ addLayer("m", {
 		branches: ["f"],
 		tabFormat: {
 			"Main": {
-				content: ["main-display", "prestige-button", ["raw-html", "<br>"], "milestones", ["raw-html", "<br>"], "upgrades"]
+				content: ["main-display", "prestige-button", ["raw-html", "<br>"], "milestones", ["raw-html", "<br>"], ["row", [["upgrade", 11], ["upgrade", 12], ["upgrade", 13], ["upgrade", 14]]]]
 			},
 			"Factories": {
 				content: ["main-display", "prestige-button", ["raw-html", function () {
@@ -1250,7 +1274,7 @@ addLayer("m", {
 				<br>
 				Active manufacturers subtract from the manufacturer effect, but in turn you get bricks to buy factories.
 				<br>`}
-				], "buyables", ["raw-html", `<br>Buying a factory makes all others more expensive. Use the space you have wisely.`]],
+				], "buyables", ["raw-html", `<br>Buying a factory makes all others more expensive. Use the space you have wisely.`], ["row", [["upgrade", 21], ["upgrade", 22], ["upgrade", 23], ["upgrade", 24]]]],
 				unlocked() {
 					return hasUpgrade("m", 13)
 				},
@@ -1281,8 +1305,8 @@ addLayer("m", {
 			player.m.bricks = player.m.bricks.add(player.m.active.mul(0.1).mul(buyableEffect("m", 13)).mul(diff));
 			player.m.active = player.m.active.min(player.m.points).max(0);
 			player.m.furnaceTick += diff;
-			player.f.points = player.f.points.add(Decimal.floor(player.m.furnaceTick/5).mul(buyableEffect("m", 11)));
-			player.m.furnaceTick = player.m.furnaceTick%5;
+			player.f.points = player.f.points.add(Decimal.floor(player.m.furnaceTick/(((!hasUpgrade("m", 21))*4)+1)).mul(buyableEffect("m", 11)));
+			player.m.furnaceTick = player.m.furnaceTick%(((!hasUpgrade("m", 21))*4)+1);
 		}
 })
 function buyMaxManufacturers() {
