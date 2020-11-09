@@ -522,7 +522,7 @@ addLayer("f", {
 				<br><br>
 				<input oninput="player.f.allocated = new Decimal(this.value)" type="range" min="0" max="${player.f.points}" step="1" style="width: 30em" value="${player.f.allocated}">
 				<br>You lose a certain amount of ores per second, but your furnaces convert them into metals. 
-				Your points are divided by ${format(Decimal.pow(hasUpgrade("e", 42)?1.001:1.1, player.f.allocated))} per second, but for every point you lose you gain ${format(getBuyableAmount("m", 11).gte(5)?Decimal.pow(1.4, player.f.allocated).mul(0.003).mul(hasUpgrade("f", 13)?upgradeEffect("f", 13):1):Decimal.pow(2, player.f.allocated.min(hasUpgrade("f", 52)?28:16)).mul(Decimal.pow(1.2, player.f.allocated.sub(hasUpgrade("f", 52)?28:16).min(hasUpgrade("f", 52)?28:16).max(0))).mul(Decimal.pow(player.f.allocated.sub(hasUpgrade("f", 52)?56:32).max(1), 0.3)).mul(0.003).mul(hasUpgrade("f", 13)?upgradeEffect("f", 13):1))} metals.
+				Your points are divided by ${format(Decimal.pow(hasUpgrade("e", 42)?1.001:1.1, player.f.allocated))} per second, but for every point you lose you gain ${format(getBuyableAmount("m", 11).gte(5)?Decimal.pow(1.4, player.f.allocated.min(2000)).mul(player.f.allocated.sub(1999).max(1).pow(2.5)).mul(0.003).mul(hasUpgrade("f", 13)?upgradeEffect("f", 13):1):Decimal.pow(2, player.f.allocated.min(hasUpgrade("f", 52)?28:16)).mul(Decimal.pow(1.2, player.f.allocated.sub(hasUpgrade("f", 52)?28:16).min(hasUpgrade("f", 52)?28:16).max(0))).mul(Decimal.pow(player.f.allocated.sub(hasUpgrade("f", 52)?56:32).max(1), 0.3)).mul(0.003).mul(hasUpgrade("f", 13)?upgradeEffect("f", 13):1))} metals.
 				<br>` : ""
 				}]]
 			},
@@ -554,7 +554,7 @@ addLayer("f", {
 			player.f.points = player.f.points.min(buyableEffect("m", 11).mul(50).add(1000));
 			var pointdiff = new Decimal(player.points);
 			player.points = player.points.div(Decimal.pow(Decimal.pow(1.1, diff), player.f.allocated))
-			player.f.metals = player.f.metals.add((getBuyableAmount("m", 11).gte(5)?Decimal.pow(1.4, player.f.allocated).mul(0.003).mul(hasUpgrade("f", 13)?upgradeEffect("f", 13):1):Decimal.pow(2, player.f.allocated.min(hasUpgrade("f", 52)?28:16)).mul(Decimal.pow(1.2, player.f.allocated.sub(hasUpgrade("f", 52)?28:16).min(hasUpgrade("f", 52)?28:16).max(0))).mul(Decimal.pow(player.f.allocated.sub(hasUpgrade("f", 52)?56:32).max(1), 0.3)).mul(0.003).mul(hasUpgrade("f", 13)?upgradeEffect("f", 13):1)).mul(pointdiff.sub(player.points)))
+			player.f.metals = player.f.metals.add((getBuyableAmount("m", 11).gte(5)?Decimal.pow(1.4, player.f.allocated.min(2000)).mul(player.f.allocated.sub(1999).max(1).pow(2.5)).mul(0.003).mul(hasUpgrade("f", 13)?upgradeEffect("f", 13):1):Decimal.pow(2, player.f.allocated.min(hasUpgrade("f", 52)?28:16)).mul(Decimal.pow(1.2, player.f.allocated.sub(hasUpgrade("f", 52)?28:16).min(hasUpgrade("f", 52)?28:16).max(0))).mul(Decimal.pow(player.f.allocated.sub(hasUpgrade("f", 52)?56:32).max(1), 0.3)).mul(0.003).mul(hasUpgrade("f", 13)?upgradeEffect("f", 13):1)).mul(pointdiff.sub(player.points)))
 			player.f.allocated = player.f.allocated.min(player.f.points)
 			if (hasUpgrade("e", 42)) player.point = pointdiff.div(Decimal.pow(Decimal.pow(1.001, diff), player.f.allocated))
 			if (hasUpgrade("f", 11)) player.e.points = player.e.points.add(tmp.e.resetGain.mul(0.01).mul(diff).mul(upgradeEffect("f", 11)));
