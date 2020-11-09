@@ -12,7 +12,7 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.4.0 probably buggy",
+	num: "0.4.1 not as buggy",
 	name: "Actual factorees",
 }
 
