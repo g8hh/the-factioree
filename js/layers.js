@@ -1324,7 +1324,7 @@ addLayer("m", {
 })
 function buyMaxManufacturers() {
 	var iterations = 0;
-	while (player.points.gte(getNextAt("m"))&&iterations<100000&&canReset("m")) {
+	while (player.f.metals.gte(getNextAt("m"))&&iterations<100000&&canReset("m")) {
 		player.m.points = player.m.points.add(1);
 		iterations++;
 		Vue.set(tmp.m, "exponent", layers.m.exponent());
