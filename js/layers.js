@@ -65,7 +65,7 @@ addLayer("f", {
 			21: {
 				title: "Hot",
 				description: `Capture embers produced by furnaces.`,
-				cost: 15,
+				cost: 16,
 				unlocked() {
 					return player.e.milestones.includes("1")
 				},
@@ -305,6 +305,13 @@ addLayer("f", {
 				effectDisplay() {
 					return `/${format(this.effect().recip())}`
 				},
+				currencyDisplayName: "flame",
+				currencyInternalName() {
+					return "flame"
+				},
+				currencyLayer() {
+					return "f"
+				},
 				style() {
 					return {backgroundColor: hasUpgrade("f", 34)?"#77bf5f":(player.f.flame.gte(17)?"#ff6600":"bf8f8f")}
 				}
@@ -316,8 +323,15 @@ addLayer("f", {
 				unlocked() {
 					return player.m.milestones.includes("3")
 				},
+				currencyDisplayName: "flame",
+				currencyInternalName() {
+					return "flame"
+				},
+				currencyLayer() {
+					return "f"
+				},
 				style() {
-					return {backgroundColor: hasUpgrade("f", 44)?"#77bf5f":(player.f.flame.gte(17)?"#ff6600":"bf8f8f")}
+					return {backgroundColor: hasUpgrade("f", 44)?"#77bf5f":(player.f.flame.gte(21)?"#ff6600":"bf8f8f")}
 				}
 			}
 		},
@@ -689,7 +703,7 @@ addLayer("e", {
 			31: {
 				title: "Over-Engineering",
 				description: "Add 2 to motor's effect base.",
-				cost: 1e66,
+				cost: 1e120,
 				unlocked() {
 					return player.f.milestones.includes("1")||hasUpgrade("m", 11)
 				}
@@ -697,7 +711,7 @@ addLayer("e", {
 			32: {
 				title: "Forged Extractor",
 				description: "Ember boost boosts ore gain at an increased rate.",
-				cost: 2e114,
+				cost: 2e290,
 				unlocked() {
 					return player.f.milestones.includes("1")||hasUpgrade("m", 11)
 				},
@@ -708,7 +722,7 @@ addLayer("e", {
 			33: {
 				title: "Friction",
 				description: "Motor boosts ember gain at a reduced rate.",
-				cost: 1e225,
+				cost: "1e330",
 				unlocked() {
 					return (player.f.milestones.includes("1")&&player.f.flame.gt(0))||hasUpgrade("m", 11)
 				},
@@ -719,7 +733,7 @@ addLayer("e", {
 			34: {
 				title: "Forged Components",
 				description: "All components gain free levels from flame.",
-				cost: 1e275,
+				cost: "1e436",
 				unlocked() {
 					return (player.f.milestones.includes("1")&&player.f.flame.gt(0))||hasUpgrade("m", 11)
 				}
@@ -1185,7 +1199,7 @@ addLayer("m", {
 			11: {
 				title: "Factory 1",
 				display() {
-					return `<br><h3>Creates a furnace every ${hasUpgrade("m", 21)?"1 second":"5 seconds"}. (count towards furnace scaling.) Fifth level uncaps ore to metal efficiency. Also increases cap to furnace amount.</h3><br>
+					return `<br><h3>Creates a furnace every ${hasUpgrade("m", 21)?"1 second":"5 seconds"}. (count towards furnace scaling.) Fifth level nerfs ore to metal efficiency cap. Also increases cap to furnace amount.</h3><br>
 					<h2>Currently:</h2><h3> ${format(this.effect().div((((!hasUpgrade("m", 21))*4)+1)), 2)}/s</h3>
 					<h2>Cost:</h2><h3> ${format(this.cost())} bricks</h3>
 					<h3>Furnaces harcapped at ${format(this.effect().mul(hasUpgrade("m", 22)?100:50).add(1000))}</h3>`
@@ -1227,7 +1241,7 @@ addLayer("m", {
 					}
 				},
 				effect() {
-					return Decimal.pow(10000, getBuyableAmount("m", 12).sub(1).max(0))
+					return Decimal.pow(1e20, getBuyableAmount("m", 12).sub(1).max(0))
 				},
 				canAfford() {
 					return player.m.bricks.gte(this.cost())
