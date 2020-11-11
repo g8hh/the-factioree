@@ -12,7 +12,7 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.4.1 not as buggy",
+	num: "0.4.2 balancing",
 	name: "Actual factorees",
 }
 
@@ -40,7 +40,7 @@ function getPointGen() {
 	if (hasUpgrade("e", 14)) gain = gain.mul(upgradeEffect("e", 14));
 	gain = gain.mul(buyableEffect("f", 13));
 	if (hasUpgrade("e", 32)) gain = gain.mul(upgradeEffect("e", 32));
-	gain = gain.mul(tmp.m.effect).mul(player.e.burnEffect.add(1.2).log(1.2));
+	gain = gain.mul(tmp.m.effect).mul(hasUpgrade("m", 43)?player.e.burnEffect.pow(0.1):player.e.burnEffect.add(1.2).log(1.2));
 	return gain
 }
 

@@ -333,6 +333,48 @@ addLayer("f", {
 				style() {
 					return {backgroundColor: hasUpgrade("f", 44)?"#77bf5f":(player.f.flame.gte(21)?"#ff6600":"bf8f8f")}
 				}
+			},
+			61: {
+				title: "Ember Acceleration",
+				description: "Multiply the base of Ember Speed by 5.",
+				cost: 30,
+				unlocked() {
+					return player.m.milestones.includes("3")
+				},
+				currencyDisplayName: "flame",
+				currencyInternalName() {
+					return "flame"
+				},
+				currencyLayer() {
+					return "f"
+				},
+				style() {
+					return {backgroundColor: hasUpgrade("f", 61)?"#77bf5f":(player.f.flame.gte(30)?"#ff6600":"bf8f8f")}
+				}
+			},
+			62: {
+				title: "Flame Decceleration",
+				description: "Oil burning makes flames cheaper.",
+				cost: 36,
+				unlocked() {
+					return player.m.milestones.includes("3")&&hasUpgrade("e", 44);
+				},
+				currencyDisplayName: "flame",
+				currencyInternalName() {
+					return "flame"
+				},
+				currencyLayer() {
+					return "f"
+				},
+				style() {
+					return {backgroundColor: hasUpgrade("f", 62)?"#77bf5f":(player.f.flame.gte(36)?"#ff6600":"bf8f8f")}
+				},
+				effect() {
+					return player.e.burnEffect.add(10).log(10).add(9).log(10).pow(0.3)
+				},
+				effectDisplay() {
+					return `^1/${format(this.effect())}`
+				}
 			}
 		},
 		milestones: {
@@ -369,7 +411,7 @@ addLayer("f", {
 					return `<br><br><h3>Boost ember gain.</h3><br>
 					<h2>Currently:</h2><h3> ${`${format(getBuyableAmount("f", 11), 0)}${getBuyableAmount("f", 12).eq(0)?
 					"":
-					`+${format(getBuyableAmount("f", 12).mul(1.5).add(getBuyableAmount("f", 13).mul(2)).add(player.e.burnEffect.add(2).log(2).log(3).floor()))}`}`}</h3>
+					`+${format(getBuyableAmount("f", 12).mul(1.5).add(getBuyableAmount("f", 13).mul(2)).add((hasUpgrade("m", 23)?player.e.burnEffect.add(2).log(2).log(2).floor():player.e.burnEffect.add(2).log(2).log(3).floor())))}`}`}</h3>
 					<h2>Cost:</h2><h3> ${format(this.cost())} fiery embers</h3>
 					<h2>Effect:</h2><h3> x${format(this.effect())}</h3>`
 				},
@@ -383,7 +425,7 @@ addLayer("f", {
 					}
 				},
 				effect() {
-					return Decimal.pow(Decimal.mul(1.5, hasUpgrade("f", 42)?1.1:1), getBuyableAmount("f", 11).add(getBuyableAmount("f", 12).mul(1.5).add(getBuyableAmount("f", 13).mul(2).add(player.e.burnEffect.add(2).log(2).log(3).floor()))))
+					return Decimal.pow(Decimal.mul(1.5, hasUpgrade("f", 42)?1.1:1), getBuyableAmount("f", 11).add(getBuyableAmount("f", 12).mul(1.5).add(getBuyableAmount("f", 13).mul(2).add(hasUpgrade("m", 23)?player.e.burnEffect.add(2).log(2).log(2).floor():player.e.burnEffect.add(2).log(2).log(3).floor()))))
 				},
 				canAfford() {
 					return player.f.embers.gte(this.cost())
@@ -398,7 +440,7 @@ addLayer("f", {
 					return `<br><br><h3>Boost ember gain, and gives extra levels to the previous upgrade.</h3><br>
 					<h2>Currently:</h2><h3> ${`${format(getBuyableAmount("f", 12), 0)}${getBuyableAmount("f", 13).eq(0)?
 					"":
-					`+${format(getBuyableAmount("f", 13).mul(0.25).add(player.e.burnEffect.add(2).log(2).log(3).floor()))}`}`}</h3>
+					`+${format(getBuyableAmount("f", 13).mul(0.25).add(hasUpgrade("m", 23)?player.e.burnEffect.add(2).log(2).log(2).floor():player.e.burnEffect.add(2).log(2).log(3).floor()))}`}`}</h3>
 					<h2>Cost:</h2><h3> ${format(this.cost())} fiery embers</h3>
 					<h2>Effect:</h2><h3> x${format(this.effect())}</h3>`
 				},
@@ -412,7 +454,7 @@ addLayer("f", {
 					}
 				},
 				effect() {
-					return Decimal.pow(2, getBuyableAmount("f", 12).add(getBuyableAmount("f", 13).mul(0.25).add(player.e.burnEffect.add(2).log(2).log(3).floor())))
+					return Decimal.pow(hasUpgrade("f", 61)?10:2, getBuyableAmount("f", 12).add(getBuyableAmount("f", 13).mul(0.25).add(hasUpgrade("m", 23)?player.e.burnEffect.add(2).log(2).log(2).floor():player.e.burnEffect.add(2).log(2).log(3).floor())))
 				},
 				canAfford() {
 					return player.f.embers.gte(this.cost())
@@ -425,7 +467,7 @@ addLayer("f", {
 				title: "Point speed",
 				display() {
 					return `<br><br><h3>Boost point gain, and gives extra levels to the previous upgrades.</h3><br>
-					<h2>Currently:</h2><h3> ${format(getBuyableAmount("f", 13), 0)}${player.e.burnEffect.add(2).log(2).log(3).floor().gt(0)?`+${format(player.e.burnEffect.add(2).log(2).log(3).floor())}`:""}</h3>
+					<h2>Currently:</h2><h3> ${format(getBuyableAmount("f", 13), 0)}${(hasUpgrade("m", 23)?player.e.burnEffect.add(2).log(2).log(2).floor():player.e.burnEffect.add(2).log(2).log(3).floor()).gt(0)?`+${format(hasUpgrade("m", 23)?player.e.burnEffect.add(2).log(2).log(2).floor():player.e.burnEffect.add(2).log(2).log(3).floor())}`:""}</h3>
 					<h2>Cost:</h2><h3> ${format(this.cost())} fiery embers</h3>
 					<h2>Effect:</h2><h3> ${format(this.effect())}</h3>`
 				},
@@ -441,7 +483,7 @@ addLayer("f", {
 				effect() {
 					var mult = new Decimal(hasUpgrade("f", 23)?1e5:1);
 					if (hasUpgrade("f", 23) && hasUpgrade("f", 24)) mult = mult.mul(upgradeEffect("f", 24));
-					return Decimal.pow(mult.mul(1e25), getBuyableAmount("f", 13).add(player.e.burnEffect.add(2).log(2).log(3).floor()))
+					return Decimal.pow(mult.mul(1e25), getBuyableAmount("f", 13).add(hasUpgrade("m", 23)?player.e.burnEffect.add(2).log(2).log(2).floor():player.e.burnEffect.add(2).log(2).log(3).floor()))
 				},
 				canAfford() {
 					return player.f.embers.gte(this.cost())
@@ -459,7 +501,7 @@ addLayer("f", {
 					<h2>Effect:</h2><h3> ^${format(this.effect())}</h3>`
 				},
 				cost() {
-					return Decimal.pow(getBuyableAmount("f", 14).add(1).pow(0.5).add(19), getBuyableAmount("f", 14).pow(3).mul(layers.f.flameEffect())).mul(1e250).mul(hasUpgrade("f", 34)?upgradeEffect("f", 34):1)
+					return Decimal.pow(getBuyableAmount("f", 14).add(1).pow(0.5).add(19), getBuyableAmount("f", 14).pow(3).mul(layers.f.flameEffect())).mul("1e500").mul(hasUpgrade("f", 34)?upgradeEffect("f", 34):1)
 				},
 				buy() {
 					if (this.canAfford()) {
@@ -499,11 +541,10 @@ addLayer("f", {
 					if (player.f.embers.gte(this.cost())) {
 						player.f.embers = player.f.embers.sub(this.cost());
 						player.f.flame = player.f.flame.add(1);
-						//if (layers.f.hotkeys.)
 					}
 				},
 				cost() {
-					return Decimal.pow(20, player.f.flame.pow(2).div(hasUpgrade("f", 41)?4:2)).mul(5e8).div(hasUpgrade("f", 33)?upgradeEffect("f", 33):1)
+					return Decimal.pow(20, player.f.flame.pow(2).div(hasUpgrade("f", 41)?4:2)).mul(5e8).div(hasUpgrade("f", 33)?upgradeEffect("f", 33):1).pow(hasUpgrade("f", 62)?Decimal.div(1, upgradeEffect("f", 62)):1);
 				},
 				style(){
 					return {
@@ -558,7 +599,7 @@ addLayer("f", {
 				return (player.f.embers.gt(500000000)||player.f.flame.gt(0))?`<br>
 				<span>You have </span><h2 style="color: #ff6600; text-shadow: 0px 0px 10px #ff6600;">${format(player.f.flame, 0)}</h2>${layers.f.extraFlame().gt(0)?`<h3> + </h3><h2 style="color: #ff6600; text-shadow: 0px 0px 7px #ff6600;">${layers.f.extraFlame()}</h2>`:""}<span> flame, making the cost exponent of all ember upgrades divided by ${format(Decimal.div(1, layers.f.flameEffect()))}.
 				<br><br>`:""}],"clickables",
-				["column", [["row", [["upgrade", 31], ["upgrade", 32], ["upgrade", 33], ["upgrade", 34]]]]], ["column", [["row", [["upgrade", 41], ["upgrade", 42], ["upgrade", 43], ["upgrade", 44]]]]]],
+				["column", [["row", [["upgrade", 31], ["upgrade", 32], ["upgrade", 33], ["upgrade", 34]]]]], ["column", [["row", [["upgrade", 41], ["upgrade", 42], ["upgrade", 43], ["upgrade", 44]]]]], ["column", [["row", [["upgrade", 61], ["upgrade", 62], ["upgrade", 63], ["upgrade", 64]]]]]],
 				unlocked() {
 					return hasUpgrade("f", 21)
 				}
@@ -926,7 +967,7 @@ addLayer("e", {
 					(${format(upgradeEffect("e", 44))}/s)
 					<br><br>Activate Oil Burning, which depletes your oil at twice the rate it is produced, but you gain boosts to ore gain and extra ember levels.<br><br>`
 				}], "clickables", ["raw-html", function () {
-					return `<br><br>You are losing ${format(player.e.burning?player.e.burnOilLoss:0)} oil per second, but you gain a x${format(player.e.burnEffect.add(1.2).log(1.2))} boost to ore gain and get ${format(player.e.burnEffect.add(2).log(2).log(3).floor())} extra ember buyable levels.`
+					return `<br><br>You are losing ${format(hasUpgrade("m", 23)?upgradeEffect("e", 44).div(2):(player.e.burning?player.e.burnOilLoss:0))} oil per second, but you gain a x${format(player.e.burnEffect.add(1.2).log(1.2))} boost to ore gain and get ${format(hasUpgrade("m", 23)?player.e.burnEffect.add(2).log(2).log(2).floor():player.e.burnEffect.add(2).log(2).log(3).floor())} extra ember buyable levels.`
 				}]],
 				unlocked() {
 					return hasUpgrade("e", 44)
@@ -934,13 +975,14 @@ addLayer("e", {
 			}
 		},
 		update(diff) {
-			if (!player.e.burning) player.e.oil = player.e.oil.add(hasUpgrade("e", 44)?upgradeEffect("e", 44).mul(diff):0);
-			if (player.e.burning) {
+			if (!player.e.burning||hasUpgrade("m", 23)) player.e.oil = player.e.oil.add(hasUpgrade("e", 44)?upgradeEffect("e", 44).mul(diff).mul(hasUpgrade("m", 23)?0.5:1):0);
+			if (player.e.burning&&(!hasUpgrade("m", 23))) {
 				player.e.oil = player.e.oil.sub(player.e.burnOilLoss.mul(diff)).max(0);
 				player.e.burnEffect = player.e.oil.min(player.e.burnOilLoss.mul(hasUpgrade("p", 13)?upgradeEffect("p", 13):1));
-			} else {
+			} else if (!hasUpgrade("m", 23)) {
 				player.e.burnEffect = new Decimal(0);
 			}
+			if (hasUpgrade("m", 23)) player.e.burnEffect = upgradeEffect("e", 44).mul(2);
 			player.e.layerticks += diff;
 			if (hasUpgrade("e", 44)) Vue.set(hotkeys, "o", {key: "o", desc: "o: Toggle oil burning", onPress() {layers.e.clickables[11].onClick()}, layer: "e"}) 
 		},
@@ -1090,6 +1132,14 @@ addLayer("m", {
 				description: "Unlock factories.",
 				cost: 30
 			},
+			14: {
+				title: "Brick Manufacturing",
+				description: "Each active manufacturer produces 1 brick instead of 0.1.",
+				cost: 40,
+				unlocked() {
+					return hasUpgrade("f", 13)
+				}
+			},
 			21: {
 				title: "Untimewall Gaming",
 				description: "Factory 1's interval is reduced to one second.",
@@ -1115,8 +1165,8 @@ addLayer("m", {
 				}
 			},
 			23: {
-				title: "The Controlled Brick Burner",
-				description: "Oil burning halves oil production instead, and the effects are much more powerful. (Does not do anything)",
+				title: "The Burning Tree",
+				description: "Oil burning halves oil production instead, is always activated, and the effects are much more powerful.",
 				cost: 2000000,
 				currencyDisplayName: "bricks",
 				currencyInternalName() {
@@ -1206,7 +1256,7 @@ addLayer("m", {
 				},
 				cost() {
 					let T = getBuyableAmount("m", 11).add(getBuyableAmount("m", 12)).add(getBuyableAmount("m", 13)).add(1);
-					return T.mul(T.add(1)).mul(T.mul(2).add(1)).mul(2).mul(T.mul(3).add(2)).div(hasUpgrade("p", 11)?upgradeEffect("p", 11):1);
+					return T.mul(T.add(1)).mul(T.mul(2).add(1)).mul(2).mul(T.add(2)).div(hasUpgrade("p", 11)?upgradeEffect("p", 11):1);
 				},
 				buy() {
 					if (this.canAfford()) {
@@ -1231,7 +1281,7 @@ addLayer("m", {
 				},
 				cost() {
 					let T = getBuyableAmount("m", 11).add(getBuyableAmount("m", 12)).add(getBuyableAmount("m", 13)).add(5);
-					return T.mul(T.add(1)).mul(T.mul(2).add(1)).mul(T.mul(3).add(2)).mul(2).div(hasUpgrade("p", 11)?upgradeEffect("p", 11):1);
+					return T.mul(T.add(1)).mul(T.mul(2).add(1)).mul(T.mul(3).add(2)).div(5).div(hasUpgrade("p", 11)?upgradeEffect("p", 11):1);
 				},
 				buy() {
 					if (this.canAfford()) {
@@ -1256,7 +1306,7 @@ addLayer("m", {
 				},
 				cost() {
 					let T = getBuyableAmount("m", 11).add(getBuyableAmount("m", 12)).add(getBuyableAmount("m", 13)).add(3);
-					return T.mul(T.add(1)).mul(T.mul(2).add(1)).mul(T.mul(3).add(2)).mul(T.mul(4).add(3)).div(4).div(hasUpgrade("p", 11)?upgradeEffect("p", 11):1);
+					return T.mul(T.add(1)).mul(T.mul(2).add(1)).mul(T.mul(3).add(2)).mul(T.mul(2)).div(20).div(hasUpgrade("p", 11)?upgradeEffect("p", 11):1);
 				},
 				buy() {
 					if (this.canAfford()) {
@@ -1290,7 +1340,7 @@ addLayer("m", {
 			},
 			"Factories": {
 				content: ["main-display", "prestige-button", ["raw-html", function () {
-				return `You have ${format(player.m.bricks)} bricks. (${format(player.m.active.mul(0.1).mul(buyableEffect("m", 13)))}/s)
+				return `You have ${format(player.m.bricks)} bricks. (${format(player.m.active.mul(hasUpgrade("f", 14)?1:0.1).mul(buyableEffect("m", 13)))}/s)
 				<br><br>
 				You have ${format(player.m.active)} active manufacturers.
 				<br><br>
@@ -1328,11 +1378,12 @@ addLayer("m", {
 		},
 		resetsNothing: false,
 		update(diff) {
-			player.m.bricks = player.m.bricks.add(player.m.active.mul(0.1).mul(buyableEffect("m", 13)).mul(diff));
+			player.m.bricks = player.m.bricks.add(player.m.active.mul(hasUpgrade("f", 14)?1:0.1).mul(buyableEffect("m", 13)).mul(diff));
 			player.m.active = player.m.active.min(player.m.points).max(0);
 			player.m.furnaceTick += diff;
 			player.f.points = player.f.points.add(Decimal.floor(player.m.furnaceTick/(((!hasUpgrade("m", 21))*4)+1)).mul(buyableEffect("m", 11)));
 			player.m.furnaceTick = player.m.furnaceTick%(((!hasUpgrade("m", 21))*4)+1);
+			if (hasUpgrade("m", 23)) player.e.burning = true; 
 		}
 })
 function buyMaxManufacturers() {
