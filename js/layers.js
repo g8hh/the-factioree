@@ -1395,7 +1395,7 @@ addLayer("m", {
 			player.f.points = player.f.points.add(Decimal.floor(player.m.furnaceTick/(((!hasUpgrade("m", 21))*4)+1)).mul(buyableEffect("m", 11)));
 			player.m.furnaceTick = player.m.furnaceTick%(((!hasUpgrade("m", 21))*4)+1);
 			if (hasUpgrade("m", 23)) player.e.burning = true; 
-			player.f.points = player.f.points.min(buyableEffect("m", 11).min(50).mul(hasUpgrade("m", 22)?100:50).add(this.effect().sub(50).max(0).mul(2500).pow(0.5).floor()).add(1000));
+			player.f.points = player.f.points.min(buyableEffect("m", 11).min(50).mul(hasUpgrade("m", 22)?100:50).add(buyableEffect("m", 11).sub(50).max(0).mul(2500).pow(0.5).floor()).add(1000));
 		}
 })
 function buyMaxManufacturers() {
