@@ -1093,7 +1093,7 @@ addLayer("m", {
 			return player.m.points.add(1).mul(1e85)
 		},
 		exponent() {
-			return player.m.points.sub(20).max(1).pow(0.01).mul(player.m.points.sub(100).max(1).pow(0.02))
+			return player.m.points.sub(20).max(1).pow(0.01).mul(player.m.points.sub(100).max(1).pow(0.05))
 		},
 		gainMult() { // Calculate the multiplier for main currency from bonuses
 			mult = new Decimal(1)
