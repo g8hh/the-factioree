@@ -606,7 +606,6 @@ addLayer("f", {
 			}
 		},
 		update(diff) {
-			player.f.points = player.f.points.min(buyableEffect("m", 11).mul(hasUpgrade("m", 22)?100:50).add(1000));
 			var pointdiff = new Decimal(player.points);
 			player.points = player.points.div(Decimal.pow(Decimal.pow(1.1, diff), player.f.allocated))
 			player.f.metals = player.f.metals.add((getBuyableAmount("m", 11).gte(5)?Decimal.pow(1.4, player.f.allocated.min(2000)).mul(player.f.allocated.sub(1999).max(1).pow(2.5)).mul(0.003).mul(hasUpgrade("f", 13)?upgradeEffect("f", 13):1):Decimal.pow(2, player.f.allocated.min(hasUpgrade("f", 52)?28:16)).mul(Decimal.pow(1.2, player.f.allocated.sub(hasUpgrade("f", 52)?28:16).min(hasUpgrade("f", 52)?28:16).max(0))).mul(Decimal.pow(player.f.allocated.sub(hasUpgrade("f", 52)?56:32).max(1), 0.3)).mul(0.003).mul(hasUpgrade("f", 13)?upgradeEffect("f", 13):1)).mul(pointdiff.sub(player.points)))
@@ -1261,10 +1260,10 @@ addLayer("m", {
 			11: {
 				title: "Factory 1",
 				display() {
-					return `<br><h3>Creates a furnace every ${hasUpgrade("m", 21)?"1 second":"5 seconds"}. (count towards furnace scaling.) Fifth level nerfs ore to metal efficiency cap. Also increases cap to furnace amount.</h3><br>
+					return `<br><h3>Creates a furnace every ${hasUpgrade("m", 21)?"1 second":"5 seconds"}. (count toward scaling) Fifth level nerfs ore to metal softcap. Also increases furnaces cap.</h3><br>
 					<h2>Currently:</h2><h3> ${format(this.effect().div((((!hasUpgrade("m", 21))*4)+1)), 2)}/s</h3>
 					<h2>Cost:</h2><h3> ${format(this.cost())} bricks</h3>
-					<h3>Furnaces harcapped at ${format(this.effect().mul(hasUpgrade("m", 22)?100:50).add(1000))}</h3>`
+					<h3>Furnaces capped at ${format(this.effect().min(50).mul(hasUpgrade("m", 22)?100:50).add(this.effect().sub(50).max(0).mul(2500).pow(0.5).floor()).add(1000))}</h3>`
 				},
 				cost() {
 					let T = getBuyableAmount("m", 11).add(getBuyableAmount("m", 12)).add(getBuyableAmount("m", 13)).add(1);
@@ -1396,6 +1395,7 @@ addLayer("m", {
 			player.f.points = player.f.points.add(Decimal.floor(player.m.furnaceTick/(((!hasUpgrade("m", 21))*4)+1)).mul(buyableEffect("m", 11)));
 			player.m.furnaceTick = player.m.furnaceTick%(((!hasUpgrade("m", 21))*4)+1);
 			if (hasUpgrade("m", 23)) player.e.burning = true; 
+			player.f.points = player.f.points.min(buyableEffect("m", 11).min(50).mul(hasUpgrade("m", 22)?100:50).add(this.effect().sub(50).max(0).mul(2500).pow(0.5).floor()).add(1000));
 		}
 })
 function buyMaxManufacturers() {
