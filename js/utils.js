@@ -37,6 +37,10 @@ function format(decimal, precision=2) {
 	decimal = new Decimal(decimal)
 	if (isNaN(decimal.sign)||isNaN(decimal.layer)||isNaN(decimal.mag)) {
 		player.hasNaN = true;
+		console.log(format.caller)
+		try{console.log(format.caller.callee)}catch(e){console.log(e)}
+		console.log(layers.m.effect());
+		console.log(layers.m.effect().sqrt());
 		return "NaN"
 	}
 	if (decimal.sign<0) return "-"+format(decimal.neg(), precision)

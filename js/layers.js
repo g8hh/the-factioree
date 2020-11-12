@@ -1120,17 +1120,26 @@ addLayer("m", {
 			11: {
 				title: "Extractor Manufacturer",
 				description: "Unlock more extractor upgrades, and keep them on reset.",
-				cost: 2
+				cost: 2,
+				onPurchase() {
+					player.m.active = player.m.active.min(player.m.points).max(0);
+				}
 			},
 			12: {
 				title: "Furnace Quality Control",
 				description: "Keep furnace upgrades on reset.",
-				cost: 7
+				cost: 7,
+				onPurchase() {
+					player.m.active = player.m.active.min(player.m.points).max(0);
+				}
 			},
 			13: {
 				title: "Actual Manufacturing",
 				description: "Unlock factories.",
-				cost: 30
+				cost: 30,
+				onPurchase() {
+					player.m.active = player.m.active.min(player.m.points).max(0);
+				}
 			},
 			14: {
 				title: "Brick Manufacturing",
@@ -1138,6 +1147,9 @@ addLayer("m", {
 				cost: 40,
 				unlocked() {
 					return hasUpgrade("f", 13)
+				},
+				onPurchase() {
+					player.m.active = player.m.active.min(player.m.points).max(0);
 				}
 			},
 			21: {
@@ -1331,12 +1343,21 @@ addLayer("m", {
 			showRespec() {
 				return true;
 			},
-			respecText: "Demolish all factories"
+			respecText: "Respec factories"
+		},
+		clickables: {
+			rows: 1,
+			cols: 1,
+			11: {
+				display() {return "shitty savefixer button (if this doesn't work send save in the discord channel)"},
+				onClick() {player.hasNaN = false;save();location.reload();},
+				canClick() {return player.hasNaN}
+			}
 		},
 		branches: ["f"],
 		tabFormat: {
 			"Main": {
-				content: ["main-display", "prestige-button", ["raw-html", "<br>"], "milestones", ["raw-html", "<br>"], ["row", [["upgrade", 11], ["upgrade", 12], ["upgrade", 13], ["upgrade", 14]]]]
+				content: ["main-display", "prestige-button", "clickables", ["raw-html", "<br>"], "milestones", ["raw-html", "<br>"], ["row", [["upgrade", 11], ["upgrade", 12], ["upgrade", 13], ["upgrade", 14]]]]
 			},
 			"Factories": {
 				content: ["main-display", "prestige-button", ["raw-html", function () {
