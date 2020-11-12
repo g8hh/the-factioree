@@ -1094,7 +1094,7 @@ addLayer("m", {
 			return player.m.points.add(1).mul(1e85)
 		},
 		exponent() {
-			return player.m.points.sub(20).max(1).pow(0.01)
+			return player.m.points.sub(20).max(1).pow(0.01).mul(player.m.points.sub(100).max(1).pow(0.02))
 		},
 		gainMult() { // Calculate the multiplier for main currency from bonuses
 			mult = new Decimal(1)
@@ -1345,19 +1345,10 @@ addLayer("m", {
 			},
 			respecText: "Respec factories"
 		},
-		clickables: {
-			rows: 1,
-			cols: 1,
-			11: {
-				display() {return "shitty savefixer button (if this doesn't work send save in the discord channel)"},
-				onClick() {player.hasNaN = false;save();location.reload();},
-				canClick() {return player.hasNaN}
-			}
-		},
 		branches: ["f"],
 		tabFormat: {
 			"Main": {
-				content: ["main-display", "prestige-button", "clickables", ["raw-html", "<br>"], "milestones", ["raw-html", "<br>"], ["row", [["upgrade", 11], ["upgrade", 12], ["upgrade", 13], ["upgrade", 14]]]]
+				content: ["main-display", "prestige-button", ["raw-html", "<br>"], "milestones", ["raw-html", "<br>"], ["row", [["upgrade", 11], ["upgrade", 12], ["upgrade", 13], ["upgrade", 14]]]]
 			},
 			"Factories": {
 				content: ["main-display", "prestige-button", ["raw-html", function () {
