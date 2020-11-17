@@ -51,7 +51,7 @@ function addedPlayerData() { return {
 
 // Display extra things at the top of the page
 var displayThings = [
-"Current Endgame: all competitors completed"
+"Current Endgame: all competitors completed, 250 000 mp (hardcapped in anticipation of the next update)"
 ]
 
 // Determines when the game "ends"

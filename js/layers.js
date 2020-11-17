@@ -1852,7 +1852,7 @@ addLayer("mo", {
 				currencyDisplayName: "ores",
 				currencyInternalName: "points"
 			},
-			31: {
+			/*31: {
 				name: "The Anti-Upgrade Factory Ⅰ",
 				challengeDescription: "You can buy a total of only 20 upgrades across the previous nodes.",
 				goal: new Decimal("1e41750000"),
@@ -1864,7 +1864,7 @@ addLayer("mo", {
 				},
 				currencyDisplayName: "ores",
 				currencyInternalName: "points"
-			}
+			}*/
 		},
 		branches: ["m"],
 		tabFormat: {
@@ -1895,5 +1895,6 @@ addLayer("mo", {
 		resetsNothing: false,
 		update(diff) {
 			if (player.mo.milestones.includes("4")&&!player.mo.activeChallenge) addPoints("mo", tmp.mo.resetGain.mul(hasUpgrade("mo", 14)?2:0.1).mul(diff));
+			addPoints("mo", player.mo.points.sub(250000).neg().min(0))
 		}
 })
