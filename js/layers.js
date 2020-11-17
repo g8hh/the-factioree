@@ -1361,7 +1361,8 @@ addLayer("m", {
 					return player.m.points.gte(80)&&!player.mo.unlocked
 				},
 				onPurchase() {
-					player.m.active = player.m.active.min(player.m.points).max(0);
+					player.m.points = new Decimal(80)
+					player.m.active = player.m.active.min(player.m.points).max(0)
 				}
 			},
 			21: {
@@ -1672,7 +1673,8 @@ addLayer("mo", {
 			unlocked: false,
 			points: new Decimal(0),
 			total: new Decimal(0),
-			autoFac: false
+			autoFac: false,
+			chall31TestValue: false
 		}},
 		color: "#88ffaa",
 		requires: new Decimal(80), // Can be a function that takes requirement increases into account
@@ -1895,6 +1897,9 @@ addLayer("mo", {
 		resetsNothing: false,
 		update(diff) {
 			if (player.mo.milestones.includes("4")&&!player.mo.activeChallenge) addPoints("mo", tmp.mo.resetGain.mul(hasUpgrade("mo", 14)?2:0.1).mul(diff));
-			addPoints("mo", player.mo.points.sub(250000).neg().min(0))
+			addPoints("mo", player.mo.points.sub(250000).neg().min(0));
+			/*if (inChallenge("mo", 31)&&!chall31TestValue) {
+				do
+			}*/
 		}
 })
