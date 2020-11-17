@@ -1589,10 +1589,10 @@ addLayer("m", {
 		branches: ["f"],
 		tabFormat: {
 			"Main": {
-				content: ["main-display", "prestige-button", ["raw-html", "<br>"], "milestones", ["raw-html", "<br>"], ["row", [["upgrade", 11], ["upgrade", 12], ["upgrade", 13], ["upgrade", 14], ["upgrade", 15]]]]
+				content: ["main-display", "prestige-button", ["upgrade", 15], ["raw-html", "<br>"], "milestones", ["raw-html", "<br>"], ["row", [["upgrade", 11], ["upgrade", 12], ["upgrade", 13], ["upgrade", 14]]]]
 			},
 			"Factories": {
-				content: ["main-display", "prestige-button", ["raw-html", function () {
+				content: ["main-display", "prestige-button", ["upgrade", 15], ["raw-html", function () {
 				return `You have ${format(player.m.bricks)} bricks. (${format(player.m.active.mul(hasUpgrade("m", 14)?1:0.1).mul(buyableEffect("m", 13)).mul(tmp.mo.effect))}/s)
 				<br><br>
 				You have ${format(player.m.active)} active manufacturers.
