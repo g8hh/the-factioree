@@ -18,7 +18,7 @@ let VERSION = {
 
 // If you add new functions anywhere inside of a layer, and those functions have an effect when called, add them here.
 // (The ones here are examples, all official functions are already taken care of)
-var doNotCallTheseFunctionsEveryTick = ["buyFlame", "flameEffect"]
+var doNotCallTheseFunctionsEveryTick = ["extraFlame", "flameEffect"]
 
 function getStartPoints(){
     return new Decimal(modInfo.initialStartPoints)
@@ -41,6 +41,7 @@ function getPointGen() {
 	gain = gain.mul(buyableEffect("f", 13));
 	if (hasUpgrade("e", 32)) gain = gain.mul(upgradeEffect("e", 32));
 	gain = gain.mul(tmp.m.effect).mul(hasUpgrade("m", 43)?player.e.burnEffect.pow(0.1):player.e.burnEffect.add(1.2).log(1.2));
+	if (hasUpgrade("mo", 11)) gain = gain.pow(upgradeEffect("mo", 11));
 	return gain
 }
 
@@ -50,6 +51,7 @@ function addedPlayerData() { return {
 
 // Display extra things at the top of the page
 var displayThings = [
+"Current Endgame: all competitors completed"
 ]
 
 // Determines when the game "ends"

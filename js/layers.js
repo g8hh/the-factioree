@@ -31,352 +31,6 @@ addLayer("f", {
 			return Decimal.div(1, player.f.points.sub(4).max(1)).pow(0.1)
 		},
 		row: 0, // Row the layer is in on the tree (0 is the first row)
-		upgrades: {
-			rows: 6,
-			cols: 4,
-			11: {
-				title: "181",
-				description: `Gain x% of extractor gain on prestige per second where x is based on your active furnaces.`,
-				cost: 9,
-				unlocked() {
-					return player.e.milestones.includes("1")
-				},
-				effect() {
-					return Decimal.pow(1.3, player.f.allocated).mul(2).sub(2).min(100000)
-				},
-				effectDisplay() {
-					return `${format(this.effect())}%`
-				}
-			},
-			12: {
-				title: "Bribed furnaces",
-				description: `Furnaces are cheaper based on metals.`,
-				cost: 10,
-				unlocked() {
-					return player.e.milestones.includes("1")
-				},
-				effect() {
-					return player.f.metals.add(1).pow(hasUpgrade("f", 14)?0.45:0.2)
-				},
-				effectDisplay() {
-					return `/${format(this.effect())}`
-				}
-			},
-			21: {
-				title: "Hot",
-				description: `Capture embers produced by furnaces.`,
-				cost: 16,
-				unlocked() {
-					return player.e.milestones.includes("1")
-				},
-				effect() {
-					var embergain = player.f.points.mul(100).mul(buyableEffect("f", 11)).mul(buyableEffect("f", 12)).mul(player.e.oil.add(2).log(2))
-					if (hasUpgrade("f", 22)) embergain = embergain.mul(upgradeEffect("f", 22));
-					if (hasUpgrade("f", 32)) embergain = embergain.mul(100);
-					if (hasUpgrade("e", 33)) embergain = embergain.mul(upgradeEffect("e", 33));
-					embergain = embergain.pow(buyableEffect("f", 14))
-					embergain = embergain.mul(tmp.m.effect.sqrt());
-					return embergain;
-				},
-				effectDisplay() {
-					return `${format(this.effect())} fiery embers/s`
-				}
-			},
-			22: {
-				title: "Lava",
-				description: `Ember gain multiplied by extractors.`,
-				cost: 25,
-				unlocked() {
-					return getBuyableAmount("f", 11).gte(5)||hasUpgrade("m", 11)
-				},
-				effect() {
-					return player.e.points.add(6).log(6)
-				}
-			},
-			13: {
-				title: "Forgery",
-				description: `Multiply metal gain by embers.`,
-				cost: 90,
-				unlocked() {
-					return player.m.milestones.includes("0")
-				},
-				effect() {
-					return player.f.embers.add(1).pow(0.3)
-				}
-			},
-			23: {
-				title: "Point Acceleration",
-				description: "Multiply Point Speed base by 1e5.",
-				cost: 101,
-				unlocked() {
-					return player.m.milestones.includes("0")
-				}
-			},
-			14: {
-				title: "Laundered furnaces",
-				description: `Bribed furnaces has a better effect formula.`,
-				cost: 109,
-				unlocked() {
-					return player.m.milestones.includes("3")
-				}
-			},
-			24: {
-				title: "Point Jerk",
-				description: "Point Acceleration is stronger based on furnaces.",
-				cost: 121,
-				unlocked() {
-					return player.m.milestones.includes("3")
-				},
-				effect() {
-					return player.f.points.add(1)
-				}
-			},
-			51: {
-				title: "Evaded furnaces",
-				description: "Furnace cost scaling base scales better.",
-				cost: 124,
-				unlocked() {
-					return player.m.milestones.includes("3")
-				}
-			},
-			52: {
-				title: "Furnace Fire Pure Teal",
-				description: "Metal gain softcap starts 12 later, and multiply extractor gain by furnaces.",
-				cost: 157,
-				unlocked() {
-					return player.m.milestones.includes("3")
-				},
-				effect() {
-					return Decimal.pow(2, player.f.points)
-				}
-			},
-			53: {
-				title: "Powerful furnaces",
-				description: "Gain free flame levels from furnaces.",
-				cost: 170,
-				unlocked() {
-					return player.m.milestones.includes("3")
-				},
-				effect() {
-					return player.f.points.pow(0.25).floor()
-				},
-				effectDisplay() {
-					return `+${this.effect()}`
-				}
-			},
-			54: {
-				title: "Timewall gaming",
-				description: "Divide furnace cost based on time spent in manufacturer reset.",
-				cost: 200,
-				unlocked() {
-					return player.m.milestones.includes("3")
-				},
-				effect() {
-					return Decimal.pow(10, player.e.layerticks).min("1e2000")
-				},
-				effectDisplay() {
-					return `/${format(this.effect())}`
-				}
-			},
-			31: {
-				title: "Flamier Flames",
-				description: "Flames effect is stronger.",
-				cost: 3,
-				unlocked() {
-					return player.f.flame.gt(1)||hasUpgrade("f", 31)||hasUpgrade("f",  32)
-				},
-				currencyDisplayName: "flame",
-				currencyInternalName() {
-					return "flame"
-				},
-				currencyLayer() {
-					return "f"
-				},
-				style() {
-					return {backgroundColor: hasUpgrade("f", 31)?"#77bf5f":(player.f.flame.gte(3)?"#ff6600":"bf8f8f")}
-				}
-			},
-			32: {
-				title: "Boost. Just Boost.",
-				description: "Ember gain times 100.",
-				cost: 3,
-				unlocked() {
-					return player.f.flame.gt(1)||hasUpgrade("f", 31)||hasUpgrade("f",  32)
-				},
-				currencyDisplayName: "flame",
-				currencyInternalName() {
-					return "flame"
-				},
-				currencyLayer() {
-					return "f"
-				},
-				style() {
-					return {backgroundColor: hasUpgrade("f", 32)?"#77bf5f":(player.f.flame.gte(3)?"#ff6600":"bf8f8f")}
-				}
-			},
-			41: {
-				title: "Oxygenator",
-				description: "Flames cost scaling is weaker.",
-				cost: 4,
-				unlocked() {
-					return hasUpgrade("f", 31)&&hasUpgrade("f", 32)
-				},
-				currencyDisplayName: "flame",
-				currencyInternalName() {
-					return "flame"
-				},
-				currencyLayer() {
-					return "f"
-				},
-				style() {
-					return {backgroundColor: hasUpgrade("f", 41)?"#77bf5f":(player.f.flame.gte(4)?"#ff6600":"bf8f8f")}
-				}
-			},
-			42: {
-				title: "Ember boost boost",
-				description: "Multiply the base of ember boost by 1.1.",
-				cost: 7,
-				unlocked() {
-					return hasUpgrade("f", 31)&&hasUpgrade("f", 32)
-				},
-				currencyDisplayName: "flame",
-				currencyInternalName() {
-					return "flame"
-				},
-				currencyLayer() {
-					return "f"
-				},
-				style() {
-					return {backgroundColor: hasUpgrade("f", 42)?"#77bf5f":(player.f.flame.gte(7)?"#ff6600":"bf8f8f")}
-				}
-			},
-			33: {
-				title: "Bribed, uh, flames?",
-				description: "Embers divide flame cost.",
-				cost: 9,
-				unlocked() {
-					return hasUpgrade("f", 41)&&hasUpgrade("f", 42)
-				},
-				effect() {
-					return player.f.embers.add(1).pow(0.25)
-				},
-				effectDisplay() {
-					return `/${format(this.effect())}`
-				},
-				currencyDisplayName: "flame",
-				currencyInternalName() {
-					return "flame"
-				},
-				currencyLayer() {
-					return "f"
-				},
-				style() {
-					return {backgroundColor: hasUpgrade("f", 33)?"#77bf5f":(player.f.flame.gte(9)?"#ff6600":"bf8f8f")}
-				}
-			},
-			43: {
-				title: "Extra Flame",
-				description: "Gain 4 extra flame levels.",
-				cost: 10,
-				unlocked() {
-					return hasUpgrade("f", 41)&&hasUpgrade("f", 42)
-				},
-				currencyDisplayName: "flame",
-				currencyInternalName() {
-					return "flame"
-				},
-				currencyLayer() {
-					return "f"
-				},
-				style() {
-					return {backgroundColor: hasUpgrade("f", 43)?"#77bf5f":(player.f.flame.gte(10)?"#ff6600":"bf8f8f")}
-				}
-			},
-			34: {
-				title: "Even Flamier",
-				description: "Flame also divide final buyable cost at an increased rate, and all cost scalings scale better.",
-				cost: 17,
-				unlocked() {
-					return player.m.milestones.includes("3")
-				},
-				effect() {
-					return Decimal.pow(2, layers.f.flameEffect().recip()).recip().pow(6)
-				},
-				effectDisplay() {
-					return `/${format(this.effect().recip())}`
-				},
-				currencyDisplayName: "flame",
-				currencyInternalName() {
-					return "flame"
-				},
-				currencyLayer() {
-					return "f"
-				},
-				style() {
-					return {backgroundColor: hasUpgrade("f", 34)?"#77bf5f":(player.f.flame.gte(17)?"#ff6600":"bf8f8f")}
-				}
-			},
-			44: {
-				title: "Extracting Flames",
-				description: "Flame also make extractor levels cheaper.",
-				cost: 21,
-				unlocked() {
-					return player.m.milestones.includes("3")
-				},
-				currencyDisplayName: "flame",
-				currencyInternalName() {
-					return "flame"
-				},
-				currencyLayer() {
-					return "f"
-				},
-				style() {
-					return {backgroundColor: hasUpgrade("f", 44)?"#77bf5f":(player.f.flame.gte(21)?"#ff6600":"bf8f8f")}
-				}
-			},
-			61: {
-				title: "Ember Acceleration",
-				description: "Multiply the base of Ember Speed by 5.",
-				cost: 30,
-				unlocked() {
-					return player.m.milestones.includes("3")
-				},
-				currencyDisplayName: "flame",
-				currencyInternalName() {
-					return "flame"
-				},
-				currencyLayer() {
-					return "f"
-				},
-				style() {
-					return {backgroundColor: hasUpgrade("f", 61)?"#77bf5f":(player.f.flame.gte(30)?"#ff6600":"bf8f8f")}
-				}
-			},
-			62: {
-				title: "Flame Decceleration",
-				description: "Oil burning makes flames cheaper.",
-				cost: 36,
-				unlocked() {
-					return player.m.milestones.includes("3")&&hasUpgrade("e", 44);
-				},
-				currencyDisplayName: "flame",
-				currencyInternalName() {
-					return "flame"
-				},
-				currencyLayer() {
-					return "f"
-				},
-				style() {
-					return {backgroundColor: hasUpgrade("f", 62)?"#77bf5f":(player.f.flame.gte(36)?"#ff6600":"bf8f8f")}
-				},
-				effect() {
-					return player.e.burnEffect.add(10).log(10).add(9).log(10).pow(0.3)
-				},
-				effectDisplay() {
-					return `^1/${format(this.effect())}`
-				}
-			}
-		},
 		milestones: {
 			0: {
 				requirementDescription: "1 furnace",
@@ -403,8 +57,12 @@ addLayer("f", {
 			}
 		},
 		buyables: {
-			rows: 1,
-			cols: 4,
+			rows() {
+				return hasUpgrade("p", 14)?2:1
+			},
+			cols() {
+				return hasUpgrade("p", 14)?2:3
+			},
 			11: {
 				title: "Ember boost",
 				display() {
@@ -445,7 +103,7 @@ addLayer("f", {
 					<h2>Effect:</h2><h3> x${format(this.effect())}</h3>`
 				},
 				cost() {
-					return Decimal.pow(11.5, getBuyableAmount("f", 12).pow(hasUpgrade("f", 34)?2.4:4).div(10).add(getBuyableAmount("f", 12)).mul(layers.f.flameEffect())).mul(10000).mul(hasUpgrade("f", 34)?upgradeEffect("f", 34):1)
+					return Decimal.pow(11.5, getBuyableAmount("f", 12).sub(250).sub(tmp.p.effect[3]).max(0).pow(6).add(getBuyableAmount("f", 12).pow(hasUpgrade("f", 34)?2.4:4).div(10)).add(getBuyableAmount("f", 12)).mul(layers.f.flameEffect())).mul(10000).mul(hasUpgrade("f", 34)?upgradeEffect("f", 34):1)
 				},
 				buy() {
 					if (this.canAfford()) {
@@ -454,7 +112,7 @@ addLayer("f", {
 					}
 				},
 				effect() {
-					return Decimal.pow(hasUpgrade("f", 61)?10:2, getBuyableAmount("f", 12).add(getBuyableAmount("f", 13).mul(0.25).add(hasUpgrade("m", 23)?player.e.burnEffect.add(2).log(2).log(2).floor():player.e.burnEffect.add(2).log(2).log(3).floor())))
+					return new Decimal(hasUpgrade("f", 61)?10:2).mul((hasChallenge("mo", 12)*4)+1).pow(getBuyableAmount("f", 12).add(getBuyableAmount("f", 13).mul(0.25).add(hasUpgrade("m", 23)?player.e.burnEffect.add(2).log(2).log(2).floor():player.e.burnEffect.add(2).log(2).log(3).floor())))
 				},
 				canAfford() {
 					return player.f.embers.gte(this.cost())
@@ -492,25 +150,54 @@ addLayer("f", {
 					return {backgroundColor: this.canAfford()?"#ff4400":"bf8f8f"}
 				}
 			},
-			14: {
-				title: "Ember Derivatives",
+			21: {
+				title: "Point speed",
 				display() {
-					return `<br><br><h3>Raise Ember gain to an exponent.</h3><br>
-					<h2>Currently:</h2><h3> ${format(getBuyableAmount("f", 14), 0)}</h3>
+					return `<br><br><h3>Boost point gain, and gives extra levels to the previous upgrades.</h3><br>
+					<h2>Currently:</h2><h3> ${format(getBuyableAmount("f", 13), 0)}${(hasUpgrade("m", 23)?player.e.burnEffect.add(2).log(2).log(2).floor():player.e.burnEffect.add(2).log(2).log(3).floor()).gt(0)?`+${format(hasUpgrade("m", 23)?player.e.burnEffect.add(2).log(2).log(2).floor():player.e.burnEffect.add(2).log(2).log(3).floor())}`:""}</h3>
 					<h2>Cost:</h2><h3> ${format(this.cost())} fiery embers</h3>
-					<h2>Effect:</h2><h3> ^${format(this.effect())}</h3>`
+					<h2>Effect:</h2><h3> ${format(this.effect())}</h3>`
 				},
 				cost() {
-					return Decimal.pow(getBuyableAmount("f", 14).add(1).pow(0.5).add(19), getBuyableAmount("f", 14).pow(3).mul(layers.f.flameEffect())).mul("1e500").mul(hasUpgrade("f", 34)?upgradeEffect("f", 34):1)
+					return Decimal.pow(10, getBuyableAmount("f", 13).sub(hasUpgrade("f", 34)?15:10).max(0).pow(hasUpgrade("f", 34)?2.6:4.5).add(getBuyableAmount("f", 13).pow(hasUpgrade("f", 34)?1.8:3).div(hasUpgrade("f", 34)?8:5).add(getBuyableAmount("f", 13)).mul(layers.f.flameEffect()))).mul(500000).mul(hasUpgrade("f", 34)?upgradeEffect("f", 34):1)
 				},
 				buy() {
 					if (this.canAfford()) {
 						player.f.embers = player.f.embers.sub(this.cost())
-						setBuyableAmount("f", 14, getBuyableAmount("f", 14).add(1))
+						setBuyableAmount("f", 13, getBuyableAmount("f", 13).add(1))
 					}
 				},
 				effect() {
-					return getBuyableAmount("f", 14).mul(0.05).add(1)
+					var mult = new Decimal(hasUpgrade("f", 23)?1e5:1);
+					if (hasUpgrade("f", 23) && hasUpgrade("f", 24)) mult = mult.mul(upgradeEffect("f", 24));
+					return Decimal.pow(mult.mul(1e25), getBuyableAmount("f", 13).add(hasUpgrade("m", 23)?player.e.burnEffect.add(2).log(2).log(2).floor():player.e.burnEffect.add(2).log(2).log(3).floor()))
+				},
+				canAfford() {
+					return player.f.embers.gte(this.cost())
+				},
+				style() {
+					return {backgroundColor: this.canAfford()?"#ff4400":"bf8f8f"}
+				}
+			},
+			22: {
+				title: "Ember Derivatives",
+				display() {
+					return `<br><br><h3>Raise Ember gain to an exponent.</h3><br>
+					<h2>Currently:</h2><h3> ${format(getBuyableAmount("f", 22), 0)}</h3>
+					<h2>Cost:</h2><h3> ${format(this.cost())} fiery embers</h3>
+					<h2>Effect:</h2><h3> ^${format(this.effect())}</h3>`
+				},
+				cost() {
+					return Decimal.pow(getBuyableAmount("f", 22).add(1).pow(0.5).add(19), getBuyableAmount("f", 22).pow(3).mul(layers.f.flameEffect())).mul("1e500").mul(hasUpgrade("f", 34)?upgradeEffect("f", 34):1)
+				},
+				buy() {
+					if (this.canAfford()) {
+						player.f.embers = player.f.embers.sub(this.cost())
+						setBuyableAmount("f", 22, getBuyableAmount("f", 22).add(1))
+					}
+				},
+				effect() {
+					return getBuyableAmount("f", 22).mul(0.05).add(1)
 				},
 				canAfford() {
 					return player.f.embers.gte(this.cost())
@@ -559,6 +246,398 @@ addLayer("f", {
 				},
 				unlocked() {
 					return (player.f.embers.gt(500000000)||player.f.flame.gt(0)||(player.f.upgrades.length > 4))
+				}
+			}
+		},
+		upgrades: {
+			rows: 6,
+			cols: 4,
+			11: {
+				title: "181",
+				description: `Gain x% of extractor gain on prestige per second where x is based on your active furnaces.`,
+				cost() {
+					return (inChallenge("mo", 31)&&((player.e.upgrades.length+player.f.upgrades.length+player.p.upgrades.length+player.m.upgrades.length)>=20))?Infinity:9;
+				},
+				unlocked() {
+					return player.e.milestones.includes("1")
+				},
+				effect() {
+					return Decimal.pow(1.3, player.f.allocated).mul(2).sub(2).min(100000)
+				},
+				effectDisplay() {
+					return `${format(this.effect())}%`
+				}
+			},
+			12: {
+				title: "Bribed furnaces",
+				description: `Furnaces are cheaper based on metals.`,
+				cost() {
+					return (inChallenge("mo", 31)&&((player.e.upgrades.length+player.f.upgrades.length+player.p.upgrades.length+player.m.upgrades.length)>=20))?Infinity:10;
+				},
+				unlocked() {
+					return player.e.milestones.includes("1")
+				},
+				effect() {
+					return player.f.metals.add(1).pow(hasUpgrade("f", 14)?0.45:0.2)
+				},
+				effectDisplay() {
+					return `/${format(this.effect())}`
+				}
+			},
+			21: {
+				title: "Hot",
+				description: `Capture embers produced by furnaces.`,
+				cost() {
+					return (inChallenge("mo", 31)&&((player.e.upgrades.length+player.f.upgrades.length+player.p.upgrades.length+player.m.upgrades.length)>=20))?Infinity:16
+				},
+				unlocked() {
+					return player.e.milestones.includes("1")
+				},
+				effect() {
+					if (inChallenge("mo", 11)) return new Decimal(0);
+					var embergain = player.f.points.mul(100).mul(buyableEffect("f", 11)).mul(buyableEffect("f", 12)).mul(player.e.oil.add(2).log(2))
+					if (hasUpgrade("f", 22)) embergain = embergain.mul(upgradeEffect("f", 22));
+					if (hasUpgrade("f", 32)) embergain = embergain.mul(100);
+					if (hasUpgrade("e", 33)) embergain = embergain.mul(upgradeEffect("e", 33));
+					embergain = embergain.pow(buyableEffect("f", 22))
+					embergain = embergain.mul(tmp.m.effect.sqrt());
+					if (hasUpgrade("mo", 13)) embergain = embergain.pow(upgradeEffect("mo", 11).pow(hasChallenge("mo", 11)?0.15:0.1));
+					return embergain;
+				},
+				effectDisplay() {
+					return `${format(this.effect())} fiery embers/s`
+				}
+			},
+			22: {
+				title: "Lava",
+				description: `Ember gain multiplied by extractors.`,
+				cost() {
+					return (inChallenge("mo", 31)&&((player.e.upgrades.length+player.f.upgrades.length+player.p.upgrades.length+player.m.upgrades.length)>=20))?Infinity:25
+				},
+				unlocked() {
+					return getBuyableAmount("f", 11).gte(5)||hasUpgrade("m", 11)
+				},
+				effect() {
+					return player.e.points.add(6).log(6)
+				}
+			},
+			13: {
+				title: "Forgery",
+				description: `Multiply metal gain by embers.`,
+				cost() {
+					return (inChallenge("mo", 31)&&((player.e.upgrades.length+player.f.upgrades.length+player.p.upgrades.length+player.m.upgrades.length)>=20))?Infinity:90;
+				},
+				unlocked() {
+					return player.m.milestones.includes("0")
+				},
+				effect() {
+					return player.f.embers.add(1).pow(0.3)
+				}
+			},
+			23: {
+				title: "Point Acceleration",
+				description: "Multiply Point Speed base by 1e5.",
+				cost() {
+					return (inChallenge("mo", 31)&&((player.e.upgrades.length+player.f.upgrades.length+player.p.upgrades.length+player.m.upgrades.length)>=20))?Infinity:101;
+				},
+				unlocked() {
+					return player.m.milestones.includes("0")
+				}
+			},
+			14: {
+				title: "Laundered furnaces",
+				description: `Bribed furnaces has a better effect formula.`,
+				cost() {
+					return (inChallenge("mo", 31)&&((player.e.upgrades.length+player.f.upgrades.length+player.p.upgrades.length+player.m.upgrades.length)>=20))?Infinity:109
+				},
+				unlocked() {
+					return player.m.milestones.includes("3")
+				}
+			},
+			24: {
+				title: "Point Jerk",
+				description: "Point Acceleration is stronger based on furnaces.",
+				cost() {
+					return (inChallenge("mo", 31)&&((player.e.upgrades.length+player.f.upgrades.length+player.p.upgrades.length+player.m.upgrades.length)>=20))?Infinity:121;
+				},
+				unlocked() {
+					return player.m.milestones.includes("3")
+				},
+				effect() {
+					return player.f.points.add(1)
+				}
+			},
+			51: {
+				title: "Evaded furnaces",
+				description: "Furnace cost scaling base scales better.",
+				cost() {
+					return (inChallenge("mo", 31)&&((player.e.upgrades.length+player.f.upgrades.length+player.p.upgrades.length+player.m.upgrades.length)>=20))?Infinity:124;
+				},
+				unlocked() {
+					return player.m.milestones.includes("3")
+				}
+			},
+			52: {
+				title: "Furnace Fire Pure Teal",
+				description: "Metal gain softcap starts 12 later, and multiply extractor gain by furnaces.",
+				cost() {
+					return (inChallenge("mo", 31)&&((player.e.upgrades.length+player.f.upgrades.length+player.p.upgrades.length+player.m.upgrades.length)>=20))?Infinity:157;
+				},
+				unlocked() {
+					return player.m.milestones.includes("3")
+				},
+				effect() {
+					return Decimal.pow(2, player.f.points)
+				}
+			},
+			53: {
+				title: "Powerful furnaces",
+				description: "Gain free flame levels from furnaces.",
+				cost() {
+					return (inChallenge("mo", 31)&&((player.e.upgrades.length+player.f.upgrades.length+player.p.upgrades.length+player.m.upgrades.length)>=20))?Infinity:170;
+				},
+				unlocked() {
+					return player.m.milestones.includes("3")
+				},
+				effect() {
+					return player.f.points.pow(0.25).floor()
+				},
+				effectDisplay() {
+					return `+${this.effect()}`
+				}
+			},
+			54: {
+				title: "Timewall gaming",
+				description: "Divide furnace cost based on time spent in manufacturer reset.",
+				cost() {
+					return (inChallenge("mo", 31)&&((player.e.upgrades.length+player.f.upgrades.length+player.p.upgrades.length+player.m.upgrades.length)>=20))?Infinity:200;
+				},
+				unlocked() {
+					return player.m.milestones.includes("3")
+				},
+				effect() {
+					return Decimal.pow(10, player.e.layerticks).min("1e2000")
+				},
+				effectDisplay() {
+					return `/${format(this.effect())}`
+				}
+			},
+			31: {
+				title: "Flamier Flames",
+				description: "Flames effect is stronger.",
+				cost() {
+					return (inChallenge("mo", 31)&&((player.e.upgrades.length+player.f.upgrades.length+player.p.upgrades.length+player.m.upgrades.length)>=20))?Infinity:3
+				},
+				unlocked() {
+					return player.f.flame.gt(1)||hasUpgrade("f", 31)||hasUpgrade("f",  32)
+				},
+				currencyDisplayName: "flame",
+				currencyInternalName() {
+					return "flame"
+				},
+				currencyLayer() {
+					return "f"
+				},
+				style() {
+					return {backgroundColor: hasUpgrade("f", 31)?"#77bf5f":(player.f.flame.gte(3)?"#ff6600":"bf8f8f")}
+				}
+			},
+			32: {
+				title: "Boost. Just Boost.",
+				description: "Ember gain times 100.",
+				cost() {
+					return (inChallenge("mo", 31)&&((player.e.upgrades.length+player.f.upgrades.length+player.p.upgrades.length+player.m.upgrades.length)>=20))?Infinity:3;
+				},
+				unlocked() {
+					return player.f.flame.gt(1)||hasUpgrade("f", 31)||hasUpgrade("f",  32)
+				},
+				currencyDisplayName: "flame",
+				currencyInternalName() {
+					return "flame"
+				},
+				currencyLayer() {
+					return "f"
+				},
+				style() {
+					return {backgroundColor: hasUpgrade("f", 32)?"#77bf5f":(player.f.flame.gte(3)?"#ff6600":"bf8f8f")}
+				}
+			},
+			41: {
+				title: "Oxygenator",
+				description: "Flames cost scaling is weaker.",
+				cost() {
+					return (inChallenge("mo", 31)&&((player.e.upgrades.length+player.f.upgrades.length+player.p.upgrades.length+player.m.upgrades.length)>=20))?Infinity:4;
+				},
+				unlocked() {
+					return hasUpgrade("f", 31)&&hasUpgrade("f", 32)
+				},
+				currencyDisplayName: "flame",
+				currencyInternalName() {
+					return "flame"
+				},
+				currencyLayer() {
+					return "f"
+				},
+				style() {
+					return {backgroundColor: hasUpgrade("f", 41)?"#77bf5f":(player.f.flame.gte(4)?"#ff6600":"bf8f8f")}
+				}
+			},
+			42: {
+				title: "Ember boost boost",
+				description: "Multiply the base of ember boost by 1.1.",
+				cost() {
+					return (inChallenge("mo", 31)&&((player.e.upgrades.length+player.f.upgrades.length+player.p.upgrades.length+player.m.upgrades.length)>=20))?Infinity:7;
+				},
+				unlocked() {
+					return hasUpgrade("f", 31)&&hasUpgrade("f", 32)
+				},
+				currencyDisplayName: "flame",
+				currencyInternalName() {
+					return "flame"
+				},
+				currencyLayer() {
+					return "f"
+				},
+				style() {
+					return {backgroundColor: hasUpgrade("f", 42)?"#77bf5f":(player.f.flame.gte(7)?"#ff6600":"bf8f8f")}
+				}
+			},
+			33: {
+				title: "Bribed, uh, flames?",
+				description: "Embers divide flame cost.",
+				cost() {
+					return (inChallenge("mo", 31)&&((player.e.upgrades.length+player.f.upgrades.length+player.p.upgrades.length+player.m.upgrades.length)>=20))?Infinity:9;
+				},
+				unlocked() {
+					return hasUpgrade("f", 41)&&hasUpgrade("f", 42)
+				},
+				effect() {
+					return player.f.embers.add(1).pow(0.25)
+				},
+				effectDisplay() {
+					return `/${format(this.effect())}`
+				},
+				currencyDisplayName: "flame",
+				currencyInternalName() {
+					return "flame"
+				},
+				currencyLayer() {
+					return "f"
+				},
+				style() {
+					return {backgroundColor: hasUpgrade("f", 33)?"#77bf5f":(player.f.flame.gte(9)?"#ff6600":"bf8f8f")}
+				}
+			},
+			43: {
+				title: "Extra Flame",
+				description: "Gain 4 extra flame levels.",
+				cost() {
+					return (inChallenge("mo", 31)&&((player.e.upgrades.length+player.f.upgrades.length+player.p.upgrades.length+player.m.upgrades.length)>=20))?Infinity:10;
+				},
+				unlocked() {
+					return hasUpgrade("f", 41)&&hasUpgrade("f", 42)
+				},
+				currencyDisplayName: "flame",
+				currencyInternalName() {
+					return "flame"
+				},
+				currencyLayer() {
+					return "f"
+				},
+				style() {
+					return {backgroundColor: hasUpgrade("f", 43)?"#77bf5f":(player.f.flame.gte(10)?"#ff6600":"bf8f8f")}
+				}
+			},
+			34: {
+				title: "Even Flamier",
+				description: "Flame also divide final buyable cost at an increased rate, and all cost scalings scale better.",
+				cost() {
+					return (inChallenge("mo", 31)&&((player.e.upgrades.length+player.f.upgrades.length+player.p.upgrades.length+player.m.upgrades.length)>=20))?Infinity:17;
+				},
+				unlocked() {
+					return player.m.milestones.includes("3")
+				},
+				effect() {
+					return Decimal.pow(2, layers.f.flameEffect().recip()).recip().pow(6)
+				},
+				effectDisplay() {
+					return `/${format(this.effect().recip())}`
+				},
+				currencyDisplayName: "flame",
+				currencyInternalName() {
+					return "flame"
+				},
+				currencyLayer() {
+					return "f"
+				},
+				style() {
+					return {backgroundColor: hasUpgrade("f", 34)?"#77bf5f":(player.f.flame.gte(17)?"#ff6600":"bf8f8f")}
+				}
+			},
+			44: {
+				title: "Extracting Flames",
+				description: "Flame also make extractor levels cheaper.",
+				cost() {
+					return (inChallenge("mo", 31)&&((player.e.upgrades.length+player.f.upgrades.length+player.p.upgrades.length+player.m.upgrades.length)>=20))?Infinity:21;
+				},
+				unlocked() {
+					return player.m.milestones.includes("3")
+				},
+				currencyDisplayName: "flame",
+				currencyInternalName() {
+					return "flame"
+				},
+				currencyLayer() {
+					return "f"
+				},
+				style() {
+					return {backgroundColor: hasUpgrade("f", 44)?"#77bf5f":(player.f.flame.gte(21)?"#ff6600":"bf8f8f")}
+				}
+			},
+			61: {
+				title: "Ember Acceleration",
+				description: "Multiply the base of Ember Speed by 5.",
+				cost() {
+					return (inChallenge("mo", 31)&&((player.e.upgrades.length+player.f.upgrades.length+player.p.upgrades.length+player.m.upgrades.length)>=20))?Infinity:30;
+				},
+				unlocked() {
+					return player.m.milestones.includes("3")
+				},
+				currencyDisplayName: "flame",
+				currencyInternalName() {
+					return "flame"
+				},
+				currencyLayer() {
+					return "f"
+				},
+				style() {
+					return {backgroundColor: hasUpgrade("f", 61)?"#77bf5f":(player.f.flame.gte(30)?"#ff6600":"bf8f8f")}
+				}
+			},
+			62: {
+				title: "Flame Decceleration",
+				description: "Oil burning makes flames cheaper.",
+				cost() {
+					return (inChallenge("mo", 31)&&((player.e.upgrades.length+player.f.upgrades.length+player.p.upgrades.length+player.m.upgrades.length)>=20))?Infinity:36;
+				},
+				unlocked() {
+					return player.m.milestones.includes("3")&&hasUpgrade("e", 44);
+				},
+				currencyDisplayName: "flame",
+				currencyInternalName() {
+					return "flame"
+				},
+				currencyLayer() {
+					return "f"
+				},
+				style() {
+					return {backgroundColor: hasUpgrade("f", 62)?"#77bf5f":(player.f.flame.gte(36)?"#ff6600":"bf8f8f")}
+				},
+				effect() {
+					return player.e.burnEffect.add(10).log(10).add(9).log(10).pow(0.3)
+				},
+				effectDisplay() {
+					return `^1/${format(this.effect())}`
 				}
 			}
 		},
@@ -616,13 +695,14 @@ addLayer("f", {
 			if (layers.f.clickables[11].unlocked()) Vue.set(hotkeys, "F", {key: "F", desc: "shift+f: Buy flame", onPress() {layers.f.clickables[11].onClick()}, layer: "f"});
 		},
 		extraFlame() {
+			if (inChallenge("mo", 11)) return 0;
 			return new Decimal(hasUpgrade("f", 43)?4:0).add(hasUpgrade("f", 53)?upgradeEffect("f", 53):0)
 		},
 		flameEffect() {
 			return Decimal.div(1, player.f.flame.add(this.extraFlame()).div(hasUpgrade("f", 31)?2.5:5).add(1))
 		},
 		doReset(resettingLayer) {
-			if (layers[resettingLayer].row > this.row) layerDataReset("f", (hasUpgrade("m", 12)? ["upgrades"] : []))
+			if (layers[resettingLayer].row > this.row) layerDataReset("f", ((hasUpgrade("m", 12)||player.mo.milestones.includes("2")) ? ["upgrades"] : []))
 		}
 });
 function buyMaxFurnaces() {
@@ -679,25 +759,33 @@ addLayer("e", {
 			11: {
 				title: "Efficiency",
 				description: "Extractors produce ores x2 faster.",
-				cost: 20
+				cost() {
+					return (inChallenge("mo", 31)&&((player.e.upgrades.length+player.f.upgrades.length+player.p.upgrades.length+player.m.upgrades.length)>=20))?Infinity:20;
+				}
 			},
 			12: {
 				title: "Optimization",
 				description: "Double extractor gain.",
-				cost: 100
+				cost() {
+					return (inChallenge("mo", 31)&&((player.e.upgrades.length+player.f.upgrades.length+player.p.upgrades.length+player.m.upgrades.length)>=20))?Infinity:100;
+				}
 			},
 			13: {
 				title: "Self-generating",
 				description: "Gain more ores based on ores.",
-				cost: 500,
+				cost() {
+					return (inChallenge("mo", 31)&&((player.e.upgrades.length+player.f.upgrades.length+player.p.upgrades.length+player.m.upgrades.length)>=20))?Infinity:500;
+				},
 				effect() {
 					return hasUpgrade("e", 24) ? player.points.add(1).min("1e1000").pow(0.2).mul(player.points.div("1e1000").max(0).add(1.5).log(1.5).pow(0.5)) : player.points.add(2).log(2)
-				},
+				}
 			},
 			14: {
 				title: "Meta upgrade",
 				description: "Gain more ores based on upgrades.",
-				cost: 5e3,
+				cost() {
+					return (inChallenge("mo", 31)&&((player.e.upgrades.length+player.f.upgrades.length+player.p.upgrades.length+player.m.upgrades.length)>=20))?Infinity:5e3;
+				},
 				effect() {
 					return Decimal.pow(3, player.e.upgrades.length)
 				},
@@ -708,7 +796,9 @@ addLayer("e", {
 			21: {
 				title: "Engineering",
 				description: "Interact with the core properties of extractors.",
-				cost: 1e5,
+				cost() {
+					return (inChallenge("mo", 31)&&((player.e.upgrades.length+player.f.upgrades.length+player.p.upgrades.length+player.m.upgrades.length)>=20))?Infinity:1e5;
+				},
 				unlocked() {
 					return player.f.milestones.includes("0")||hasUpgrade("m", 11)
 				}
@@ -716,7 +806,9 @@ addLayer("e", {
 			22: {
 				title: "Smelted Extractor",
 				description: "Metal boost extractor gain.",
-				cost: 2e9,
+				cost() {
+					return (inChallenge("mo", 31)&&((player.e.upgrades.length+player.f.upgrades.length+player.p.upgrades.length+player.m.upgrades.length)>=20))?Infinity:2e9;
+				},
 				unlocked() {
 					return player.f.milestones.includes("0")||hasUpgrade("m", 11)
 				},
@@ -727,7 +819,9 @@ addLayer("e", {
 			23: {
 				title: "Scaling",
 				description: "Scaled motor scaling starts later, and is weakened.",
-				cost: 1e12,
+				cost() {
+					return (inChallenge("mo", 31)&&((player.e.upgrades.length+player.f.upgrades.length+player.p.upgrades.length+player.m.upgrades.length)>=20))?Infinity:1e12;
+				},
 				unlocked() {
 					return player.f.milestones.includes("0")||hasUpgrade("m", 11)
 				}
@@ -735,7 +829,9 @@ addLayer("e", {
 			24: {
 				title: "Self improvement",
 				description: "Self-generating's formula is better.",
-				cost: 3e15,
+				cost() {
+					return (inChallenge("mo", 31)&&((player.e.upgrades.length+player.f.upgrades.length+player.p.upgrades.length+player.m.upgrades.length)>=20))?Infinity:3e15;
+				},
 				unlocked() {
 					return player.f.milestones.includes("0")||hasUpgrade("m", 11)
 				}
@@ -743,7 +839,9 @@ addLayer("e", {
 			31: {
 				title: "Over-Engineering",
 				description: "Add 2 to motor's effect base.",
-				cost: 1e120,
+				cost() {
+					return (inChallenge("mo", 31)&&((player.e.upgrades.length+player.f.upgrades.length+player.p.upgrades.length+player.m.upgrades.length)>=20))?Infinity:1e120;
+				},
 				unlocked() {
 					return player.f.milestones.includes("1")||hasUpgrade("m", 11)
 				}
@@ -751,7 +849,9 @@ addLayer("e", {
 			32: {
 				title: "Forged Extractor",
 				description: "Ember boost boosts ore gain at an increased rate.",
-				cost: 2e290,
+				cost() {
+					return (inChallenge("mo", 31)&&((player.e.upgrades.length+player.f.upgrades.length+player.p.upgrades.length+player.m.upgrades.length)>=20))?Infinity:2e290;
+				},
 				unlocked() {
 					return player.f.milestones.includes("1")||hasUpgrade("m", 11)
 				},
@@ -762,7 +862,9 @@ addLayer("e", {
 			33: {
 				title: "Friction",
 				description: "Motor boosts ember gain at a reduced rate.",
-				cost: "1e330",
+				cost() {
+					return (inChallenge("mo", 31)&&((player.e.upgrades.length+player.f.upgrades.length+player.p.upgrades.length+player.m.upgrades.length)>=20))?Infinity:"1e330"
+				},
 				unlocked() {
 					return (player.f.milestones.includes("1")&&player.f.flame.gt(0))||hasUpgrade("m", 11)
 				},
@@ -773,7 +875,9 @@ addLayer("e", {
 			34: {
 				title: "Forged Components",
 				description: "All components gain free levels from flame.",
-				cost: "1e436",
+				cost() {
+					return (inChallenge("mo", 31)&&((player.e.upgrades.length+player.f.upgrades.length+player.p.upgrades.length+player.m.upgrades.length)>=20))?Infinity:"1e436";
+				},
 				unlocked() {
 					return (player.f.milestones.includes("1")&&player.f.flame.gt(0))||hasUpgrade("m", 11)
 				}
@@ -781,7 +885,9 @@ addLayer("e", {
 			41: {
 				title: "More Optimization",
 				description: "The exponent for extractor gain is better.",
-				cost: "1e580",
+				cost() {
+					return (inChallenge("mo", 31)&&((player.e.upgrades.length+player.f.upgrades.length+player.p.upgrades.length+player.m.upgrades.length)>=20))?Infinity:"1e580";
+				},
 				unlocked() {
 					return hasUpgrade("m", 11)
 				}
@@ -789,7 +895,9 @@ addLayer("e", {
 			42: {
 				title: "Even More Optimization",
 				description: "Active furnaces only divide ore gain by 1.001 but metal gain stays the same as if it was 1.1.",
-				cost: "2e860",
+				cost() {
+					return (inChallenge("mo", 31)&&((player.e.upgrades.length+player.f.upgrades.length+player.p.upgrades.length+player.m.upgrades.length)>=20))?Infinity:"2e860";
+				},
 				unlocked() {
 					return hasUpgrade("m", 11)
 				}
@@ -797,7 +905,9 @@ addLayer("e", {
 			43: {
 				title: "Rich In Ores",
 				description: "Improve Depth's effect formula.",
-				cost: "1e875",
+				cost() {
+					return (inChallenge("mo", 31)&&((player.e.upgrades.length+player.f.upgrades.length+player.p.upgrades.length+player.m.upgrades.length)>=20))?Infinity:"1e875";
+				},
 				unlocked() {
 					return hasUpgrade("m", 11)
 				}
@@ -805,7 +915,9 @@ addLayer("e", {
 			44: {
 				title: "Oil Rigs Too",
 				description: "Extractors start producing oil.",
-				cost: "1e1800",
+				cost() {
+					return (inChallenge("mo", 31)&&((player.e.upgrades.length+player.f.upgrades.length+player.p.upgrades.length+player.m.upgrades.length)>=20))?Infinity:"1e1800"
+				},
 				unlocked() {
 					return hasUpgrade("m", 11)
 				},
@@ -986,7 +1098,7 @@ addLayer("e", {
 			if (hasUpgrade("e", 44)) Vue.set(hotkeys, "o", {key: "o", desc: "o: Toggle oil burning", onPress() {layers.e.clickables[11].onClick()}, layer: "e"}) 
 		},
 		doReset(resettingLayer) {
-			if (layers[resettingLayer].row > this.row) layerDataReset("e", (hasUpgrade("m", 11)? ["upgrades"] : []))
+			if (layers[resettingLayer].row > this.row) layerDataReset("e", ((hasUpgrade("m", 11)||player.mo.milestones.includes("2")) ? ["upgrades"] : []))
 		}
 });
 addLayer("p", {
@@ -996,7 +1108,12 @@ addLayer("p", {
 	row: 0,
 	startData() { return {
 		unlocked: false,
-		points: new Decimal(0)
+		points: new Decimal(0),
+		structureData: {
+			1: new Decimal(0),
+			2: new Decimal(0),
+			3: new Decimal(0)
+		}
 	}},
 	color: "#888a8f",
 	requires: new Decimal(1),
@@ -1020,7 +1137,9 @@ addLayer("p", {
 			effectDescription() {
 				return `/${this.effect()}`
 			},
-			cost: "1e550"
+			cost() {
+				return (inChallenge("mo", 31)&&((player.e.upgrades.length+player.f.upgrades.length+player.p.upgrades.length+player.m.upgrades.length)>=20))?Infinity:"1e550";
+			}
 		},
 		12: {
 			title: "Questionable Structural Integrity II",
@@ -1028,7 +1147,9 @@ addLayer("p", {
 			effect() {
 				return player.p.points.add(1).pow(0.2)
 			},
-			cost: "1e600"
+			cost() {
+				return (inChallenge("mo", 31)&&((player.e.upgrades.length+player.f.upgrades.length+player.p.upgrades.length+player.m.upgrades.length)>=20))?Infinity:"1e600";
+			}
 		},
 		13: {
 			title: "Questionable Burning Practices",
@@ -1036,7 +1157,9 @@ addLayer("p", {
 			effect() {
 				return player.p.points.add(1).pow(0.1)
 			},
-			cost: "1e700"
+			cost() {
+				return (inChallenge("mo", 31)&&((player.e.upgrades.length+player.f.upgrades.length+player.p.upgrades.length+player.m.upgrades.length)>=20))?Infinity:"1e700";
+			}
 		},
 		14: {
 			title: "Excessive Burning Practices",
@@ -1048,7 +1171,36 @@ addLayer("p", {
 			currencyLayer() {
 				return "e"
 			},
-			cost: "1e1500"
+			cost() {
+				return (inChallenge("mo", 31)&&((player.e.upgrades.length+player.f.upgrades.length+player.p.upgrades.length+player.m.upgrades.length)>=20))?Infinity:"1e1500";
+			}
+		}
+	},
+	buyables: {
+		rows: 1,
+		cols: 1,
+		11: {
+			title: "Plastic structures",
+			display() {
+				return `<h3>Plastic Structures</h3><br>
+				<h2>Amount:</h2><h3> ${format(getBuyableAmount("p", 11))}</h3>
+				<h2>Cost:</h2><h3> ${format(this.cost())}</h3>`
+			},
+			buy() {
+				if (this.canAfford()) {
+					player.p.points = player.p.points.sub(this.cost());
+					setBuyableAmount("p", 11, getBuyableAmount("p", 11).add(1));
+				}
+			},
+			cost() {
+				return Decimal.pow(1e100, getBuyableAmount("p", 11).pow(2)).mul("1e8888")
+			},
+			canAfford() {
+				return player.p.points.gte(this.cost())
+			},
+			unlocked() {
+				return hasUpgrade("mo", 21)
+			}
 		}
 	},
 	update(diff) {
@@ -1058,11 +1210,50 @@ addLayer("p", {
 			if (getBuyableAmount("m", 12).gt(0)) player.p.unlocked = true;
 		}
 	},
+	resetsNothing() {
+		return player.mo.milestones.includes("1")
+	},
 	tabFormat: [
-	"main-display", ["raw-html", function() {return `(${format(player.e.oil.pow(0.5).mul(buyableEffect("m", 12)))}/s)<br><br>`}], "upgrades"
+	"main-display", ["raw-html", function() {return `(${format(player.e.oil.pow(0.5).mul(buyableEffect("m", 12)))}/s)<br><br>`}], "upgrades", "buyables", ["raw-html", function () {
+		return getBuyableAmount("p", 11).gt(0)?`You have ${format(getBuyableAmount("p", 11).sub(player.p.structureData[1]).sub(player.p.structureData[2]).sub(player.p.structureData[3]))} free structures.
+		<br><br>
+		<div style="display: flex; justify-content: center">
+			<div style="display: flex; flex-direction: column; margin: 3px; justify-content: flex-start;">
+			<span style="margin: 2px; text-align: left;">Structurally dangerous factories: </span>
+			<span style="margin: 2px; text-align: left;">Furnace smugglers: </span>
+			<span style="margin: 2px; text-align: left;">Uncontrolled burn: </span>
+			</div>
+			<div style="display: flex; flex-direction: column; margin: 3px;">
+			<span><input type="range" style="width: 15em" step="1" min="0" max="${getBuyableAmount("p", 11)}" value="${player.p.structureData[1]}" oninput="
+			if (Decimal.gt(this.value, getBuyableAmount('p', 11).sub(player.p.structureData[2]).sub(player.p.structureData[3]))) {this.value = getBuyableAmount('p', 11).sub(player.p.structureData[2]).sub(player.p.structureData[3]).toString()} player.p.structureData[1] = new Decimal(this.value)
+			"/></span>
+			<span><input type="range" style="width: 15em" step="1" min="0" max="${getBuyableAmount("p", 11)}" value="${player.p.structureData[2]}" oninput="
+			if (Decimal.gt(this.value, getBuyableAmount('p', 11).sub(player.p.structureData[1]).sub(player.p.structureData[3]))) {this.value = getBuyableAmount('p', 11).sub(player.p.structureData[1]).sub(player.p.structureData[3]).toString()} player.p.structureData[2] = new Decimal(this.value)
+			"/></span>
+			<span><input type="range" style="width: 15em" step="1" min="0" max="${getBuyableAmount("p", 11)}" value="${player.p.structureData[3]}" oninput="
+			if (Decimal.gt(this.value, getBuyableAmount('p', 11).sub(player.p.structureData[2]).sub(player.p.structureData[1]))) {this.value = getBuyableAmount('p', 11).sub(player.p.structureData[2]).sub(player.p.structureData[1]).toString()} player.p.structureData[3] = new Decimal(this.value)
+			"/></span>
+			</div>
+		</div>
+		<br><br>
+		You have ${format(player.p.structureData[1])} structures to structurally dangerous factories, making post-1000 factory scaling start ${format(tmp.p.effect[1])} later.
+		<br>
+		You have ${format(player.p.structureData[2])} structures to furnace smuggling, making factory 1 softcap start ${format(tmp.p.effect[2])} later.
+		<br>
+		You have ${format(player.p.structureData[3])} structures dedicated to uncontrolled burning, making post-250 ember speed scaling start ${format(tmp.p.effect[3])} later.`:""
+	}]
 	],
 	doReset(resettingLayer) {
-		if (resettingLayer == "m") layerDataReset("p", ["upgrades", "challenges"])
+		if (layers[resettingLayer].row == 1) layerDataReset("p", ["upgrades", "challenges", "buyables", "structureData"]);
+		else if (resettingLayer == "mo") layerDataReset("p", player.mo.milestones.includes("2")?["upgrades", "challenges", "buyables", "structureData"]:[]);
+		else if (layers[resettingLayer].row > 1) layerDataReset("p", [])
+	},
+	effect() {
+		return {
+			1: player.p.structureData[1].mul(5).pow(1.5),
+			2: player.p.structureData[2].pow(2).mul(2),
+			3: player.p.structureData[3].pow(1.6).mul(5)
+		}
 	}
 })
 addLayer("m", {
@@ -1081,7 +1272,8 @@ addLayer("m", {
 			bricks: new Decimal(0),
 			active: new Decimal(0),
 			furnaceTick: 0,
-			usedBricks: new Decimal(0)
+			usedBricks: new Decimal(0),
+			moChallLeft: new Decimal(0)
 		}},
 		color: "#8f1402",
 		requires: new Decimal("1e1080"), // Can be a function that takes requirement increases into account
@@ -1093,7 +1285,7 @@ addLayer("m", {
 			return player.m.points.add(1).mul(1e85)
 		},
 		exponent() {
-			return player.m.points.sub(20).max(1).pow(0.01).mul(player.m.points.sub(100).max(1).pow(0.05))
+			return player.m.points.sub(20).max(1).pow(0.01).mul(player.m.points.sub(100).max(1).pow(hasUpgrade("mo", 15)?0.035:0.05))
 		},
 		gainMult() { // Calculate the multiplier for main currency from bonuses
 			mult = new Decimal(1)
@@ -1115,11 +1307,13 @@ addLayer("m", {
 		layerShown(){return player.m.unlocked||player.points.gte("1e1000")},
 		upgrades: {
 			rows: 3,
-			cols: 4,
+			cols: 5,
 			11: {
 				title: "Extractor Manufacturer",
 				description: "Unlock more extractor upgrades, and keep them on reset.",
-				cost: 2,
+				cost() {
+					return (inChallenge("mo", 31)&&((player.e.upgrades.length+player.f.upgrades.length+player.p.upgrades.length+player.m.upgrades.length)>=20))?Infinity:2;
+				},
 				onPurchase() {
 					player.m.active = player.m.active.min(player.m.points).max(0);
 				}
@@ -1127,7 +1321,9 @@ addLayer("m", {
 			12: {
 				title: "Furnace Quality Control",
 				description: "Keep furnace upgrades on reset.",
-				cost: 7,
+				cost() {
+					return (inChallenge("mo", 31)&&((player.e.upgrades.length+player.f.upgrades.length+player.p.upgrades.length+player.m.upgrades.length)>=20))?Infinity:7;
+				},
 				onPurchase() {
 					player.m.active = player.m.active.min(player.m.points).max(0);
 				}
@@ -1135,17 +1331,34 @@ addLayer("m", {
 			13: {
 				title: "Actual Manufacturing",
 				description: "Unlock factories.",
-				cost: 30,
+				cost() {
+					return (inChallenge("mo", 31)&&((player.e.upgrades.length+player.f.upgrades.length+player.p.upgrades.length+player.m.upgrades.length)>=20))?Infinity:30;
+				},
 				onPurchase() {
 					player.m.active = player.m.active.min(player.m.points).max(0);
 				}
 			},
 			14: {
 				title: "Brick Manufacturing",
-				description: "Each active manufacturer produces 1 brick instead of 0.1.",
-				cost: 40,
+				description: "Produce bricks 10x faster.",
+				cost() {
+					return (inChallenge("mo", 31)&&((player.e.upgrades.length+player.f.upgrades.length+player.p.upgrades.length+player.m.upgrades.length)>=20))?Infinity:40;
+				},
 				unlocked() {
 					return hasUpgrade("f", 13)
+				},
+				onPurchase() {
+					player.m.active = player.m.active.min(player.m.points).max(0);
+				}
+			},
+			15: {
+				title: "Sacrifice",
+				description: "Remove all of your manufacturers past 80 to unlock the next layer.",
+				cost() {
+					return player.m.points.sub(80)
+				},
+				unlocked() {
+					return player.m.points.gte(80)&&!player.mo.unlocked
 				},
 				onPurchase() {
 					player.m.active = player.m.active.min(player.m.points).max(0);
@@ -1154,7 +1367,9 @@ addLayer("m", {
 			21: {
 				title: "Untimewall Gaming",
 				description: "Factory 1's interval is reduced to one second.",
-				cost: 10000,
+				cost() {
+					return (inChallenge("mo", 31)&&((player.e.upgrades.length+player.f.upgrades.length+player.p.upgrades.length+player.m.upgrades.length)>=20))?Infinity:10000;
+				},
 				currencyDisplayName: "bricks",
 				currencyInternalName() {
 					return "bricks"
@@ -1166,7 +1381,9 @@ addLayer("m", {
 			22: {
 				title: "Timewalled Gaming again",
 				description: "Factory one raises furnace hardcap to 100 instead of 50 per level.",
-				cost: 50000,
+				cost() {
+					return (inChallenge("mo", 31)&&((player.e.upgrades.length+player.f.upgrades.length+player.p.upgrades.length+player.m.upgrades.length)>=20))?Infinity:50000;
+				},
 				currencyDisplayName: "bricks",
 				currencyInternalName() {
 					return "bricks"
@@ -1178,7 +1395,9 @@ addLayer("m", {
 			23: {
 				title: "The Burning Tree",
 				description: "Oil burning halves oil production instead, is always activated, and the effects are much more powerful.",
-				cost: 2000000,
+				cost() {
+					return (inChallenge("mo", 31)&&((player.e.upgrades.length+player.f.upgrades.length+player.p.upgrades.length+player.m.upgrades.length)>=20))?Infinity:2000000
+				},
 				currencyDisplayName: "bricks",
 				currencyInternalName() {
 					return "bricks"
@@ -1263,23 +1482,30 @@ addLayer("m", {
 					return `<br><h3>Creates a furnace every ${hasUpgrade("m", 21)?"1 second":"5 seconds"}. (count toward scaling) Fifth level nerfs ore to metal softcap. Also increases furnaces cap.</h3><br>
 					<h2>Currently:</h2><h3> ${format(this.effect().div((((!hasUpgrade("m", 21))*4)+1)), 2)}/s</h3>
 					<h2>Cost:</h2><h3> ${format(this.cost())} bricks</h3>
-					<h3>Furnaces capped at ${format(this.effect().min(50).mul(hasUpgrade("m", 22)?100:50).add(this.effect().sub(50).max(0).mul(2500).pow(0.5).floor()).add(1000))}</h3>`
+					<h3>Furnaces capped at ${format(this.effect().min(tmp.p.effect[2].add(50)).mul(hasUpgrade("m", 22)?100:50).add(this.effect().sub(50).sub(tmp.p.effect[2]).max(0).mul(2500).pow(0.5).floor()).add(1000))}</h3>`
 				},
 				cost() {
 					let T = getBuyableAmount("m", 11).add(getBuyableAmount("m", 12)).add(getBuyableAmount("m", 13)).add(1);
-					return T.mul(T.add(1)).mul(T.mul(2).add(1)).mul(2).mul(T.add(2)).div(hasUpgrade("p", 11)?upgradeEffect("p", 11):1);
+					if (hasUpgrade("mo", 12) && !(inChallenge("mo", 21)||inChallenge("mo", 22))) T = getBuyableAmount("m", 11).add(1);
+					let C = T.mul(T.add(1)).mul(T.mul(2).add(1)).mul(2).mul(T.add(2)).mul(Decimal.pow(1.5, T.sub(1000).sub(tmp.p.effect[1]).max(0))).div(hasUpgrade("p", 11)?upgradeEffect("p", 11):1);
+					if (inChallenge("mo", 22)) return C.mul(1e9);
+					if (hasChallenge("mo", 21)) return C.div(challengeEffect("mo", 21));
+					return C;
 				},
 				buy() {
 					if (this.canAfford()) {
 						player.m.bricks = player.m.bricks.sub(this.cost())
 						player.m.usedBricks = player.m.usedBricks.add(this.cost())
 						setBuyableAmount("m", 11, getBuyableAmount("m", 11).add(1))
+						player.m.moChallLeft = player.m.moChallLeft.add(1)
 					}
 				},
 				effect() {
 					return getBuyableAmount("m", 11)
 				},
 				canAfford() {
+					if (player.m.moChallLeft.gte(100) && inChallenge("mo", 21)) return false;
+					if (player.m.moChallLeft.gte(20) && inChallenge("mo", 22)) return false;
 					return player.m.bricks.gte(this.cost())
 				}
 			},
@@ -1292,19 +1518,26 @@ addLayer("m", {
 				},
 				cost() {
 					let T = getBuyableAmount("m", 11).add(getBuyableAmount("m", 12)).add(getBuyableAmount("m", 13)).add(5);
-					return T.mul(T.add(1)).mul(T.mul(2).add(1)).mul(T.mul(3).add(2)).div(5).div(hasUpgrade("p", 11)?upgradeEffect("p", 11):1);
+					if (hasUpgrade("mo", 12) && !(inChallenge("mo", 21)||inChallenge("mo", 22))) T = getBuyableAmount("m", 12).add(5);
+					let C = T.mul(T.add(1)).mul(T.mul(2).add(1)).mul(T.mul(3).add(2)).div(5).mul(Decimal.pow(1.5, T.sub(1000).sub(tmp.p.effect[1]).max(0))).div(hasUpgrade("p", 11)?upgradeEffect("p", 11):1);
+					if (inChallenge("mo", 22)) return C.mul(1e9);
+					if (hasChallenge("mo", 21)) return C.div(challengeEffect("mo", 21));
+					return C;
 				},
 				buy() {
 					if (this.canAfford()) {
 						player.m.bricks = player.m.bricks.sub(this.cost())
 						player.m.usedBricks = player.m.usedBricks.add(this.cost())
 						setBuyableAmount("m", 12, getBuyableAmount("m", 12).add(1))
+						player.m.moChallLeft = player.m.moChallLeft.add(1)
 					}
 				},
 				effect() {
-					return Decimal.pow(1e20, getBuyableAmount("m", 12).sub(1).max(0))
+					return Decimal.pow(1e20, getBuyableAmount("m", 12).sub(1).max(0).min(100)).mul(getBuyableAmount("m", 12).sub(100).max(1).pow(10))
 				},
 				canAfford() {
+					if (player.m.moChallLeft.gte(100) && inChallenge("mo", 21)) return false;
+					if (player.m.moChallLeft.gte(20) && inChallenge("mo", 22)) return false;
 					return player.m.bricks.gte(this.cost())
 				}
 			},
@@ -1317,19 +1550,26 @@ addLayer("m", {
 				},
 				cost() {
 					let T = getBuyableAmount("m", 11).add(getBuyableAmount("m", 12)).add(getBuyableAmount("m", 13)).add(3);
-					return T.mul(T.add(1)).mul(T.mul(2).add(1)).mul(T.mul(3).add(2)).mul(T.mul(2)).div(20).div(hasUpgrade("p", 11)?upgradeEffect("p", 11):1);
+					if (hasUpgrade("mo", 12) && !(inChallenge("mo", 21)||inChallenge("mo", 22))) T = getBuyableAmount("m", 13).add(3);
+					let C = T.mul(T.add(1)).mul(T.mul(2).add(1)).mul(T.mul(3).add(2)).mul(T.mul(2)).div(20).mul(Decimal.pow(1.5, T.sub(1000).sub(tmp.p.effect[1]).max(0))).div(hasUpgrade("p", 11)?upgradeEffect("p", 11):1);
+					if (inChallenge("mo", 22)) return C.mul(1e9);
+					if (hasChallenge("mo", 21)) return C.div(challengeEffect("mo", 21));
+					return C;
 				},
 				buy() {
 					if (this.canAfford()) {
 						player.m.bricks = player.m.bricks.sub(this.cost())
 						player.m.usedBricks = player.m.usedBricks.add(this.cost())
 						setBuyableAmount("m", 13, getBuyableAmount("m", 13).add(1))
+						player.m.moChallLeft = player.m.moChallLeft.add(1)
 					}
 				},
 				effect() {
 					return getBuyableAmount("m", 13).add(1).pow(2.5);
 				},
 				canAfford() {
+					if (player.m.moChallLeft.gte(100) && inChallenge("mo", 21)) return false;
+					if (player.m.moChallLeft.gte(20) && inChallenge("mo", 22)) return false;
 					return player.m.bricks.gte(this.cost())
 				}
 			},
@@ -1338,6 +1578,7 @@ addLayer("m", {
 				player.m.bricks = player.m.bricks.add(player.m.usedBricks);
 				player.m.usedBricks = new Decimal(0);
 				doReset("m", true);
+				if (inChallenge("mo", 21)) player.m.moChallLeft = new Decimal(0);
 			},
 			showRespec() {
 				return true;
@@ -1347,11 +1588,11 @@ addLayer("m", {
 		branches: ["f"],
 		tabFormat: {
 			"Main": {
-				content: ["main-display", "prestige-button", ["raw-html", "<br>"], "milestones", ["raw-html", "<br>"], ["row", [["upgrade", 11], ["upgrade", 12], ["upgrade", 13], ["upgrade", 14]]]]
+				content: ["main-display", "prestige-button", ["raw-html", "<br>"], "milestones", ["raw-html", "<br>"], ["row", [["upgrade", 11], ["upgrade", 12], ["upgrade", 13], ["upgrade", 14], ["upgrade", 15]]]]
 			},
 			"Factories": {
 				content: ["main-display", "prestige-button", ["raw-html", function () {
-				return `You have ${format(player.m.bricks)} bricks. (${format(player.m.active.mul(hasUpgrade("f", 14)?1:0.1).mul(buyableEffect("m", 13)))}/s)
+				return `You have ${format(player.m.bricks)} bricks. (${format(player.m.active.mul(hasUpgrade("m", 14)?1:0.1).mul(buyableEffect("m", 13)).mul(tmp.mo.effect))}/s)
 				<br><br>
 				You have ${format(player.m.active)} active manufacturers.
 				<br><br>
@@ -1360,7 +1601,9 @@ addLayer("m", {
 				<input oninput="player.m.active = new Decimal(this.value)" type="range" min="0" max="${player.m.points}" step="1" style="width: 30em" value="${player.m.active}">
 				<br>
 				Active manufacturers subtract from the manufacturer effect, but in turn you get bricks to buy factories.
-				<br>`}
+				<br>${
+					(inChallenge("mo", 21)||inChallenge("mo", 22))?`The Spacious Factory factory purchases left: ${inChallenge("mo", 21)?Decimal.sub(100, player.m.moChallLeft):Decimal.sub(20, player.m.moChallLeft)}`:""
+				}`}
 				], "buyables", ["raw-html", `<br>Buying a factory makes all others more expensive. Use the space you have wisely.`], ["row", [["upgrade", 21], ["upgrade", 22], ["upgrade", 23], ["upgrade", 24]]]],
 				unlocked() {
 					return hasUpgrade("m", 13)
@@ -1368,34 +1611,47 @@ addLayer("m", {
 			}
 		},
 		automate() {
-			if (player.m.autoFurnace&&canReset("f")) player.m.milestones.includes("4")?buyMaxFurnaces():doReset("f");
-			if (player.m.autoFAlloc) player.f.allocated = player.f.points;
-			if (player.m.autoEBuyable) {
+			if (player.m.autoFurnace&&canReset("f")&&player.m.milestones.includes("0")) player.m.milestones.includes("4")?buyMaxFurnaces():doReset("f");
+			if (player.m.autoFAlloc&&player.m.milestones.includes("0")) player.f.allocated = player.f.points;
+			if (player.m.autoEBuyable&&player.m.milestones.includes("1")) {
 				for (var i = 11; i <= 13; i++) {
 					for (var j = 0; j < 40; j++) {
 						layers.e.buyables[i].buy()
 					}
 				}
 			}
-			if (player.m.autoFlame) layers.f.clickables[11].onClick();
-			if (player.m.autoEmber) {
-				for (var i = 11; i <= (hasUpgrade("p", 14)+13); i++) {
-					for (var j = 0; j < 40; j++) {
-						layers.f.buyables[i].buy()
+			if (player.m.autoFlame&&player.m.milestones.includes("2")) layers.f.clickables[11].onClick();
+			if (player.m.autoEmber&&player.m.milestones.includes("2")) {
+				for (var i = 10; i <= (hasUpgrade("p", 14)?20:10); i += 10) {
+					for (var j = 1; j <= (hasUpgrade("p", 14)?2:3); j++) {
+						for (var k = 0; k < 40; k++) {
+							layers.f.buyables[i+j].buy()
+						}
 					}
 				}
 			}
-			if (player.m.autoManu) buyMaxManufacturers();
+			if (player.m.autoManu&&player.m.milestones.includes("4")) buyMaxManufacturers();
 		},
-		resetsNothing: false,
+		resetsNothing() {
+			return player.mo.milestones.includes("1")
+		},
 		update(diff) {
-			player.m.bricks = player.m.bricks.add(player.m.active.mul(hasUpgrade("f", 14)?1:0.1).mul(buyableEffect("m", 13)).mul(diff));
+			player.m.bricks = player.m.bricks.add(player.m.active.mul(hasUpgrade("m", 14)?1:0.1).mul(buyableEffect("m", 13)).mul(tmp.mo.effect).mul(diff));
+			if (player.mo.milestones.includes("3")) player.m.bricks = player.m.bricks.add(player.m.points.sub(player.m.active).mul(hasUpgrade("m", 14)?0.5:0.05).mul(buyableEffect("m", 13)).mul(tmp.mo.effect).mul(diff));
 			player.m.active = player.m.active.min(player.m.points).max(0);
 			player.m.furnaceTick += diff;
 			player.f.points = player.f.points.add(Decimal.floor(player.m.furnaceTick/(((!hasUpgrade("m", 21))*4)+1)).mul(buyableEffect("m", 11)));
 			player.m.furnaceTick = player.m.furnaceTick%(((!hasUpgrade("m", 21))*4)+1);
 			if (hasUpgrade("m", 23)) player.e.burning = true; 
-			player.f.points = player.f.points.min(buyableEffect("m", 11).min(50).mul(hasUpgrade("m", 22)?100:50).add(buyableEffect("m", 11).sub(50).max(0).mul(2500).pow(0.5).floor()).add(1000));
+			player.f.points = player.f.points.min(buyableEffect("m", 11).min(tmp.p.effect[2].add(50)).mul(hasUpgrade("m", 22)?100:50).add(buyableEffect("m", 11).sub(50).sub(tmp.p.effect[2]).max(0).mul(2500).pow(0.5).floor()).add(1000));
+		},
+		doReset(resettingLayer) {
+			var keep = [];
+			if (layers[resettingLayer].row > 1) {
+				if (player.mo.milestones.includes("0")) keep.push("milestones", "autoFurnace", "autoFAlloc", "autoEBuyable", "autoFlame", "autoEmber", "autoManu");
+				if (player.mo.milestones.includes("2")) keep.push("upgrades");
+				layerDataReset("m", keep)
+			}
 		}
 })
 function buyMaxManufacturers() {
@@ -1408,3 +1664,236 @@ function buyMaxManufacturers() {
 	}
 	if (iterations>0) doReset("m", true);
 }
+addLayer("mo", {
+		name: "monopoly", // This is optional, only used in a few places, If absent it just uses the layer id.
+		symbol: "MO", // This appears on the layer's node. Default is the id with the first letter capitalized
+		position: 0, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
+		startData() { return {
+			unlocked: false,
+			points: new Decimal(0),
+			total: new Decimal(0),
+			autoFac: false
+		}},
+		color: "#88ffaa",
+		requires: new Decimal(80), // Can be a function that takes requirement increases into account
+		resource: "monopoly power", // Name of prestige currency
+		baseResource: "manufacturers", // Name of resource prestige is based on
+		baseAmount() {return player.m.points}, // Get the current amount of baseResource
+		type: "normal", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
+		exponent: 3,
+		roundUpCost: true,
+		gainMult() { // Calculate the multiplier for main currency from bonuses
+			mult = new Decimal(1)
+			if (hasUpgrade("mo", 16)) mult = mult.mul(3);
+			if (hasChallenge("mo", 22)) mult = mult.mul(challengeEffect("mo", 22));
+			return mult;
+		},
+		gainExp() { // Calculate the exponent on main currency from bonuses
+			return new Decimal(1)
+		},
+		effect() {
+			return player.mo.total.add(1).pow(2)
+		},
+		effectDescription() {
+			return `boosting brick gain by ${format(this.effect())} (based on total mp)`
+		},
+		row: 2, // Row the layer is in on the tree (0 is the first row)
+		hotkeys: [
+			{key: "M", description: "shift+m: Reset for monopoly power", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
+		],
+		layerShown(){return player.mo.unlocked||hasUpgrade("m", 15)},
+		upgrades: {
+			rows: 3,
+			cols: 6,
+			11: {
+				title: "Corruptions",
+				description: "Exponentiate ore gain (after the previous layers' boosts) based on total mp.",
+				cost: 1,
+				effect() {
+					return player.mo.total.min(Math.pow(4, 4)).add(4).log(4).add(player.mo.total.add(40).log(40)).pow(0.2)
+				},
+				effectDisplay() {
+					return `^${format(this.effect(), 3)}`
+				}
+			},
+			12: {
+				title: "Monopoly Over Land",
+				description: "Factories no longer make each other more expensive.",
+				cost: 2
+			},
+			13: {
+				title: "Rioting",
+				description: "Corruptions boosts embers at a reduced rate.",
+				cost: 20
+			},
+			14: {
+				title: "Perpetual Monopoly",
+				description: "Improve the 5th milestone to gain 200%.",
+				cost: 400
+			},
+			15: {
+				title: "Monopoly Over Manufacturing",
+				description: "Post-100 manufacturer exponent scaling is 30% weaker.",
+				cost: 10000
+			},
+			16: {
+				title: "Eww Static Boosts",
+				description: "Triple mp gain.",
+				cost: 22222
+			},
+			21: {
+				title: "Buildings of Horrendousness",
+				description: "Unlock plastic structures.",
+				cost: 50000,
+				unlocked() {
+					return hasChallenge("mo", 22)
+				}
+			}
+		},
+		milestones: {
+			0: {
+				requirementDescription: "1 monopoly power",
+				effectDescription: "Retain manufacturer milestones.",
+				done() {
+					return player.mo.points.gte(1)
+				},
+				style: {
+					width: "500px"
+				}
+			},
+			1: {
+				requirementDescription: "2 monopoly power",
+				effectDescription: "Furnaces and Manufacturers reset nothing.",
+				done() {
+					return player.mo.points.gte(2)
+				},
+				style: {
+					width: "500px"
+				}
+			},
+			2: {
+				requirementDescription: "3 monopoly power",
+				effectDescription: "Retain upgrades from the previous layers.",
+				done() {
+					return player.mo.points.gte(3)
+				},
+				style: {
+					width: "500px"
+				}
+			},
+			3: {
+				requirementDescription: "10 monopoly power",
+				effectDescription: "Automate Factories, and non active manufacturers produce bricks at half the rate.",
+				toggles: [["mo", "autoFac"]],
+				done() {
+					return player.mo.points.gte(10)
+				},
+				style: {
+					width: "500px"
+				}
+			},
+			4: {
+				requirementDescription: "50 monopoly power",
+				effectDescription: "Gain 10% of monopoly power gain per second.",
+				done() {
+					return player.mo.points.gte(50)
+				},
+				style: {
+					width: "500px"
+				}
+			}
+		},
+		challenges: {
+			rows: 3,
+			cols: 2,
+			11: {
+				name: "The Ice Factory Ⅰ",
+				challengeDescription: "The Ice Factory has just won a lawsuit against your factory. No more embers!",
+				goal: new Decimal("1e32500"),
+				rewardDescription: "<b>Rioting</b> is more effective.",
+				currencyDisplayName: "ores",
+				currencyInternalName: "points"
+			},
+			12: {
+				name: "The Ice Factory Ⅱ",
+				challengeDescription: "More lawsuits: No more furnaces!",
+				goal: new Decimal("1e5000"),
+				rewardDescription: "Ember Speed's base is 10 times larger.",
+				currencyDisplayName: "ores",
+				currencyInternalName: "points"
+			},
+			21: {
+				name: "The Spacious Factory Ⅰ",
+				challengeDescription: "You come to find your space for factories taken by a competitor. <b>Monopoly Over Land</b> is disabled, and you can buy a maximum of 100 factories.",
+				goal: new Decimal("1e55555"),
+				rewardDescription() {
+					return `Factories are cheaper based on your mp.`;
+				},
+				rewardEffect() {
+					return player.mo.points.pow(0.3)
+				},
+				currencyDisplayName: "ores",
+				currencyInternalName: "points"
+			},
+			22: {
+				name: "The Spacious Factory Ⅱ",
+				challengeDescription: "They've gotten even stronger, and you can only build a total of 20 factories, and this does not reset on respec. Nullify the previous challenge's effect, and multiplies factory costs by 1e9.",
+				goal: new Decimal("1e41750"),
+				rewardDescription() {
+					return `Unlock more upgrades, and gain more mp based on total competitor challenge completions.`;
+				},
+				rewardEffect() {
+					let t = 0;
+					for (var e in player.mo.challenges) {
+						t += Number(player.mo.challenges[e]);
+					}
+					return Decimal.pow(1.5, t);
+				},
+				currencyDisplayName: "ores",
+				currencyInternalName: "points"
+			},
+			31: {
+				name: "The Anti-Upgrade Factory Ⅰ",
+				challengeDescription: "You can buy a total of only 20 upgrades across the previous nodes.",
+				goal: new Decimal("1e41750000"),
+				rewardDescription() {
+					return `filler content`;
+				},
+				rewardEffect() {
+					return 1;
+				},
+				currencyDisplayName: "ores",
+				currencyInternalName: "points"
+			}
+		},
+		branches: ["m"],
+		tabFormat: {
+			"Main": {
+				content: ["main-display", "prestige-button", ["raw-html", () => {return `You have ${format(player.mo.total)} total monopoly power.<br>`}], "milestones", ["raw-html", "<br>"], "upgrades"]
+			},
+			"Competitors": {
+				content: ["main-display", "prestige-button", ["raw-html", "<br><br><h1>Competitors</h1><br>Wait, they still exist?"], "challenges"],
+				unlocked() {
+					return player.mo.total.gte(250)
+				}
+			},
+		},
+		automate() {
+			if (player.mo.autoFac&&(!inChallenge("mo", 21))&&(!inChallenge("mo", 22))) {
+				for (var i = 11; i <= 13; i++) {
+					layers.m.buyables[i].buy();
+					layers.m.buyables[i].buy();
+					layers.m.buyables[i].buy();
+					layers.m.buyables[i].buy();
+					layers.m.buyables[i].buy();
+					layers.m.buyables[i].buy();
+					layers.m.buyables[i].buy();
+					layers.m.buyables[i].buy();
+				}
+			}
+		},
+		resetsNothing: false,
+		update(diff) {
+			if (player.mo.milestones.includes("4")&&!player.mo.activeChallenge) addPoints("mo", tmp.mo.resetGain.mul(hasUpgrade("mo", 14)?2:0.1).mul(diff));
+		}
+})

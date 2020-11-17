@@ -80,10 +80,12 @@ function shouldNotify(layer){
 
 function canReset(layer)
 {
-	if(tmp[layer].type == "normal")
+	if(tmp[layer].type == "normal") {
+		if (layer == "mo"&&player.mo.activeChallenge) return false;
 		return tmp[layer].baseAmount.gte(tmp[layer].requires)
+	}
 	else if(tmp[layer].type== "static") {
-		if (layer == "f") return player.points.gte(getNextAt("f")) && buyableEffect("m", 11).mul(hasUpgrade("m", 22)?100:50).add(1000).gt(player.f.points);
+		if (layer == "f") return (!inChallenge("mo", 12)) && (player.points.gte(getNextAt("f")) && buyableEffect("m", 11).mul(hasUpgrade("m", 22)?100:50).add(1000).gt(player.f.points));
 		return tmp[layer].baseAmount.gte(tmp[layer].nextAt) 
 	}
 	if(tmp[layer].type == "none")

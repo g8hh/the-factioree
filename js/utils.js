@@ -448,7 +448,7 @@ function upgradeEffect(layer, id){
 }
 
 function challengeEffect(layer, id){
-	return (tmp[layer].challenges[id].effect)
+	return (tmp[layer].challenges[id].rewardEffect)
 }
 
 function buyableEffect(layer, id){
