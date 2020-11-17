@@ -1589,7 +1589,7 @@ addLayer("m", {
 		branches: ["f"],
 		tabFormat: {
 			"Main": {
-				content: ["main-display", "prestige-button", ["upgrade", 15], ["raw-html", "<br>"], "milestones", ["raw-html", "<br>"], ["row", [["upgrade", 11], ["upgrade", 12], ["upgrade", 13], ["upgrade", 14]]]]
+				content: ["main-display", "prestige-button", ["upgrade", 15], ["raw-html", "<br>Reach 80 manufacturers to unlock the next layer.<br>"], "milestones", ["raw-html", "<br>"], ["row", [["upgrade", 11], ["upgrade", 12], ["upgrade", 13], ["upgrade", 14]]]]
 			},
 			"Factories": {
 				content: ["main-display", "prestige-button", ["upgrade", 15], ["raw-html", function () {
