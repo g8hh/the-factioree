@@ -223,7 +223,7 @@ addLayer("f", {
 			11: {
 				display() {
 					return `<span>Gain <b>1</b> flame.<br>
-					${format(player.f.embers)}/${format(this.cost())} fiery embers</span>`
+					${format(player.f.embers)}/&ZeroWidthSpace;${format(this.cost())} fiery embers</span>`
 				},
 				canClick() {
 					return player.f.embers.gte(this.cost())
@@ -266,7 +266,7 @@ addLayer("f", {
 					return player.e.milestones.includes("1")
 				},
 				effect() {
-					return Decimal.pow(1.3, player.f.allocated).mul(2).sub(2).min(100000)
+					return Decimal.pow(1.3, player.f.allocated).mul(2).sub(2).min(inChallenge("mo", 42)?0.0001:100000)
 				},
 				effectDisplay() {
 					return `${format(this.effect())}%`
