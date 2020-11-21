@@ -2693,7 +2693,10 @@ addLayer("mo", {
 					You have ${format(player.mo.burningWaste)} burning waste, boosting waste gain by ${format(tmp.mo.wasteEffect.wasteBoost)}.<br>
 					You have ${format(player.mo.greenhouse)} greenhouse gas, boosting burning waste gain by ${format(tmp.mo.wasteEffect.burningWasteBoost)},
 					and raising all waste effects to ^${format(tmp.mo.wasteEffect.wasteExponent)}.<br><br><h2>Pollutions</h2>`
-				}], "buyables"]
+				}], "buyables"],
+				unlocked() {
+					return hasUpgrade("mo", 22)
+				}
 			}
 		},
 		automate() {
