@@ -1809,7 +1809,7 @@ addLayer("r", {
 		},
 		12: {
 			title: "Singular Research 2",
-			description: "Free Plastic Strucutres add free levels to all structures, and autobuy plastic structures. Swindles the goverment into giving you infinity space for plastic structures instead of the 16 cap.",
+			description: "Free Plastic Strucutres add free levels to all structures, and autobuy plastic structures. Swindles the goverment into giving you infinity space for plastic structures instead of the 20 cap.",
 			cost: 1e18,
 			style: {
 				height: "200px",
