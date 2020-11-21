@@ -2719,7 +2719,7 @@ addLayer("mo", {
 				manuCheap: player.mo.waste.pow(500).add(1).pow(tmp.mo.wasteEffect.wasteExponent),
 				wasteBoost: player.mo.burningWaste.add(1).pow(0.5),
 				electricBoost: player.mo.burningWaste.add(1.2).log(1.2),
-				burningWasteBoost: player.mo.greenhouse.pow(0.75),
+				burningWasteBoost: player.mo.greenhouse.add(1).pow(0.75),
 				wasteExponent: player.mo.greenhouse.add(20).log(20)
 			}
 		},
