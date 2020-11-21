@@ -7,7 +7,7 @@ function exponentialFormat(num, precision) {
 		m = new Decimal(1)
 		e = e.add(1)
 	}
-	return m.toStringWithDecimalPlaces(precision)+"e"+e.toStringWithDecimalPlaces(0)
+	return m.toStringWithDecimalPlaces(precision)+"e"+(e>1e9?format(e, 4):format(e, 0))
 }
 
 function commaFormat(num, precision) {

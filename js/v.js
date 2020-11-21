@@ -422,6 +422,13 @@ function loadVue() {
 		`
 	})
 
+	Vue.component('research-dropdown', {
+		props: ['layer', 'data'],
+		template: `<span><h3 v-if="data.show">{{data.text}}: <select v-model="player[layer][data.internalName]">
+			<option v-for="option in data.options">{{option}}</option>
+		</select></h3></span>`
+	})
+
 
 	app = new Vue({
 		el: "#app",
