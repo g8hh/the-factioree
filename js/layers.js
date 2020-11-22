@@ -2288,8 +2288,8 @@ addLayer("ps", {
 		"Main": {
 			content: ["main-display", "prestige-button", ["raw-html", _=>{
 				return `You have ${format(player.ps.electric)} electricity, producing ${format(tmp.ps.heatProduction)} heat per second.<br>You are producing ${format(tmp.ps.electricProduction)} electricity per second. (boosted by oil burning)
-				${player.mo.burningWaste.gt(0)?`<br>This is further boosted by your burning waste, providing a ${format(tmp.mo.wasteEffect.electricBoost)} multiplier to electricity gain.<br>
-				You have ${format(player.ps.heat)} heat, boosting ember production by ${format(tmp.ps.effect.emberBoost)}, and multiplying point speed base by ${format(tmp.ps.effect.pointSpeedBoost)}`:""}`
+				${player.mo.burningWaste.gt(0)?`<br>This is further boosted by your burning waste, providing a ${format(tmp.mo.wasteEffect.electricBoost)} multiplier to electricity gain.<br>`:""}
+				You have ${format(player.ps.heat)} heat, boosting ember production by ${format(tmp.ps.effect.emberBoost)}, and multiplying point speed base by ${format(tmp.ps.effect.pointSpeedBoost)}`
 			}], "milestones", "buyables", "upgrades"]
 		}
 	},
