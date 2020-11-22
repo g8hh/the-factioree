@@ -2080,35 +2080,27 @@ addLayer("r", {
 				player.r.buyables[i+j] = player.r.buyables[i+j].min(50)
 			}
 		}
+		updateTimes();
 		if (player.r.autoResearch != "disabled") {
 			player.r.allocated = player.r.free;
 			switch (player.r.autoResearch) {
 				case "1":
 				layers.r.buyables[11].buy();
-				if (player.r.researchScientists[11].gte(1)) updateTimes();
 				break;
 				case "2":
 				layers.r.buyables[12].buy();
-				if (player.r.researchScientists[12].gte(1)) updateTimes();
 				break;
 				case "3":
 				layers.r.buyables[13].buy();
-				if (player.r.researchScientists[13].gte(1)) {
-					updateTimes();
-					console.log(format(player.r.researchScientists[13]));
-				}
 				break;
 				case "4":
 				layers.r.buyables[21].buy();
-				if (player.r.researchScientists[21].gte(1)) updateTimes();
 				break;
 				case "5":
 				layers.r.buyables[22].buy();
-				if (player.r.researchScientists[22].gte(1)) updateTimes();
 				break;
 				case "6":
 				layers.r.buyables[23].buy();
-				if (player.r.researchScientists[23].gte(1)) updateTimes();
 				break;
 			}
 		}
