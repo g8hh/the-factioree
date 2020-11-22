@@ -2071,7 +2071,7 @@ addLayer("r", {
 					player.r.researchTimes[i+j] += diff;
 					if (player.r.researchTimes[i+j] >= player.r.researchTReq[i+j]) {
 						player.r.buyables[i+j] = player.r.buyables[i+j].add(1);
-						player.r.free = player.r.researchScientists[i+j];
+						player.r.free = player.r.free.add(player.r.researchScientists[i+j]);
 						player.r.researchScientists[i+j] = new Decimal(0);
 						player.r.researchTimes[i+j] = 0;
 					}
