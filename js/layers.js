@@ -308,6 +308,7 @@ addLayer("f", {
 					embergain = embergain.mul(tmp.m.effect.sqrt());
 					embergain = embergain.mul(tmp.ps.effect.emberBoost);
 					if (hasUpgrade("mo", 13)) embergain = embergain.pow(upgradeEffect("mo", 13));
+					if (hasUpgrade("r", 14)) embergain = embergain.mul(upgradeEffect("r", 14));
 					return embergain;
 				},
 				effectDisplay() {
@@ -1298,7 +1299,7 @@ addLayer("p", {
 	},
 	effect() {
 		return {
-			1: player.p.structureData[1].add(hasUpgrade("r", 12)?getBuyableAmount("p", 11).sub(player.p.structureData[1]).sub(player.p.structureData[2]).sub(player.p.structureData[3]):0).mul(5).pow(1.5),
+			1: player.p.structureData[1].add(hasUpgrade("r", 12)?getBuyableAmount("p", 11).sub(player.p.structureData[1]).sub(player.p.structureData[2]).sub(player.p.structureData[3]):0).mul(5).pow(2),
 			2: player.p.structureData[2].add(hasUpgrade("r", 12)?getBuyableAmount("p", 11).sub(player.p.structureData[1]).sub(player.p.structureData[2]).sub(player.p.structureData[3]):0).pow(1.5).mul(2),
 			3: player.p.structureData[3].add(hasUpgrade("r", 12)?getBuyableAmount("p", 11).sub(player.p.structureData[1]).sub(player.p.structureData[2]).sub(player.p.structureData[3]):0).pow(1.6).mul(5)
 		}
@@ -1416,7 +1417,7 @@ addLayer("m", {
 			},
 			21: {
 				title: "Untimewall Gaming",
-				description: "Factory 1's interval is reduced to one second.",
+				description: "Factory 1's interval is reduced to 0.5 seconds.",
 				cost() {
 					return (inChallenge("mo", 31)&&((player.e.upgrades.length+player.f.upgrades.length+player.p.upgrades.length+player.m.upgrades.length)>=20))?Infinity:10000;
 				},
@@ -1583,7 +1584,7 @@ addLayer("m", {
 					}
 				},
 				effect() {
-					return Decimal.pow(1e20, getBuyableAmount("m", 12).sub(1).max(0).min(inChallenge("mo", 42)?0:100)).mul(getBuyableAmount("m", 12).sub(inChallenge("mo", 42)?0:100).max(1).pow(10))
+					return Decimal.pow(1e20, getBuyableAmount("m", 12).sub(1).max(0).min(inChallenge("mo", 42)?0:100)).mul(Decimal.pow(3, getBuyableAmount("m", 12).sub(inChallenge("mo", 42)?0:100).max(0).pow(0.5)))
 				},
 				canAfford() {
 					if (player.m.moChallLeft.gte(100) && inChallenge("mo", 21)) return false;
@@ -1690,8 +1691,8 @@ addLayer("m", {
 			if (player.mo.milestones.includes("3")) player.m.bricks = player.m.bricks.add(player.m.points.sub(player.m.active).mul(hasUpgrade("m", 14)?0.5:0.05).mul(buyableEffect("m", 13)).mul(tmp.mo.effect).mul(diff));
 			player.m.active = player.m.active.min(player.m.points).max(0);
 			player.m.furnaceTick += diff;
-			player.f.points = player.f.points.add(Decimal.floor(player.m.furnaceTick/(((!hasUpgrade("m", 21))*4)+1)).mul(buyableEffect("m", 11)));
-			player.m.furnaceTick = player.m.furnaceTick%(((!hasUpgrade("m", 21))*4)+1);
+			player.f.points = player.f.points.add(Decimal.floor(player.m.furnaceTick/(((!hasUpgrade("m", 21))*4.5)+0.5)).mul(buyableEffect("m", 11)));
+			player.m.furnaceTick = player.m.furnaceTick%(((!hasUpgrade("m", 21))*4.5)+0.5);
 			if (hasUpgrade("m", 23)) player.e.burning = true; 
 			player.f.points = player.f.points.min(buyableEffect("m", 11).min(tmp.p.effect[2].add(50)).mul(hasUpgrade("m", 22)?100:50).add(buyableEffect("m", 11).sub(50).sub(tmp.p.effect[2]).max(0).mul(2500).pow(0.5).floor()).add(1000));
 		},
@@ -1740,7 +1741,7 @@ function buyMaxManufacturers() {
 addLayer("r", {
 	name: "research",
 	startData() { return {
-		unlocked: true,
+		unlocked: false,
 		points: new Decimal(0),
 		free: new Decimal(0),
 		autoResearch: "disabled",
@@ -1781,7 +1782,7 @@ addLayer("r", {
 	requires: new Decimal("1e250000"),
 	type: "static",
 	exponent() {
-		return hasUpgrade("r", 12)?0.15:0.3
+		return hasUpgrade("r", 13)?0.15:0.3
 	},
 	base: 100,
 	canBuyMax: true,
@@ -1801,7 +1802,7 @@ addLayer("r", {
 		11: {
 			title: "Singular Research 1",
 			description: "Power stations reset nothing.",
-			cost: 1e17,
+			cost: 5e17,
 			style: {
 				height: "200px",
 				width: "200px"
@@ -1810,7 +1811,7 @@ addLayer("r", {
 		12: {
 			title: "Singular Research 2",
 			description: "Free Plastic Strucutres add free levels to all structures, and autobuy plastic structures. Swindles the goverment into giving you infinity space for plastic structures instead of the 20 cap.",
-			cost: 1e18,
+			cost: 3e18,
 			style: {
 				height: "200px",
 				width: "200px"
@@ -1819,7 +1820,7 @@ addLayer("r", {
 		13: {
 			title: "Singular Research 3",
 			description: "Automatically research, and researching resets nothing. Research point gain is much better, and halve all research times.",
-			cost: 1e29,
+			cost: 3e19,
 			style: {
 				height: "200px",
 				width: "200px"
@@ -1837,7 +1838,7 @@ addLayer("r", {
 		22: {
 			title: "Singular Research 5",
 			description: "Autobuy electric buyables, and they don't subtract from the electricity amount. Electric buyables are also much cheaper.",
-			cost: 1e44,
+			cost: 1e43,
 			style: {
 				height: "200px",
 				width: "200px"
@@ -1845,8 +1846,8 @@ addLayer("r", {
 		},
 		23: {
 			title: "Singular Research 6",
-			description: "Scientists are much cheaper.",
-			cost: 3e44,
+			description: "Scientists are much cheaper, and halve all research times again.",
+			cost: 1e44,
 			style: {
 				height: "200px",
 				width: "200px"
@@ -1864,7 +1865,7 @@ addLayer("r", {
 				<h3>Cost: ${format(tmp.r.buyables[31].cost)} research points</h3>`
 			},
 			cost() {
-				return Decimal.pow(1000, player.r.buyables[31].pow(hasUpgrade("r", 23)?1.05:1.25)).mul(1e10);
+				return Decimal.pow(hasUpgrade("r", 23)?100:1000, player.r.buyables[31].pow(hasUpgrade("r", 23)?1.05:1.25)).mul(1e10);
 			},
 			buy() {
 				if (this.canAfford()) {
@@ -1975,7 +1976,7 @@ addLayer("r", {
 				}
 			},
 			canAfford() {
-				return player.r.allocated.gte(1)&&player.r.researchScientists[21].eq(0)&&player.r.buyables[13].lt(50);
+				return player.r.allocated.gte(1)&&player.r.researchScientists[21].eq(0)&&player.r.buyables[21].lt(50);
 			},
 			effect() {
 				return Decimal.pow("1e2000", player.r.buyables[21].pow(0.5))
@@ -2001,10 +2002,10 @@ addLayer("r", {
 				}
 			},
 			canAfford() {
-				return player.r.allocated.gte(1)&&player.r.researchScientists[22].eq(0);
+				return player.r.allocated.gte(1)&&player.r.researchScientists[22].eq(0)&&player.r.buyables[22].lt(50);
 			},
 			effect() {
-				return Decimal.pow("1e5000", player.r.buyables[22].pow(0.3))
+				return Decimal.pow("1e5000", player.r.buyables[22].pow(0.3));
 			}
 		},
 		23: {
@@ -2076,6 +2077,39 @@ addLayer("r", {
 						player.r.researchTimes[i+j] = 0;
 					}
 				}
+				player.r.buyables[i+j] = player.r.buyables[i+j].min(50)
+			}
+		}
+		if (player.r.autoResearch != "disabled") {
+			player.r.allocated = player.r.free;
+			switch (player.r.autoResearch) {
+				case "1":
+				layers.r.buyables[11].buy();
+				if (player.r.researchScientists[11].gte(1)) updateTimes();
+				break;
+				case "2":
+				layers.r.buyables[12].buy();
+				if (player.r.researchScientists[12].gte(1)) updateTimes();
+				break;
+				case "3":
+				layers.r.buyables[13].buy();
+				if (player.r.researchScientists[13].gte(1)) {
+					updateTimes();
+					console.log(format(player.r.researchScientists[13]));
+				}
+				break;
+				case "4":
+				layers.r.buyables[21].buy();
+				if (player.r.researchScientists[21].gte(1)) updateTimes();
+				break;
+				case "5":
+				layers.r.buyables[22].buy();
+				if (player.r.researchScientists[22].gte(1)) updateTimes();
+				break;
+				case "6":
+				layers.r.buyables[23].buy();
+				if (player.r.researchScientists[23].gte(1)) updateTimes();
+				break;
 			}
 		}
 	},
@@ -2085,29 +2119,6 @@ addLayer("r", {
 		if (hasUpgrade("r", 22)) {
 			layers.ps.buyables[11].buy();
 			layers.ps.buyables[12].buy();
-		}
-		if (player.r.autoResearch != "disabled") {
-			player.r.allocated = player.r.free;
-			switch (player.r.autoResearch) {
-				case "1":
-				layers.r.buyables[11].buy();
-				break;
-				case "2":
-				layers.r.buyables[12].buy();
-				break;
-				case "3":
-				layers.r.buyables[13].buy();
-				break;
-				case "4":
-				layers.r.buyables[21].buy();
-				break;
-				case "5":
-				layers.r.buyables[22].buy();
-				break;
-				case "6":
-				layers.r.buyables[23].buy();
-				break;
-			}
 		}
 	},
 	resetsNothing() {
@@ -2121,17 +2132,23 @@ addLayer("r", {
 	}
 })
 function updateTimes() {
-	if (!player.r.researchScientists[11].gte(1)) player.r.researchTReq[11] = Math.max(300/toNumber(player.r.allocated.pow(1.2))/(hasUpgrade("r", 13)?2:1), 0.5);
-	if (!player.r.researchScientists[12].gte(1)) player.r.researchTReq[12] = Math.max(500/toNumber(player.r.allocated.pow(1.2))/(hasUpgrade("r", 13)?2:1), 0.5);
-	if (!player.r.researchScientists[13].gte(1)) player.r.researchTReq[13] = Math.max(500/toNumber(player.r.allocated.pow(1.2))/(hasUpgrade("r", 13)?2:1), 0.5);
-	if (!player.r.researchScientists[21].gte(1)) player.r.researchTReq[21] = Math.max(300/toNumber(player.r.allocated.pow(1.2))/(hasUpgrade("r", 13)?2:1), 0.5);
-	if (!player.r.researchScientists[22].gte(1)) player.r.researchTReq[22] = Math.max(450/toNumber(player.r.allocated.pow(1.2))/(hasUpgrade("r", 13)?2:1), 0.5);
-	if (!player.r.researchScientists[23].gte(1)) player.r.researchTReq[23] = Math.max(1000/toNumber(player.r.allocated.pow(1.2))/(hasUpgrade("r", 13)?2:1), 0.5);
+	if (!player.r.researchScientists[11].gte(1)) player.r.researchTReq[11] = Math.max(300/toNumber(player.r.allocated.pow(1.2))/(hasUpgrade("r", 13)?2:1)/(hasUpgrade("r", 23)?2:1), 0.5);
+	else player.r.researchTReq[11] = Math.max(300/toNumber(player.r.researchScientists[11].pow(1.2))/(hasUpgrade("r", 13)?2:1)/(hasUpgrade("r", 23)?2:1), 0.5);
+	if (!player.r.researchScientists[12].gte(1)) player.r.researchTReq[12] = Math.max(500/toNumber(player.r.allocated.pow(1.2))/(hasUpgrade("r", 13)?2:1)/(hasUpgrade("r", 23)?2:1), 0.5);
+	else player.r.researchTReq[12] = Math.max(300/toNumber(player.r.researchScientists[12].pow(1.2))/(hasUpgrade("r", 13)?2:1)/(hasUpgrade("r", 23)?2:1), 0.5);
+	if (!player.r.researchScientists[13].gte(1)) player.r.researchTReq[13] = Math.max(500/toNumber(player.r.allocated.pow(1.2))/(hasUpgrade("r", 13)?2:1)/(hasUpgrade("r", 23)?2:1), 0.5);
+	else player.r.researchTReq[13] = Math.max(300/toNumber(player.r.researchScientists[13].pow(1.2))/(hasUpgrade("r", 13)?2:1)/(hasUpgrade("r", 23)?2:1), 0.5);
+	if (!player.r.researchScientists[21].gte(1)) player.r.researchTReq[21] = Math.max(300/toNumber(player.r.allocated.pow(1.2))/(hasUpgrade("r", 13)?2:1)/(hasUpgrade("r", 23)?2:1), 0.5);
+	else player.r.researchTReq[21] = Math.max(300/toNumber(player.r.researchScientists[21].pow(1.2))/(hasUpgrade("r", 13)?2:1)/(hasUpgrade("r", 23)?2:1), 0.5);
+	if (!player.r.researchScientists[22].gte(1)) player.r.researchTReq[22] = Math.max(450/toNumber(player.r.allocated.pow(1.2))/(hasUpgrade("r", 13)?2:1)/(hasUpgrade("r", 23)?2:1), 0.5);
+	else player.r.researchTReq[22] = Math.max(300/toNumber(player.r.researchScientists[22].pow(1.2))/(hasUpgrade("r", 13)?2:1)/(hasUpgrade("r", 23)?2:1), 0.5);
+	if (!player.r.researchScientists[23].gte(1)) player.r.researchTReq[23] = Math.max(1000/toNumber(player.r.allocated.pow(1.2))/(hasUpgrade("r", 13)?2:1)/(hasUpgrade("r", 23)?2:1), 0.5);
+	else player.r.researchTReq[23] = Math.max(300/toNumber(player.r.researchScientists[23].pow(1.2))/(hasUpgrade("r", 13)?2:1)/(hasUpgrade("r", 23)?2:1), 0.5);
 }
 addLayer("ps", {
 	name: "power station",
 	startData() { return {
-		unlocked: true,
+		unlocked: false,
 		points: new Decimal(0),
 		electric: new Decimal(0),
 		heat: new Decimal(0),
@@ -2192,6 +2209,23 @@ addLayer("ps", {
 			currencyDisplayName: "heat",
 			currencyLayer: "ps",
 			currencyInternalName: "heat"
+		},
+		14: {
+			title: "Synergism",
+			description: "Heat boosts burning waste generation, and burning waste boosts embers.",
+			cost: 2e13,
+			currencyDisplayName: "heat",
+			currencyLayer: "ps",
+			currencyInternalName: "heat",
+			effect() {
+				return {
+					bWaste: player.ps.heat.add(100).log(100),
+					eBoost: player.mo.burningWaste.add(1).pow(4000)
+				}
+			},
+			effectDisplay() {
+				return `${format(this.effect().bWaste)} to burning waste, ${format(this.effect().eBoost)} to embers`
+			}
 		}
 	},
 	buyables: {
@@ -2270,8 +2304,8 @@ addLayer("ps", {
 	branches: ["f", "mo"],
 	effect() {
 		return {
-			emberBoost: player.ps.heat.pow(20).add(1),
-			pointSpeedBoost: player.ps.heat.pow(10).add(1)
+			emberBoost: player.ps.heat.pow(60).add(1),
+			pointSpeedBoost: player.ps.heat.pow(40).add(1)
 		}
 	},
 	update(diff) {
@@ -2394,7 +2428,7 @@ addLayer("mo", {
 			22: {
 				title: "Landscape of Horrendousness",
 				description: "Unlock pollutions.",
-				cost: 1000000,
+				cost: 500000,
 				unlocked() {
 					return hasChallenge("mo", 32)
 				}
@@ -2549,7 +2583,7 @@ addLayer("mo", {
 				effect() {
 					var eff = player.mo.buyables[12];
 					eff = eff.div(1000).pow(0.4);
-					eff = eff.mul(tmp.mo.wasteEffect.burningWasteBoost).mul(tmp.r.buyables[23].effect);
+					eff = eff.mul(tmp.mo.wasteEffect.burningWasteBoost).mul(tmp.r.buyables[23].effect).mul(hasUpgrade("ps", 14)?upgradeEffect("ps", 14).bWaste:1);
 					return eff;
 				}
 			},
@@ -2636,11 +2670,11 @@ addLayer("mo", {
 			},
 			31: {
 				name: "The Upgrade Factory Ⅰ",
-				challengeDescription: "You can buy a total of only 20 upgrades across the previous nodes.",
-				goal: new Decimal("1e60000"),
+				challengeDescription: "You can buy a total of only 20 upgrades across the previous nodes. Make sure your upgrades provide huge boosts!",
+				goal: new Decimal("1e45000"),
 				rewardDescription: "Multiply ore gain based on MP.",
 				rewardEffect() {
-					return player.mo.points.add(1).pow(10);
+					return player.mo.points.add(1).pow(50);
 				},
 				currencyDisplayName: "ores",
 				currencyInternalName: "points"
@@ -2648,7 +2682,7 @@ addLayer("mo", {
 			32: {
 				name: "The Upgrade Factory Ⅱ",
 				challengeDescription: "Multiply ore gain by 1e400, but you cannot buy any upgrades past row 1 of any layer.",
-				goal: new Decimal("1e2270"),
+				goal: new Decimal("1e6000"),
 				rewardDescription: "Unlock more monopoly upgrades.",
 				currencyDisplayName: "ores",
 				currencyInternalName: "points"
@@ -2702,21 +2736,14 @@ addLayer("mo", {
 		automate() {
 			if (player.mo.autoFac&&(!inChallenge("mo", 21))&&(!inChallenge("mo", 22))&&hasUpgrade("m", 13)) {
 				for (var i = 11; i <= 13; i++) {
-					layers.m.buyables[i].buy();
-					layers.m.buyables[i].buy();
-					layers.m.buyables[i].buy();
-					layers.m.buyables[i].buy();
-					layers.m.buyables[i].buy();
-					layers.m.buyables[i].buy();
-					layers.m.buyables[i].buy();
-					layers.m.buyables[i].buy();
+					for (var j = 0; j < 100; j++) {layers.m.buyables[i].buy();}
 				}
 			}
 		},
 		wasteEffect() {
 			return {
-				plasticBoost: player.mo.waste.pow(400).add(1).pow(tmp.mo.wasteEffect.wasteExponent),
-				manuCheap: player.mo.waste.pow(500).add(1).pow(tmp.mo.wasteEffect.wasteExponent),
+				plasticBoost: player.mo.waste.pow(500).add(1).pow(tmp.mo.wasteEffect.wasteExponent),
+				manuCheap: player.mo.waste.pow(2000).add(1).pow(tmp.mo.wasteEffect.wasteExponent),
 				wasteBoost: player.mo.burningWaste.add(1).pow(0.5),
 				electricBoost: player.mo.burningWaste.add(1.2).log(1.2),
 				burningWasteBoost: player.mo.greenhouse.add(1).pow(0.75),
@@ -2749,7 +2776,7 @@ addLayer("mo", {
 			} else if (!inChallenge("mo", 32)&&player.mo.chall32TestValue) {
 				player.mo.chall32TestValue = false;
 			}
-			if (player.ps.pollution > 12) {
+			if (player.mo.pollution > 12) {
 				player.e.points = player.e.points.div(Decimal.pow(100000, diff));
 				player.p.points = player.p.points.div(Decimal.pow(100000, diff));
 				player.m.bricks = player.m.bricks.div(Decimal.pow(100000, diff));

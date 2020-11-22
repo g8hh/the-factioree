@@ -41,7 +41,7 @@ function getPointGen() {
 	gain = gain.mul(buyableEffect("f", 13));
 	if (hasUpgrade("e", 32)) gain = gain.mul(upgradeEffect("e", 32));
 	if (hasChallenge("mo", 31)) gain = gain.mul(challengeEffect("mo", 31));
-	gain = gain.mul(tmp.m.effect).mul(hasUpgrade("m", 43)?player.e.burnEffect.pow(0.1):player.e.burnEffect.add(1.2).log(1.2));
+	gain = gain.mul(tmp.m.effect).mul(player.e.burnEffect.add(1.2).log(1.2));
 	if (hasUpgrade("mo", 11)) gain = gain.pow(upgradeEffect("mo", 11));
 	if (inChallenge("mo", 32)) gain = gain.mul("1e400");
 	if (player.mo.pollution) gain = gain.pow(0.5);
@@ -58,7 +58,7 @@ function addedPlayerData() { return {
 
 // Display extra things at the top of the page
 var displayThings = [
-"Current Endgame: all competitors completed, all research upgrades gained, all researches maxed, e13 500 000 ores, e11-12 monopoly power, e45 research points"
+"Current Endgame: all competitors completed, all research upgrades gained, all researches maxed, e17 500 000 ores, e11-12 monopoly power, e45 research points"
 ]
 
 // Determines when the game "ends"
