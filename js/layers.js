@@ -2754,6 +2754,8 @@ addLayer("mo", {
 				player.f.upgrades = [];
 				player.p.upgrades = [];
 				player.m.upgrades = [];
+				player.subtabs.m.mainTabs = "Main";
+				player.subtabs.e.mainTabs = "Main";
 				player.mo.chall31TestValue = true;
 			} else if (!inChallenge("mo", 31)&&player.mo.chall31TestValue) {
 				player.mo.chall31TestValue = false;
@@ -2764,6 +2766,8 @@ addLayer("mo", {
 				player.f.upgrades = [];
 				player.p.upgrades = [];
 				player.m.upgrades = [];
+				player.subtabs.m.mainTabs = "Main";
+				player.subtabs.e.mainTabs = "Main";
 				player.mo.chall32TestValue = true;
 			} else if (!inChallenge("mo", 32)&&player.mo.chall32TestValue) {
 				player.mo.chall32TestValue = false;
