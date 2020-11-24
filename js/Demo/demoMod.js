@@ -11,8 +11,8 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "2.1.3.1",
-	name: " We should have thought of this sooner!",
+	num: "2.2.2",
+	name: "Uprooted",
 }
 
 // If you add new functions anywhere inside of a layer, and those functions have an effect when called, add them here.

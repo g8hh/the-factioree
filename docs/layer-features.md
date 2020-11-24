@@ -137,6 +137,8 @@ Key:
 - prestigeButtonText(): **Sometimes required**, Use this to make the entirety of the text a Prestige button contains. Only required for custom layers,
                         but usable by all types. 
 
+- passiveGeneration(): **optional**, returns a regular number. You automatically generate your gain times this number every second (does nothing if absent)
+        This is good for automating Normal layers.
 
 
 ## Tree/node features
