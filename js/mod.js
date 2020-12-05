@@ -49,6 +49,7 @@ function getPointGen() {
 	if (hasUpgrade("mo", 24)) gain = gain.mul(upgradeEffect("mo", 24));
 	if (hasUpgrade("ps", 12)) gain = gain.mul(upgradeEffect("ps", 12));
 	gain = gain.mul(tmp.r.buyables[11].effect);
+	gain = gain.mul(tmp.l.effect.oregain);
 	return gain
 }
 

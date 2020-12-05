@@ -1,7 +1,6 @@
 # The Modding Tree changelog:
 
 
-
 ### v2.2.2 - 11/22/20
 - Fixed right half of the screen being unclickable in some circumstances.
 - Fixed tree branches being offset.
@@ -195,7 +194,6 @@ which will break old things)
 - Fixed a big save issue. If you use a unique mod id, your save will never conflict with other mods.
 - Added a configurable offline time limit in modinfo at the top of index.html. (default 1 hour)
 - Added a few minor features, and updated the docs with new information.
-
 
 
 ### v1.1.1:
