@@ -69,6 +69,17 @@ addLayer("f", {
 	gainExp() { // Calculate the exponent on main currency from bonuses
 		return Decimal.div(1, player.f.points.sub(4).max(1)).pow(0.1)
 	},
+	metal() {
+		var notAsSoft = [Decimal.pow(2, player.f.allocated.min(hasUpgrade("f", 52)?28:16)),
+		Decimal.pow(1.2, player.f.allocated.sub(hasUpgrade("f", 52)?28:16).min(hasUpgrade("f", 52)?28:16).max(0)),
+		player.f.allocated.sub(hasUpgrade("f", 52)?56:32).max(1).pow(0.3)];
+
+		var soft = Decimal.pow(1.4, player.f.allocated.min(inChallenge("mo", 42)?0:2000)).mul(player.f.allocated.sub(inChallenge("mo", 42)?0:1999).max(1).pow(2.5));
+
+		var f13upg = hasUpgrade("f", 13)?upgradeEffect("f", 13):1;
+
+		return (getBuyableAmount("m", 11).gte(5)?soft:notAsSoft[0].mul(notAsSoft[1]).mul(notAsSoft[2])).mul(0.003).mul(f13upg)
+	},
 	row: 0, // Row the layer is in on the tree (0 is the first row)
 	milestones: {
 		0: {
@@ -106,11 +117,11 @@ addLayer("f", {
 			title: "Ember boost",
 			display() {
 				return `<br><br><h3>Boost ember gain.</h3><br>
-				<h2>Currently:</h2><h3> ${`${format(getBuyableAmount("f", 11), 0)}${getBuyableAmount("f", 12).eq(0)?
+				<span style="font-size: 12px">Currently: ${`${format(getBuyableAmount("f", 11), 0)}${getBuyableAmount("f", 12).eq(0)?
 				"":
 				`+${format(getBuyableAmount("f", 12).mul(1.5).add(getBuyableAmount("f", 13).mul(2)).add((hasUpgrade("m", 23)?player.e.burnEffect.add(2).log(2).log(2).floor():player.e.burnEffect.add(2).log(2).log(3).floor())))}`}`}</h3>
-				<h2>Cost:</h2><h3> ${format(this.cost())} fiery embers</h3>
-				<h2>Effect:</h2><h3> x${format(this.effect())}</h3>`
+				Cost: ${format(this.cost())} fiery embers
+				Effect: x${format(this.effect())}</span>`
 			},
 			cost() {
 				return Decimal.pow(4, getBuyableAmount("f", 11).sub(50).max(0).pow(hasUpgrade("f", 34)?2:3).div(hasUpgrade("f", 34)?5:3).add(getBuyableAmount("f", 11).pow(hasUpgrade("f", 34)?1.5:2).div(hasUpgrade("f", 34)?6:4).add(getBuyableAmount("f", 11)).mul(layers.f.flameEffect()))).mul(100).mul(hasUpgrade("f", 34)?upgradeEffect("f", 34):1)
@@ -135,11 +146,11 @@ addLayer("f", {
 			title: "Ember speed",
 			display() {
 				return `<br><br><h3>Boost ember gain, and gives extra levels to the previous upgrade.</h3><br>
-				<h2>Currently:</h2><h3> ${`${format(getBuyableAmount("f", 12), 0)}${getBuyableAmount("f", 13).eq(0)?
+				<span style="font-size: 12px">Currently: ${`${format(getBuyableAmount("f", 12), 0)}${getBuyableAmount("f", 13).eq(0)?
 				"":
 				`+${format(getBuyableAmount("f", 13).mul(0.25).add(hasUpgrade("m", 23)?player.e.burnEffect.add(2).log(2).log(2).floor():player.e.burnEffect.add(2).log(2).log(3).floor()))}`}`}</h3>
-				<h2>Cost:</h2><h3> ${format(this.cost())} fiery embers</h3>
-				<h2>Effect:</h2><h3> x${format(this.effect())}</h3>`
+				Cost: ${format(this.cost())} fiery embers
+				Effect: x${format(this.effect())}</span>`
 			},
 			cost() {
 				return Decimal.pow(11.5, getBuyableAmount("f", 12).sub(inChallenge("mo", 42)?0:250).sub(inChallenge("mo", 42)?0:tmp.p.effect[3]).max(0).pow(6).add(getBuyableAmount("f", 12).pow(hasUpgrade("f", 34)?2.4:4).div(10)).add(getBuyableAmount("f", 12)).mul(layers.f.flameEffect())).mul(10000).mul(hasUpgrade("f", 34)?upgradeEffect("f", 34):1)
@@ -164,9 +175,9 @@ addLayer("f", {
 			title: "Point speed",
 			display() {
 				return `<br><br><h3>Boost point gain, and gives extra levels to the previous upgrades.</h3><br>
-				<h2>Currently:</h2><h3> ${format(getBuyableAmount("f", 13), 0)}${(hasUpgrade("m", 23)?player.e.burnEffect.add(2).log(2).log(2).floor():player.e.burnEffect.add(2).log(2).log(3).floor()).gt(0)?`+${format(hasUpgrade("m", 23)?player.e.burnEffect.add(2).log(2).log(2).floor():player.e.burnEffect.add(2).log(2).log(3).floor())}`:""}</h3>
-				<h2>Cost:</h2><h3> ${format(this.cost())} fiery embers</h3>
-				<h2>Effect:</h2><h3> ${format(this.effect())}</h3>`
+				<span style="font-size: 12px">Currently: ${format(getBuyableAmount("f", 13), 0)}${(hasUpgrade("m", 23)?player.e.burnEffect.add(2).log(2).log(2).floor():player.e.burnEffect.add(2).log(2).log(3).floor()).gt(0)?`+${format(hasUpgrade("m", 23)?player.e.burnEffect.add(2).log(2).log(2).floor():player.e.burnEffect.add(2).log(2).log(3).floor())}`:""}</h3>
+				Cost: ${format(this.cost())} fiery embers
+				Effect: ${format(this.effect())}</span>`
 			},
 			cost() {
 				return Decimal.pow(10, getBuyableAmount("f", 13).sub(inChallenge("mo", 42)?0:(hasUpgrade("f", 34)?15:10)).max(0).pow(hasUpgrade("f", 34)?2.6:4.5).add(getBuyableAmount("f", 13).pow(hasUpgrade("f", 34)?1.8:3).div(hasUpgrade("f", 34)?8:5).add(getBuyableAmount("f", 13)).mul(layers.f.flameEffect()))).mul(500000).mul(hasUpgrade("f", 34)?upgradeEffect("f", 34):1)
@@ -193,9 +204,9 @@ addLayer("f", {
 			title: "Point speed",
 			display() {
 				return `<br><br><h3>Boost point gain, and gives extra levels to the previous upgrades.</h3><br>
-				<h2>Currently:</h2><h3> ${format(getBuyableAmount("f", 13), 0)}${(hasUpgrade("m", 23)?player.e.burnEffect.add(2).log(2).log(2).floor():player.e.burnEffect.add(2).log(2).log(3).floor()).gt(0)?`+${format(hasUpgrade("m", 23)?player.e.burnEffect.add(2).log(2).log(2).floor():player.e.burnEffect.add(2).log(2).log(3).floor())}`:""}</h3>
-				<h2>Cost:</h2><h3> ${format(this.cost())} fiery embers</h3>
-				<h2>Effect:</h2><h3> ${format(this.effect())}</h3>`
+				<span style="font-size: 12px">Currently: ${format(getBuyableAmount("f", 13), 0)}${(hasUpgrade("m", 23)?player.e.burnEffect.add(2).log(2).log(2).floor():player.e.burnEffect.add(2).log(2).log(3).floor()).gt(0)?`+${format(hasUpgrade("m", 23)?player.e.burnEffect.add(2).log(2).log(2).floor():player.e.burnEffect.add(2).log(2).log(3).floor())}`:""}</h3>
+				Cost: ${format(this.cost())} fiery embers
+				Effect: ${format(this.effect())}</span>`
 			},
 			cost() {
 				return Decimal.pow(10, getBuyableAmount("f", 13).sub(inChallenge("mo", 42)?0:(hasUpgrade("f", 34)?15:10)).max(0).pow(hasUpgrade("f", 34)?2.6:4.5).add(getBuyableAmount("f", 13).pow(hasUpgrade("f", 34)?1.8:3).div(hasUpgrade("f", 34)?8:5).add(getBuyableAmount("f", 13)).mul(layers.f.flameEffect()))).mul(500000).mul(hasUpgrade("f", 34)?upgradeEffect("f", 34):1)
@@ -223,9 +234,9 @@ addLayer("f", {
 			title: "Ember Derivatives",
 			display() {
 				return `<br><br><h3>Raise Ember gain to an exponent.</h3><br>
-				<h2>Currently:</h2><h3> ${format(getBuyableAmount("f", 22), 0)}</h3>
-				<h2>Cost:</h2><h3> ${format(this.cost())} fiery embers</h3>
-				<h2>Effect:</h2><h3> ^${format(this.effect())}</h3>`
+				<span style="font-size: 12px">Currently: ${format(getBuyableAmount("f", 22), 0)}</h3>
+				Cost: ${format(this.cost())} fiery embers
+				Effect: ^${format(this.effect())}</span>`
 			},
 			cost() {
 				return Decimal.pow(getBuyableAmount("f", 22).add(1).pow(0.5).add(19), getBuyableAmount("f", 22).pow(3).mul(layers.f.flameEffect())).mul("1e500").mul(hasUpgrade("f", 34)?upgradeEffect("f", 34):1)
@@ -722,7 +733,7 @@ addLayer("f", {
 			<br><br>
 			<input oninput="player.f.allocated = new Decimal(this.value)" type="range" min="0" max="${player.f.points}" step="1" style="width: 30em" value="${player.f.allocated}">
 			<br>You lose a certain amount of ores per second, but your furnaces convert them into metals. 
-			Your points are divided by ${format(Decimal.pow(hasUpgrade("e", 42)?1:1.1, player.f.allocated))} per second, but for every point you lose you gain ${format(getBuyableAmount("m", 11).gte(5)?Decimal.pow(1.4, player.f.allocated.min(inChallenge("mo", 42)?0:2000)).mul(player.f.allocated.sub(inChallenge("mo", 42)?0:1999).max(1).pow(2.5)).mul(0.003).mul(hasUpgrade("f", 13)?upgradeEffect("f", 13):1):Decimal.pow(2, player.f.allocated.min(hasUpgrade("f", 52)?28:16)).mul(Decimal.pow(1.2, player.f.allocated.sub(hasUpgrade("f", 52)?28:16).min(hasUpgrade("f", 52)?28:16).max(0))).mul(Decimal.pow(player.f.allocated.sub(hasUpgrade("f", 52)?56:32).max(1), 0.3)).mul(0.003).mul(hasUpgrade("f", 13)?upgradeEffect("f", 13):1))} metals.
+			Your points are divided by ${format(Decimal.pow(hasUpgrade("e", 42)?1:1.1, player.f.allocated))} per second, but for every point you lose you gain ${format(tmp.f.metal, 3)} metals.
 			<br>` : ""
 			}]]
 		},
@@ -761,7 +772,7 @@ addLayer("f", {
 	update(diff) {
 		var pointdiff = new Decimal(player.points);
 		player.points = player.points.div(Decimal.pow(Decimal.pow(1.1, diff), player.f.allocated))
-		player.f.metals = player.f.metals.add((getBuyableAmount("m", 11).gte(5)?Decimal.pow(1.4, player.f.allocated.min(inChallenge("mo", 42)?0:2000)).mul(player.f.allocated.sub(inChallenge("mo", 42)?0:1999).max(1).pow(2.5)).mul(0.003).mul(hasUpgrade("f", 13)?upgradeEffect("f", 13):1):Decimal.pow(2, player.f.allocated.min(hasUpgrade("f", 52)?28:16)).mul(Decimal.pow(1.2, player.f.allocated.sub(hasUpgrade("f", 52)?28:16).min(hasUpgrade("f", 52)?28:16).max(0))).mul(Decimal.pow(player.f.allocated.sub(hasUpgrade("f", 52)?56:32).max(1), 0.3)).mul(0.003).mul(hasUpgrade("f", 13)?upgradeEffect("f", 13):1)).mul(pointdiff.sub(player.points)))
+		player.f.metals = player.f.metals.add(tmp.f.metal.mul(pointdiff.sub(player.points)))
 		player.f.allocated = player.f.allocated.min(player.f.points)
 		if (hasUpgrade("e", 42)) player.points = pointdiff;
 		if (hasUpgrade("f", 11)) player.e.points = player.e.points.add(tmp.e.resetGain.mul(0.01).mul(diff).mul(upgradeEffect("f", 11)));
@@ -1061,9 +1072,9 @@ addLayer("e", {
 			title: "Depth",
 			display() {
 				return `<br><br><h3>Increase the depth of extractors.</h3><br>
-				<h2>Currently:</h2><h3> ${format(getBuyableAmount("e", 11).add(hasUpgrade("e", 34)?player.f.flame.mul(2).pow(2):0).add(1).mul(10), 0)}m deep</h3>
-				<h2>Cost:</h2><h3> ${format(this.cost())} metals</h3>
-				<h2>Effect:</h2><h3> x${format(this.effect())}</h3>`
+				<span style="font-size: 12px">Currently: ${format(getBuyableAmount("e", 11).add(hasUpgrade("e", 34)?player.f.flame.mul(2).pow(2):0).add(1).mul(10), 0)}m deep</h3>
+				Cost: ${format(this.cost())} metals
+				Effect: x${format(this.effect())}</span>`
 			},
 			cost() {
 				return Decimal.pow(5, getBuyableAmount("e", 11).add(getBuyableAmount("e", 11).sub(20).max(0).pow(2).div(1.5)).mul(hasUpgrade("f", 44)?layers.f.flameEffect():1)).mul(1e8)
@@ -1088,9 +1099,9 @@ addLayer("e", {
 			title: "Amount",
 			display() {
 				return `<br><br><h3>Increase the amount of modules per depth.</h3><br>
-				<h2>Currently:</h2><h3> ${format(this.effect(), 0)} modules</h3>
-				<h2>Cost:</h2><h3> ${format(this.cost())} metals</h3>
-				<h2>Effect:</h2><h3> x${format(this.effect())}</h3>`
+				<span style="font-size: 12px">Currently: ${format(this.effect(), 0)} modules</h3>
+				Cost: ${format(this.cost())} metals
+				Effect: x${format(this.effect())}</span>`
 			},
 			cost() {
 				return Decimal.pow(10, getBuyableAmount("e", 12).add(getBuyableAmount("e", 12).sub(30).max(0).pow(2).div(1.4)).mul(hasUpgrade("f", 44)?layers.f.flameEffect():1)).mul(1e7)
@@ -1115,9 +1126,9 @@ addLayer("e", {
 			title: "Motor",
 			display() {
 				return `<br><br><h3>Increase the speed of all carts and motors in the extractor.</h3><br>
-				<h2>Currently:</h2><h3> ${format(buyableEffect("e", 13).mul(60))}rpm</h3>
-				<h2>Cost:</h2><h3> ${format(getBuyableCost("e", 13))} metals</h3>
-				<h2>Effect:</h2><h3> x${format(buyableEffect("e", 13))}</h3>`
+				<span style="font-size: 12px">Currently: ${format(buyableEffect("e", 13).mul(60))}rpm</h3>
+				Cost: ${format(getBuyableCost("e", 13))} metals
+				Effect: x${format(buyableEffect("e", 13))}</span>`
 			},
 			cost() {
 				return Decimal.pow(20, getBuyableAmount("e", 13).add(getBuyableAmount("e", 13).sub(hasUpgrade("e", 23)?6:3).max(0).pow(hasUpgrade("e", 23)?2.4:3)).mul(hasUpgrade("f", 44)?layers.f.flameEffect():1)).mul(1e7)
@@ -1300,9 +1311,8 @@ addLayer("p", {
 		11: {
 			title: "Plastic structures",
 			display() {
-				return `<h3>Plastic Structures</h3><br>
-				<h2>Amount:</h2><h3> ${format(getBuyableAmount("p", 11))}</h3>
-				<h2>Cost:</h2><h3> ${format(this.cost())}</h3>`
+				return `<span style="font-size: 12px">Amount: ${format(getBuyableAmount("p", 11))}
+				Cost: ${format(this.cost())}</span>`
 			},
 			buy() {
 				if (this.canAfford()) {
@@ -1611,10 +1621,10 @@ addLayer("m", {
 		11: {
 			title: "Factory 1",
 			display() {
-				return `<br><h3>Creates a furnace every ${hasUpgrade("m", 21)?"1 second":"5 seconds"}. (count toward scaling) Fifth level nerfs ore to metal softcap. Also increases furnaces cap.</h3><br>
-				<h2>Currently:</h2><h3> ${format(this.effect().div((((!hasUpgrade("m", 21))*4)+1)), 2)}/s</h3>
-				<h2>Cost:</h2><h3> ${format(this.cost())} bricks</h3>
-				<h3>Furnaces capped at ${format(this.effect().min(inChallenge("mo", 42)?0:tmp.p.effect[2].add(50)).mul(hasUpgrade("m", 22)?100:50).add(this.effect().sub(inChallenge("mo", 42)?0:50).sub(inChallenge("mo", 42)?0:tmp.p.effect[2]).max(0).mul(2500).pow(0.5).floor()).add(1000))}</h3>`
+				return `<br><span style="font-size: 12px">Creates a furnace every ${hasUpgrade("m", 21)?"1 second":"5 seconds"}. (count toward scaling) Fifth level nerfs ore to metal softcap. Also increases furnaces cap.<br>
+				Currently: ${format(this.effect().div((((!hasUpgrade("m", 21))*4)+1)))}/s
+				Cost: ${format(this.cost())} bricks
+				Furnaces capped at ${format(this.effect().min(inChallenge("mo", 42)?0:tmp.p.effect[2].add(50)).mul(hasUpgrade("m", 22)?100:50).add(this.effect().sub(inChallenge("mo", 42)?0:50).sub(inChallenge("mo", 42)?0:tmp.p.effect[2]).max(0).mul(2500).pow(0.5).floor()).add(1000))}</span>`
 			},
 			cost() {
 				let T = getBuyableAmount("m", 11).add(getBuyableAmount("m", 12)).add(getBuyableAmount("m", 13)).add(1);
@@ -1644,9 +1654,9 @@ addLayer("m", {
 		12: {
 			title: "Factory 2",
 			display() {
-				return `<br><h3>First level unlocks plastic, other levels boost plastic gain.</h3><br>
-				<h2>Currently:</h2><h3> x${format(this.effect(), 2)} to plastic</h3>
-				<h2>Cost:</h2><h3> ${format(this.cost())} bricks</h3>`
+				return `<br><span style="font-size: 12px">First level unlocks plastic, other levels boost plastic gain.<br>
+				Currently: x${format(this.effect())} to plastic
+				Cost: ${format(this.cost())} bricks</span>`
 			},
 			cost() {
 				let T = getBuyableAmount("m", 11).add(getBuyableAmount("m", 12)).add(getBuyableAmount("m", 13)).add(5);
@@ -1676,9 +1686,9 @@ addLayer("m", {
 		13: {
 			title: "Factory 3",
 			display() {
-				return `<br><h3>Each level increases brick gain.</h3><br>
-				<h2>Currently:</h2><h3> x${format(this.effect(), 2)} to bricks</h3>
-				<h2>Cost:</h2><h3> ${format(this.cost())} bricks</h3>`
+				return `<br><span style="font-size: 12px">Each level increases brick gain.<br>
+				Currently: x${format(this.effect(), 2)} to bricks
+				Cost: ${format(this.cost())} bricks</span>`
 			},
 			cost() {
 				let T = getBuyableAmount("m", 11).add(getBuyableAmount("m", 12)).add(getBuyableAmount("m", 13)).add(3);
@@ -1946,9 +1956,9 @@ addLayer("r", {
 		31: {
 			title: "Scientists",
 			display() {
-				return `<h3>Purchase a scientist.</h3><br>
-				<h3>You have ${format(player.r.buyables[31])} scientists.</h3><br>
-				<h3>Cost: ${format(tmp.r.buyables[31].cost)} research points</h3>`
+				return `<span style="font-size: 12px">Purchase a scientist.<br>
+				You have ${format(player.r.buyables[31])} scientists.<br>
+				Cost: ${format(tmp.r.buyables[31].cost)} research points</span>`
 			},
 			cost() {
 				return Decimal.pow(hasUpgrade("r", 23)?100:1000, player.r.buyables[31].pow(hasUpgrade("r", 23)?1.05:1.25)).mul(1e10);
@@ -1967,11 +1977,10 @@ addLayer("r", {
 		11: {
 			title: "Research 1",
 			display() {
-				return `<h3>Boosts ore generation.</h3><br>
-				${player.r.allocated.gte(1)?`<h3>Research time: ${format(player.r.researchTReq[11])}s</h3>`:""}
-				<h3>Currently: ${format(player.r.buyables[11], 0)} researches</h3>
-				<h3>Effect: ${format(tmp.r.buyables[11].effect)}</h3>
-				${player.r.researchScientists[11].gt(0)?`<h3>Time left: ${format(Math.max(player.r.researchTReq[11]-player.r.researchTimes[11], 0))}s</h3>`:""}`
+				return `<h3 style="font-weight: 500">Boosts ore generation.</h3><br>
+				<span style="font-size: 12px">${player.r.allocated.gte(1)?`Research time: ${format(player.r.researchTReq[11])}s<br><`:""}Currently: ${format(player.r.buyables[11], 0)} researches
+				Effect: ${format(tmp.r.buyables[11].effect)}
+				${player.r.researchScientists[11].gt(0)?`Time left: ${format(Math.max(player.r.researchTReq[11]-player.r.researchTimes[11], 0))}s`:""}</span>`
 			},
 			cost() {
 				return new Decimal(0);
@@ -1993,11 +2002,10 @@ addLayer("r", {
 		12: {
 			title: "Research 2",
 			display() {
-				return `<h3>Boosts electricity generation.</h3><br>
-				${player.r.allocated.gte(1)?`<h3>Research time: ${format(player.r.researchTReq[12])}s</h3>`:""}
-				<h3>Currently: ${format(player.r.buyables[12], 0)} researches</h3>
-				<h3>Effect: ${format(tmp.r.buyables[12].effect)}</h3>
-				${player.r.researchScientists[12].gt(0)?`<h3>Time left: ${format(Math.max(player.r.researchTReq[12]-player.r.researchTimes[12], 0))}s</h3>`:""}`
+				return `<h3 style="font-weight: 500">Boosts electricity generation.</h3><br>
+				<span style="font-size: 12px">${player.r.allocated.gte(1)?`Research time: ${format(player.r.researchTReq[12])}s<br>`:""}Currently: ${format(player.r.buyables[12], 0)} researches
+				Effect: ${format(tmp.r.buyables[12].effect)}
+				${player.r.researchScientists[12].gt(0)?`Time left: ${format(Math.max(player.r.researchTReq[12]-player.r.researchTimes[12], 0))}s`:""}</span>`
 			},
 			cost() {
 				return new Decimal(0);
@@ -2019,11 +2027,10 @@ addLayer("r", {
 		13: {
 			title: "Research 3",
 			display() {
-				return `<h3>Boosts heat generation.</h3><br>
-				${player.r.allocated.gte(1)?`<h3>Research time: ${format(player.r.researchTReq[13])}s</h3>`:""}
-				<h3>Currently: ${format(player.r.buyables[13], 0)} researches</h3>
-				<h3>Effect: ${format(tmp.r.buyables[13].effect)}</h3>
-				${player.r.researchScientists[13].gt(0)?`<h3>Time left: ${format(Math.max(player.r.researchTReq[13]-player.r.researchTimes[13], 0))}s</h3>`:""}`
+				return `<h3 style="font-weight: 500">Boosts heat generation.</h3><br>
+				<span style="font-size: 12px">${player.r.allocated.gte(1)?`Research time: ${format(player.r.researchTReq[13])}s<br><`:""}Currently: ${format(player.r.buyables[13], 0)} researches
+				Effect: ${format(tmp.r.buyables[13].effect)}
+				${player.r.researchScientists[13].gt(0)?`Time left: ${format(Math.max(player.r.researchTReq[13]-player.r.researchTimes[13], 0))}s`:""}</span>`
 			},
 			cost() {
 				return new Decimal(0);
@@ -2045,11 +2052,10 @@ addLayer("r", {
 		21: {
 			title: "Research 4",
 			display() {
-				return `<h3>Boosts oil generation.</h3><br>
-				${player.r.allocated.gte(1)?`<h3>Research time: ${format(player.r.researchTReq[21])}s</h3>`:""}
-				<h3>Currently: ${format(player.r.buyables[21], 0)} researches</h3>
-				<h3>Effect: ${format(tmp.r.buyables[21].effect)}</h3>
-				${player.r.researchScientists[21].gt(0)?`<h3>Time left: ${format(Math.max(player.r.researchTReq[21]-player.r.researchTimes[21], 0))}s</h3>`:""}`
+				return `<h3 style="font-weight: 500">Boosts oil generation.</h3><br>
+				<span style="font-size: 12px">${player.r.allocated.gte(1)?`Research time: ${format(player.r.researchTReq[21])}s<br><`:""}Currently: ${format(player.r.buyables[21], 0)} researches
+				Effect: ${format(tmp.r.buyables[21].effect)}
+				${player.r.researchScientists[21].gt(0)?`Time left: ${format(Math.max(player.r.researchTReq[21]-player.r.researchTimes[21], 0))}s`:""}</span>`
 			},
 			cost() {
 				return new Decimal(0);
@@ -2071,11 +2077,10 @@ addLayer("r", {
 		22: {
 			title: "Research 5",
 			display() {
-				return `<h3>Boosts extractor gain.</h3><br>
-				${player.r.allocated.gte(1)?`<h3>Research time: ${format(player.r.researchTReq[22])}s</h3>`:""}
-				<h3>Currently: ${format(player.r.buyables[22], 0)} researches</h3>
-				<h3>Effect: ${format(tmp.r.buyables[22].effect)}</h3>
-				${player.r.researchScientists[22].gt(0)?`<h3>Time left: ${format(Math.max(player.r.researchTReq[22]-player.r.researchTimes[22], 0))}s</h3>`:""}`
+				return `<h3 style="font-weight: 500">Boosts extractor gain.</h3><br>
+				<span style="font-size: 12px">${player.r.allocated.gte(1)?`Research time: ${format(player.r.researchTReq[22])}s<br><`:""}Currently: ${format(player.r.buyables[22], 0)} researches
+				Effect: ${format(tmp.r.buyables[22].effect)}
+				${player.r.researchScientists[22].gt(0)?`Time left: ${format(Math.max(player.r.researchTReq[22]-player.r.researchTimes[22], 0))}s`:""}</span>`
 			},
 			cost() {
 				return new Decimal(0);
@@ -2097,11 +2102,10 @@ addLayer("r", {
 		23: {
 			title: "Research 6",
 			display() {
-				return `<h3>Boosts all waste generations.</h3><br>
-				${player.r.allocated.gte(1)?`<h3>Research time: ${format(player.r.researchTReq[23])}s</h3>`:""}
-				<h3>Currently: ${format(player.r.buyables[23], 0)} researches</h3>
-				<h3>Effect: ${format(tmp.r.buyables[23].effect)}</h3>
-				${player.r.researchScientists[23].gt(0)?`<h3>Time left: ${format(Math.max(player.r.researchTReq[23]-player.r.researchTimes[23], 0))}s</h3>`:""}`
+				return `<h3 style="font-weight: 500">Boosts all waste generations.</h3><br>
+				<span style="font-size: 12px">${player.r.allocated.gte(1)?`Research time: ${format(player.r.researchTReq[23])}s<br><`:""}Currently: ${format(player.r.buyables[23], 0)} researches
+				Effect: ${format(tmp.r.buyables[23].effect)}
+				${player.r.researchScientists[23].gt(0)?`Time left: ${format(Math.max(player.r.researchTReq[23]-player.r.researchTimes[23], 0))}s`:""}</span>`
 			},
 			cost() {
 				return new Decimal(0);
@@ -2134,7 +2138,7 @@ addLayer("r", {
 				You cannot disable a research after activating it!<br>
 				All researches have been capped at 50 for balancing purposes.<br><br>`
 			}], ["research-dropdown", _=>{ return {
-				text: "Singular Research 4 automation",
+				text: "Research automation",
 				show: hasUpgrade("r", 21),
 				options: ["disabled", "1", "2", "3", "4", "5", "6"],
 				internalName: "autoResearch"
@@ -2142,7 +2146,7 @@ addLayer("r", {
 		},
 		"One-time researches": {
 			content: ["main-display", "prestige-button", "resource-display", "upgrades", ["research-dropdown", _=>{ return {
-				text: "Singular Research 4 automation",
+				text: "Research automation",
 				show: hasUpgrade("r", 21),
 				options: ["disabled", "1", "2", "3", "4", "5", "6"],
 				internalName: "autoResearch"
@@ -2310,10 +2314,10 @@ addLayer("ps", {
 		11: {
 			title: "Current",
 			display() {
-				return `<h3>Increase the current coming from your power stations.</h3><br>
-				<h3>Currently: ${format(tmp.ps.buyables[11].effect)} amps</h3>
-				<h3>Cost: ${format(tmp.ps.buyables[11].cost)}</h3>
-				<h3>Effect: x${format(tmp.ps.buyables[11].effect)} to electricity and heat</h3>`
+				return `<span style="font-size: 12px">Increase thecurrent coming from your power stations.<br>
+				Currently: ${format(tmp.ps.buyables[11].effect)} amps
+				Cost: ${format(tmp.ps.buyables[11].cost)}
+				Effect: x${format(tmp.ps.buyables[11].effect)} to electricity and heat</span>`
 			},
 			effect() {
 				return player.ps.buyables[11].add(1).pow(hasUpgrade("ps", 13)?1.5:1)
@@ -2334,10 +2338,10 @@ addLayer("ps", {
 		12: {
 			title: "Resistance",
 			display() {
-				return `<h3>Increase the resistance to produce more heat.</h3><br>
-				<h3>Currently: ${format(player.ps.buyables[12].add(1))} ohms</h3>
-				<h3>Cost: ${format(tmp.ps.buyables[12].cost)}</h3>
-				<h3>Effect: ${format(tmp.ps.buyables[12].effect)} to heat</h3>`
+				return `<span style="font-size: 12px">Increase theresistance to produce more heat.<br>
+				Currently: ${format(player.ps.buyables[12].add(1))} ohms
+				Cost: ${format(tmp.ps.buyables[12].cost)}
+				Effect: ${format(tmp.ps.buyables[12].effect)} to heat</span>`
 			},
 			effect() {
 				return player.ps.buyables[12].add(1).pow(2)
@@ -2724,6 +2728,59 @@ addLayer("mo", {
 					player.l.crowdfund = player.l.crowdfund.sub(this.cost());
 					player.mo.buyables[31] = player.mo.buyables[31].add(1);
 				}
+			},
+			canAfford() {
+				return player.l.crowdfund.gte(this.cost());
+			},
+			cost() {
+				return Decimal.pow(2, player.mo.buyables[31].pow(0.8)).mul(10);
+			},
+			unlocked() {
+				return player.l.upgrades.includes(11)
+			}
+		},
+		32: {
+			title: "Anti Plastic Collectors",
+			display() {
+				return `Amount: ${format(player.mo.buyables[32])}<br>
+				Clean ocean/s: ${format(tmp.mo.buyables[32].effect)}`
+			},
+			buy() {
+				if (this.canAfford()) {
+					player.l.crowdfund = player.l.crowdfund.sub(this.cost());
+					player.mo.buyables[32] = player.mo.buyables[32].add(1);
+				}
+			},
+			canAfford() {
+				return player.l.crowdfund.gte(this.cost());
+			},
+			cost() {
+				return Decimal.pow(3, player.mo.buyables[32].pow(0.9)).mul(100);
+			},
+			unlocked() {
+				return player.l.upgrades.includes(11)
+			}
+		},
+		33: {
+			title: "Anti Plastic Collectors",
+			display() {
+				return `Amount: ${format(player.mo.buyables[33])}<br>
+				Clean ocean/s: ${format(tmp.mo.buyables[33].effect)}`
+			},
+			buy() {
+				if (this.canAfford()) {
+					player.l.crowdfund = player.l.crowdfund.sub(this.cost());
+					player.mo.buyables[33] = player.mo.buyables[33].add(1);
+				}
+			},
+			canAfford() {
+				return player.l.crowdfund.gte(this.cost());
+			},
+			cost() {
+				return Decimal.pow(5, player.mo.buyables[33].pow(0.95)).mul(2000);
+			},
+			unlocked() {
+				return player.l.upgrades.includes(11)
 			}
 		}
 	},
@@ -3038,7 +3095,7 @@ addLayer("l", {
 	color: "#cceeff",
 	baseResource: "monopoly power",
 	type: "normal",
-	exponent: 0.2,
+	exponent: 0.05,
 	requires() {
 		return player.d.unlocked?Infinity:new Decimal(5e11);
 	},
@@ -3130,7 +3187,7 @@ addLayer("d", {
 	color: "#606060",
 	baseResource: "monopoly power",
 	type: "normal",
-	exponent: 0.2,
+	exponent: 0.05,
 	requires() {
 		return player.l.unlocked?Infinity:new Decimal(5e11);
 	},

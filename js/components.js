@@ -420,6 +420,15 @@ function loadVue() {
 		</select></h3></span>`
 	})
 
+	Vue.component('prestige-display', {
+		props: ['layer'],
+		template: `<main-display v-bind:style="tmp[layer].componentStyles['main-display']" :layer="layer"></main-display>
+			<div v-if="tmp[layer].type !== 'none'">
+				<prestige-button v-bind:style="tmp[layer].componentStyles['prestige-button']" :layer="layer"></prestige-button>
+			</div>
+			<resource-display v-bind:style="tmp[layer].componentStyles['resource-display']" :layer="layer"></resource-display>`
+	})
+
 	app = new Vue({
 		el: "#app",
 		data: {
