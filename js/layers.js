@@ -139,7 +139,7 @@ addLayer("f", {
 				return player.f.embers.gte(this.cost())
 			},
 			style() {
-				return {backgroundColor: this.canAfford()?"#ff4400":"bf8f8f"}
+				return {backgroundColor: this.canAfford()?"#ff440077":"#ff000044"}
 			}
 		},
 		12: {
@@ -168,7 +168,7 @@ addLayer("f", {
 				return player.f.embers.gte(this.cost())
 			},
 			style() {
-				return {backgroundColor: this.canAfford()?"#ff4400":"bf8f8f"}
+				return {backgroundColor: this.canAfford()?"#ff440077":"#ff000044"}
 			}
 		},
 		13: {
@@ -197,7 +197,7 @@ addLayer("f", {
 				return player.f.embers.gte(this.cost())
 			},
 			style() {
-				return {backgroundColor: this.canAfford()?"#ff4400":"bf8f8f"}
+				return {backgroundColor: this.canAfford()?"#ff440077":"#ff000044"}
 			}
 		},
 		21: {
@@ -227,7 +227,7 @@ addLayer("f", {
 				return player.f.embers.gte(this.cost())
 			},
 			style() {
-				return {backgroundColor: this.canAfford()?"#ff4400":"bf8f8f"}
+				return {backgroundColor: this.canAfford()?"#ff440077":"#ff000044"}
 			}
 		},
 		22: {
@@ -254,7 +254,7 @@ addLayer("f", {
 				return player.f.embers.gte(this.cost())
 			},
 			style() {
-				return {backgroundColor: this.canAfford()?"#ff4400":"bf8f8f"}
+				return {backgroundColor: this.canAfford()?"#ff440077":"#ff000044"}
 			},
 			unlocked() {
 				return hasUpgrade("p", 14)
@@ -270,7 +270,7 @@ addLayer("f", {
 		11: {
 			display() {
 				return `<span>Gain <b>1</b> flame.<br>
-				${format(player.f.embers)}/&ZeroWidthSpace;${format(this.cost())} fiery embers</span>`
+				${format(player.f.embers)} / ${format(this.cost())} fiery embers</span>`
 			},
 			canClick() {
 				return player.f.embers.gte(this.cost())
@@ -291,7 +291,7 @@ addLayer("f", {
 					borderRadius: "25%",
 					border: "4px solid",
 					borderColor: "rgba(0, 0, 0, 0.125)",
-					backgroundColor: this.canClick()?"#ff6600":"#bf8f8f",
+					backgroundColor: this.canClick()?"#ff660077":"#ff000044",
 					font: "400 13.3333px Arial"
 				}
 			},
@@ -442,8 +442,8 @@ addLayer("f", {
 			}
 		},
 		52: {
-			title: "Furnace Fire Pure Teal",
-			description: "Metal gain softcap starts 12 later, and multiply extractor gain by furnaces.",
+			title: "MORE",
+			description: "Push back metal gain softcap and multiply extractor gain by furnaces.",
 			cost() {
 				if (inChallenge("mo", 32)) return Infinity;
 				return (inChallenge("mo", 31)&&((player.e.upgrades.length+player.f.upgrades.length+player.p.upgrades.length+player.m.upgrades.length)>=20))?Infinity:157;
@@ -455,7 +455,7 @@ addLayer("f", {
 				return Decimal.pow(2, player.f.points)
 			},
 			effectDisplay() {
-				return `x${format(this.effect())} to extractors`
+				return `x${format(this.effect())}`
 			}
 		},
 		53: {
@@ -510,7 +510,7 @@ addLayer("f", {
 				return "f"
 			},
 			style() {
-				return {backgroundColor: hasUpgrade("f", 31)?"#77bf5f":(player.f.flame.gte(this.cost())?"#ff6600":"bf8f8f")}
+				return {backgroundColor: hasUpgrade("f", 31)?"#00ff0044":(player.f.flame.gte(this.cost())?"#ff660044":"#ff440044")}
 			}
 		},
 		32: {
@@ -530,7 +530,7 @@ addLayer("f", {
 				return "f"
 			},
 			style() {
-				return {backgroundColor: hasUpgrade("f", 32)?"#77bf5f":(player.f.flame.gte(this.cost())?"#ff6600":"bf8f8f")}
+				return {backgroundColor: hasUpgrade("f", 32)?"#00ff0044":(player.f.flame.gte(this.cost())?"#ff660044":"#ff440044")}
 			}
 		},
 		41: {
@@ -551,7 +551,7 @@ addLayer("f", {
 				return "f"
 			},
 			style() {
-				return {backgroundColor: hasUpgrade("f", 41)?"#77bf5f":(player.f.flame.gte(this.cost())?"#ff6600":"bf8f8f")}
+				return {backgroundColor: hasUpgrade("f", 41)?"#00ff0044":(player.f.flame.gte(this.cost())?"#ff660044":"#ff440044")}
 			}
 		},
 		42: {
@@ -572,7 +572,7 @@ addLayer("f", {
 				return "f"
 			},
 			style() {
-				return {backgroundColor: hasUpgrade("f", 42)?"#77bf5f":(player.f.flame.gte(7)?"#ff6600":"bf8f8f")}
+				return {backgroundColor: hasUpgrade("f", 42)?"#00ff0044":(player.f.flame.gte(7)?"#ff660044":"#ff440044")}
 			}
 		},
 		33: {
@@ -598,7 +598,7 @@ addLayer("f", {
 				return "f"
 			},
 			style() {
-				return {backgroundColor: hasUpgrade("f", 33)?"#77bf5f":(player.f.flame.gte(this.cost())?"#ff6600":"bf8f8f")}
+				return {backgroundColor: hasUpgrade("f", 33)?"#00ff0044":(player.f.flame.gte(this.cost())?"#ff660044":"#ff440044")}
 			}
 		},
 		43: {
@@ -619,7 +619,7 @@ addLayer("f", {
 				return "f"
 			},
 			style() {
-				return {backgroundColor: hasUpgrade("f", 43)?"#77bf5f":(player.f.flame.gte(this.cost())?"#ff6600":"bf8f8f")}
+				return {backgroundColor: hasUpgrade("f", 43)?"#00ff0044":(player.f.flame.gte(this.cost())?"#ff660044":"#ff440044")}
 			}
 		},
 		34: {
@@ -645,7 +645,7 @@ addLayer("f", {
 				return "f"
 			},
 			style() {
-				return {backgroundColor: hasUpgrade("f", 34)?"#77bf5f":(player.f.flame.gte(this.cost())?"#ff6600":"bf8f8f")}
+				return {backgroundColor: hasUpgrade("f", 34)?"#00ff0044":(player.f.flame.gte(this.cost())?"#ff660044":"#ff440044")}
 			}
 		},
 		44: {
@@ -666,7 +666,7 @@ addLayer("f", {
 				return "f"
 			},
 			style() {
-				return {backgroundColor: hasUpgrade("f", 44)?"#77bf5f":(player.f.flame.gte(this.cost())?"#ff6600":"bf8f8f")}
+				return {backgroundColor: hasUpgrade("f", 44)?"#00ff0044":(player.f.flame.gte(this.cost())?"#ff660044":"#ff440044")}
 			}
 		},
 		61: {
@@ -687,7 +687,7 @@ addLayer("f", {
 				return "f"
 			},
 			style() {
-				return {backgroundColor: hasUpgrade("f", 61)?"#77bf5f":(player.f.flame.gte(this.cost())?"#ff6600":"bf8f8f")}
+				return {backgroundColor: hasUpgrade("f", 61)?"#00ff0044":(player.f.flame.gte(this.cost())?"#ff660044":"#ff440044")}
 			}
 		},
 		62: {
@@ -708,7 +708,7 @@ addLayer("f", {
 				return "f"
 			},
 			style() {
-				return {backgroundColor: hasUpgrade("f", 62)?"#77bf5f":(player.f.flame.gte(this.cost())?"#ff6600":"bf8f8f")}
+				return {backgroundColor: hasUpgrade("f", 62)?"#00ff0044":(player.f.flame.gte(this.cost())?"#ff660044":"#ff440044")}
 			},
 			effect() {
 				return player.e.burnEffect.add(10).log(10).add(9).log(10).pow(0.3)
@@ -1174,7 +1174,7 @@ addLayer("e", {
 					borderRadius: "25%",
 					border: "4px solid",
 					borderColor: "rgba(0, 0, 0, 0.125)",
-					backgroundColor: this.canClick()?"#884400":"#bf8f8f",
+					backgroundColor: this.canClick()?"#88440077":"#00ff0044",
 					font: "400 13.3333px Arial"
 				}
 			}
@@ -1862,7 +1862,7 @@ addLayer("r", {
 		},
 		allocated: new Decimal(0)
 	}},
-	color: "#3366ff",
+	color: "#3399ff",
 	resource: "research points",
 	row: 1,
 	symbol: "R",
@@ -1977,8 +1977,8 @@ addLayer("r", {
 		11: {
 			title: "Research 1",
 			display() {
-				return `<h3 style="font-weight: 500">Boosts ore generation.</h3><br>
-				<span style="font-size: 12px">${player.r.allocated.gte(1)?`Research time: ${format(player.r.researchTReq[11])}s<br><`:""}Currently: ${format(player.r.buyables[11], 0)} researches
+				return `<span style="font-size: 12px">Boosts ore generation.<br>
+				${player.r.allocated.gte(1)?`Research time: ${format(player.r.researchTReq[11])}s<br>`:""}Currently: ${format(player.r.buyables[11], 0)} researches
 				Effect: ${format(tmp.r.buyables[11].effect)}
 				${player.r.researchScientists[11].gt(0)?`Time left: ${format(Math.max(player.r.researchTReq[11]-player.r.researchTimes[11], 0))}s`:""}</span>`
 			},
@@ -2002,8 +2002,8 @@ addLayer("r", {
 		12: {
 			title: "Research 2",
 			display() {
-				return `<h3 style="font-weight: 500">Boosts electricity generation.</h3><br>
-				<span style="font-size: 12px">${player.r.allocated.gte(1)?`Research time: ${format(player.r.researchTReq[12])}s<br>`:""}Currently: ${format(player.r.buyables[12], 0)} researches
+				return `<span style="font-size: 12px">Boosts electricity generation.<br>
+				${player.r.allocated.gte(1)?`Research time: ${format(player.r.researchTReq[12])}s<br>`:""}Currently: ${format(player.r.buyables[12], 0)} researches
 				Effect: ${format(tmp.r.buyables[12].effect)}
 				${player.r.researchScientists[12].gt(0)?`Time left: ${format(Math.max(player.r.researchTReq[12]-player.r.researchTimes[12], 0))}s`:""}</span>`
 			},
@@ -2027,8 +2027,8 @@ addLayer("r", {
 		13: {
 			title: "Research 3",
 			display() {
-				return `<h3 style="font-weight: 500">Boosts heat generation.</h3><br>
-				<span style="font-size: 12px">${player.r.allocated.gte(1)?`Research time: ${format(player.r.researchTReq[13])}s<br><`:""}Currently: ${format(player.r.buyables[13], 0)} researches
+				return `<span style="font-size: 12px">Boosts heat generation.<br>
+				${player.r.allocated.gte(1)?`Research time: ${format(player.r.researchTReq[13])}s<br>`:""}Currently: ${format(player.r.buyables[13], 0)} researches
 				Effect: ${format(tmp.r.buyables[13].effect)}
 				${player.r.researchScientists[13].gt(0)?`Time left: ${format(Math.max(player.r.researchTReq[13]-player.r.researchTimes[13], 0))}s`:""}</span>`
 			},
@@ -2052,8 +2052,8 @@ addLayer("r", {
 		21: {
 			title: "Research 4",
 			display() {
-				return `<h3 style="font-weight: 500">Boosts oil generation.</h3><br>
-				<span style="font-size: 12px">${player.r.allocated.gte(1)?`Research time: ${format(player.r.researchTReq[21])}s<br><`:""}Currently: ${format(player.r.buyables[21], 0)} researches
+				return `<span style="font-size: 12px">Boosts oil generation.<br>
+				${player.r.allocated.gte(1)?`Research time: ${format(player.r.researchTReq[21])}s<br>`:""}Currently: ${format(player.r.buyables[21], 0)} researches
 				Effect: ${format(tmp.r.buyables[21].effect)}
 				${player.r.researchScientists[21].gt(0)?`Time left: ${format(Math.max(player.r.researchTReq[21]-player.r.researchTimes[21], 0))}s`:""}</span>`
 			},
@@ -2077,8 +2077,8 @@ addLayer("r", {
 		22: {
 			title: "Research 5",
 			display() {
-				return `<h3 style="font-weight: 500">Boosts extractor gain.</h3><br>
-				<span style="font-size: 12px">${player.r.allocated.gte(1)?`Research time: ${format(player.r.researchTReq[22])}s<br><`:""}Currently: ${format(player.r.buyables[22], 0)} researches
+				return `<span style="font-size: 12px">Boosts extractor gain.<br>
+				${player.r.allocated.gte(1)?`Research time: ${format(player.r.researchTReq[22])}s<br>`:""}Currently: ${format(player.r.buyables[22], 0)} researches
 				Effect: ${format(tmp.r.buyables[22].effect)}
 				${player.r.researchScientists[22].gt(0)?`Time left: ${format(Math.max(player.r.researchTReq[22]-player.r.researchTimes[22], 0))}s`:""}</span>`
 			},
@@ -2102,8 +2102,8 @@ addLayer("r", {
 		23: {
 			title: "Research 6",
 			display() {
-				return `<h3 style="font-weight: 500">Boosts all waste generations.</h3><br>
-				<span style="font-size: 12px">${player.r.allocated.gte(1)?`Research time: ${format(player.r.researchTReq[23])}s<br><`:""}Currently: ${format(player.r.buyables[23], 0)} researches
+				return `<span style="font-size: 12px">Boosts all waste generations.<br>
+				${player.r.allocated.gte(1)?`Research time: ${format(player.r.researchTReq[23])}s<br>`:""}Currently: ${format(player.r.buyables[23], 0)} researches
 				Effect: ${format(tmp.r.buyables[23].effect)}
 				${player.r.researchScientists[23].gt(0)?`Time left: ${format(Math.max(player.r.researchTReq[23]-player.r.researchTimes[23], 0))}s`:""}</span>`
 			},
@@ -2219,8 +2219,12 @@ addLayer("r", {
 })
 function updateTimes() {
 	let reqs = {11:300,12:500,13:500,21:300,22:450,23:1000};
-	if (!player.r.researchScientists[11].gte(1)) player.r.researchTReq[11] = Math.max(300/toNumber(player.r.allocated.pow(1.2))/(hasUpgrade("r", 13)?2:1)/(hasUpgrade("r", 23)?2:1), 0.5);
-	else player.r.researchTReq[11] = Math.max(300/toNumber(player.r.researchScientists[11].pow(1.2))/(hasUpgrade("r", 13)?2:1)/(hasUpgrade("r", 23)?2:1), 0.5);
+	for (var i = 10; i <= 20; i += 10) {
+		for (var j = 1; j <= 3; j++) {
+			if (!player.r.researchScientists[i+j].gte(1)) player.r.researchTReq[i+j] = Math.max(300/toNumber(player.r.allocated.pow(1.2))/(hasUpgrade("r", 13)?2:1)/(hasUpgrade("r", 23)?2:1), 0.5);
+			else player.r.researchTReq[i+j] = Math.max(300/toNumber(player.r.researchScientists[i+j].pow(1.2))/(hasUpgrade("r", 13)?2:1)/(hasUpgrade("r", 23)?2:1), 0.5);
+		}
+	}
 }
 addLayer("ps", {
 	name: "power station",
@@ -2312,10 +2316,10 @@ addLayer("ps", {
 		rows: 1,
 		cols: 2,
 		11: {
-			title: "Current",
+			title: "Voltage",
 			display() {
-				return `<span style="font-size: 12px">Increase thecurrent coming from your power stations.<br>
-				Currently: ${format(tmp.ps.buyables[11].effect)} amps
+				return `<span style="font-size: 12px">Increase the voltage.<br>
+				Currently: ${format(tmp.ps.buyables[11].effect)} volts
 				Cost: ${format(tmp.ps.buyables[11].cost)}
 				Effect: x${format(tmp.ps.buyables[11].effect)} to electricity and heat</span>`
 			},
@@ -2338,7 +2342,7 @@ addLayer("ps", {
 		12: {
 			title: "Resistance",
 			display() {
-				return `<span style="font-size: 12px">Increase theresistance to produce more heat.<br>
+				return `<span style="font-size: 12px">Increase the resistance to produce more heat.<br>
 				Currently: ${format(player.ps.buyables[12].add(1))} ohms
 				Cost: ${format(tmp.ps.buyables[12].cost)}
 				Effect: ${format(tmp.ps.buyables[12].effect)} to heat</span>`
@@ -2878,7 +2882,11 @@ addLayer("mo", {
 	branches: ["m"],
 	tabFormat: {
 		"Main": {
-			content: ["main-display", "prestige-button", "resource-display", "milestones", ["raw-html", "<br>"], "upgrades"]
+			content: ["main-display", "prestige-button", "resource-display", "milestones", ["raw-html", "<br>"],
+			["column", [["row", [["upgrade", 11], ["upgrade", 12], ["upgrade", 13]]],
+			["row", [["upgrade", 14], ["upgrade", 15], ["upgrade", 16]]],
+			["row", [["upgrade", 21], ["upgrade", 22], ["upgrade", 23]]],
+			["row", [["upgrade", 24], ["upgrade", 25], ["upgrade", 26]]]]]]
 		},
 		"Competitors": {
 			content: ["main-display", "prestige-button", "resource-display", ["raw-html", "<br><br><h1>Competitors</h1><br>Wait, they still exist?"], "challenges"],
@@ -3151,26 +3159,26 @@ addLayer("l", {
 		cols: 3,
 		11: {
 			title: "The Great Cleansing",
-			description: "Removes pollutions, but replace them with better options. Each one of them bought gives +0.1 happiness.",
-			cost: 4,
-			unlocked() {
+			description: "Removes pollutions, but replace them with better options. Unlock crowdfunding as well.",
+			cost: 2,
+			/*unlocked() {
 				return player.l.milestones.includes("2");
-			}
+			}*/
 		}
 	},
 	tabFormat: {
 		"Main": {
 			content: ["main-display", "prestige-button", "resource-display", ["raw-html", _=> {
 				return player.l.unlocked?`You have ${format(player.l.total)} total lightness.<br><br>
-				You have ${format(player.l.crowdfund)} crowndfunding.<br>
-				Your happiness index is ${format(player.l.happiness)}, boosting monopoly power gain by ${format(tmp.l.effect.mogain)} and ore gain by ${format(tmp.l.effect.oregain)}, and generating ${format(tmp.l.effect.crowdfund)} crowndfunding per second.<br>Each milestone gives 0.5 happiness.`:""
+				${hasUpgrade("l", 11)?`You have ${format(player.l.crowdfund)} crowndfunding.<br>`:""}
+				Your happiness index is ${format(player.l.happiness)}, boosting monopoly power gain by ${format(tmp.l.effect.mogain)} and ore gain by ${format(tmp.l.effect.oregain)}${hasUpgrade("l", 11)?`, and generating ${format(tmp.l.effect.crowdfundps)} crowndfunding per second.`:""}<br>Each milestone gives 0.5 happiness.`:""
 			}], "milestones", "upgrades"]
 		}
 	},
 	update(diff) {
 		player.l.happiness = new Decimal(player.l.milestones.length*0.5);
 		player.l.happiness = player.l.happiness.add(player.mo.buyables[31].add(player.mo.buyables[32]).add(player.mo.buyables[33]))
-		player.l.crowdfund = player.l.crowdfund.add(tmp.l.effect.crowdfundps);
+		if (hasUpgrade("l", 11)) player.l.crowdfund = player.l.crowdfund.add(tmp.l.effect.crowdfundps.mul(diff));
 	},
 	branches: ["mo"],
 	effect() {
@@ -3192,7 +3200,6 @@ addLayer("d", {
 		return player.l.unlocked?Infinity:new Decimal(5e11);
 	},
 	nodeStyle() { return player.mo.points.gte(this.requires())?{
-		borderColor: "rgba(255, 255, 255, 0.3)",
 		color: "rgba(255, 255, 255, 0.5)",
 		backgroundColor: "#222222"
 	}:{}},
@@ -3233,7 +3240,7 @@ addLayer("d", {
 		},
 		1: {
 			requirementDescription: "2 total darkness",
-			effectDescription: "Keep cchallenges and upgrades.",
+			effectDescription: "Keep challenges and upgrades.",
 			done() {return player.d.total.gte(2)}
 		},
 		2: {

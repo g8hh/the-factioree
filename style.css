@@ -1,8 +1,58 @@
+@font-face {
+	font-family: 'Iosevka Term SS08 Web';
+    font-weight: 200;
+    font-style: normal;
+    src: url("fonts/iosevka-term-ss08-extralight.woff") format("woff")
+}
+@font-face {
+	font-family: 'Iosevka Term SS08 Web';
+    font-weight: 200;
+    font-style: italic;
+    src: url("fonts/iosevka-term-ss08-extralightitalic.woff") format("woff")
+}
+@font-face {
+	font-family: 'Iosevka Term SS08 Web';
+    font-weight: 400;
+    font-style: normal;
+    src: url("fonts/iosevka-term-ss08-regular.woff") format("woff")
+}
+@font-face {
+	font-family: 'Iosevka Term SS08 Web';
+    font-weight: 400;
+    font-style: italic;
+    src: url("fonts/iosevka-term-ss08-italic.woff") format("woff")
+}
+@font-face {
+	font-family: 'Iosevka Term SS08 Web';
+    font-weight: 600;
+    font-style: normal;
+    src: url("fonts/iosevka-term-ss08-semibold.woff") format("woff")
+}
+@font-face {
+	font-family: 'Iosevka Term SS08 Web';
+    font-weight: 600;
+    font-style: italic;
+    src: url("fonts/iosevka-term-ss08-semibolditalic.woff") format("woff")
+}
+@font-face {
+	font-family: 'Iosevka Term SS08 Web';
+    font-weight: 800;
+    font-style: normal;
+    src: url("fonts/iosevka-term-ss08-extrabold.woff") format("woff")
+}
+@font-face {
+	font-family: 'Iosevka Term SS08 Web';
+    font-weight: 800;
+    font-style: italic;
+    src: url("fonts/iosevka-term-ss08-extrabolditalic.woff") format("woff")
+}
+
+
 * {
 	transition-duration: 0.5s;
 	text-align: center;
-	font-family: "Inconsolata", monospace;
-	font-weight: bold;
+	font-family: "Iosevka Term SS08 Web", monospace;
+	font-weight: 400;
 	table-align: center;
 	margin: auto;
 }
@@ -112,8 +162,11 @@ h1, h2, h3, b, input {
 
 
 .locked {
-	background-color: #bf8f8f;
+	background-color: #ff555544;
 	cursor: not-allowed;
+}
+.treeNode.locked {
+	background-color: #bf8585;
 }
 
 .can {
@@ -145,7 +198,7 @@ h1, h2, h3, b, input {
 }
 
 .bought {
-	background-color: #77bf5f;
+	background-color: #00ff0044;
 	cursor: default;
 }
 
@@ -235,17 +288,18 @@ h1, h2, h3, b, input {
 .reset {
 	height: 120px;
 	width: 180px;
-	border-radius: 25%;
-	border: 4px solid;
-	border-color: rgba(0, 0, 0, 0.125);
+	border: 3px solid;
+	color: #fff;
+	border-color: #fff;
 }
 
 .upg {
 	height: 120px;
-	width: 120px;
-	border-radius: 25%;
-	border: 2px solid;
-	border-color: rgba(0, 0, 0, 0.125);
+	width: 150px;
+	border-radius: 0 !important;
+	border: 2px solid !important;
+	border-color: #fff !important;
+	color: #fff !important;
 	font-size: 10px;
 }
 
@@ -267,9 +321,10 @@ h1, h2, h3, b, input {
 .buyable {
 	height: 200px;
 	width: 200px;
-	border-radius: 25%;
+	border-radius: 5%;
 	border: 2px solid;
-	border-color: rgba(0, 0, 0, 0.125);
+	color: #fff;
+	border-color: #fff;
 	font-size: 10px;
 }
 
@@ -284,11 +339,12 @@ h1, h2, h3, b, input {
 .longUpg {
 	height: 50px;
 	width: 120px;
-	background: var(--points);
-	border-radius: 50%;
+	background: #ffffff44;
+	border-radius: 25%;
 	border: 2px solid;
-	border-color: rgba(0, 0, 0, 0.125);
+	border-color: #fff;
 	font-size: 10px;
+	color: #fff;
 }
 
 .smallUpg {
@@ -297,11 +353,11 @@ h1, h2, h3, b, input {
 	border-radius: 25%;
 	border: 2px solid;
 	border-color: rgba(0, 0, 0, 0.125);
+	font-weight: bold;
 }
 
 #points {
 	color: var(--points);
-	text-shadow: 0px 0px 10px var(--points);
 }
 
 #optionWheel {
@@ -404,16 +460,17 @@ a {
 .opt {
 	height: 100px;
 	width: 100px;
-	border-radius: 25%;
-	border: 4px solid;
-	background-color: var(--color);
-	border-color: rgba(255, 255, 255, 0.125) rgba(0, 0, 0, 0.25) rgba(0, 0, 0, 0.25) rgba(255, 255, 255, 0.125);
-	color: rgba(0, 0, 0, 0.5);
+	border: 2px solid;
+	margin: 4px;
+	background-color: #44444444;
+	border-color: #fff;
+	color: #fff;
 	cursor: pointer;
 }
 
 .opt:hover {
-	background-color: #439ea3;
+	box-shadow: 0px 0px 10px 1px #fff;
+	background-color: #66666666;
 }
 
 .hidden {
@@ -434,11 +491,10 @@ a {
 	padding-left: 5px;
 	padding-right: 5px;
 	height: 75px;
-	background-color: #bf8f8f;
-	border: 4px solid;
-	border-radius: 4px;
-	border-color: rgba(0, 0, 0, 0.125);
-	color: rgba(0, 0, 0, 0.5);
+	background-color: #ff000044;
+	border: 2px solid;
+	border-color: #fff;
+	color: #fff;
 }
 
 .milestoneDone {
@@ -446,13 +502,11 @@ a {
 	min-width: 120px;
 	padding-left: 5px;
 	padding-right: 5px;
-
 	height: 75px;
-	background-color: #77bf5f;
-	border: 4px solid;
-	border-radius: 4px;
-	border-color: rgba(0, 0, 0, 0.125);
-	color: rgba(0, 0, 0, 0.5);
+	background-color: #00ff0044;
+	border: 2px solid;
+	border-color: #fff;
+	color: #fff;
 }
 
 .left {
@@ -525,22 +579,23 @@ ul {
 }
 
 .hChallenge {
-	background-color: #bf8f8f;
-	border: 4px solid;
-	border-color: rgba(0, 0, 0, 0.125);
-	color: rgba(0, 0, 0, 0.5);
+	background-color: #ff000055;
+	border: 3px solid;
+	margin: 2px;
+	border-color: #fff;
+	color: #fff;
 	width: 300px;
 	height: 300px;
-	font-size: 15px;
-	border-radius: 33.33%;
+	font-size: 13px;
+	border-radius: 20%;
 }
 
 .hChallenge.done {
-	background-color: #77bf5f;
+	background-color: #00ff0055;
 }
 
 .hChallenge.canComplete {
-	background-color: #ffbf00;
+	background-color: #ffbf0055;
 }
 
 .fullWidth {
