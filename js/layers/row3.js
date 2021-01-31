@@ -120,7 +120,7 @@ addLayer("mo", {
 		},
 		24: {
 			title() {return hasUpgrade("l", 11)?"Ores <i>were</i> Trash":"Ores are Trash"},
-			description() {return `${hasUpgrade("l", 11)?"trees":"waste"} boosts ore gain.`},
+			description() {return `${hasUpgrade("l", 11)?"Trees":"Waste"} boosts ore gain.`},
 			cost: 2000,
 			currencyDisplayName() {return hasUpgrade("l", 11)?"trees":"waste"},
 			currencyLayer: "mo",
@@ -129,7 +129,7 @@ addLayer("mo", {
 				return player.mo.waste.gt(10)||hasUpgrade("mo", 24)||hasUpgrade("l", 11)
 			},
 			effect() {
-				return player.mo[hasUpgrade("l", 11)?"waste":"trees"].add(1).pow(hasUpgrade("l", 11)?2000:1000);
+				return player.mo[hasUpgrade("l", 11)?"trees":"waste"].add(1).pow(hasUpgrade("l", 11)?2000:1000);
 			},
 			effectDisplay() {
 				return `x${format(this.effect())}`
@@ -383,7 +383,7 @@ addLayer("mo", {
 			title: "Restablisation",
 			display() {
 				return `Amount: ${format(player.mo.buyables[33])}<br>
-				Effect: x${format(tmp.mo.buyables[33].effect)} boost to previous resources and +${format(player.mo.buyables[33].mul(0.2))} happiness<br>
+				Effect: x${format(tmp.mo.buyables[33].effect)} boost to previous resources and +${format(tmp.mo.buyables[33].effect2)} happiness<br>
 				Cost: ${format(tmp.mo.buyables[33].cost)} clean ocean<br>
 				${format(tmp.mo.buyables[33].cost)} trees`
 			},
@@ -576,7 +576,7 @@ addLayer("mo", {
 				return `<br><h2><s>Pollutions</s> &nbsp; Anti-Pollutions</h2><br><br>
 				You have ${format(player.mo.ocean)} clean ocean, making manufacturers cheaper by /${format(tmp.mo.wasteEffect.manuCheap2)}, making factories cheaper by /${format(tmp.mo.wasteEffect.facCheap)}, and making factories act as if there were x${format(tmp.mo.wasteEffect.facMul)} of them (unaffected by softcap)<br><br>
 				You have ${format(player.mo.trees)} trees, making power stations cheaper by /${format(tmp.mo.wasteEffect.powerCheap)}, making their buyables cheaper by /${format(tmp.mo.wasteEffect.voltCheap)}, and boosting research point gain by x${format(tmp.mo.wasteEffect.research)}.<br><br>
-				${player.ps.unlocked?`You have ${format(player.mo.air)} clean air, boosting burning ore to metal conversion by ^${format(tmp.mo.wasteEffect.metalGain)}, ${tmp.l.unlocks2 >= 1?`and `:""}boosting the first 2 boosts that previous resources give by ^${format(tmp.mo.wasteEffect.antiExponent)}${tmp.l.unlocks2 >= 1?`, and making each restablisation give +${format(tmp.mo.wasteEffect.rest)} happiness`:""}.`:""}`
+				${player.ps.unlocked?`You have ${format(player.mo.air)} clean air, boosting burning ore to metal conversion by ^${format(tmp.mo.wasteEffect.metalGain)}, ${tmp.l.buyables[11].unlocks2 >= 1?`and `:""}boosting the first 2 boosts that previous resources give by ^${format(tmp.mo.wasteEffect.antiExponent)}${tmp.l.buyables[11].unlocks2 >= 1?`, and making each restablisation give +${format(tmp.mo.wasteEffect.rest)} happiness`:""}.`:""}`
 			}], "buyables"],
 			unlocked() {return hasUpgrade("mo", 22)&&hasUpgrade("l", 11)}
 		}

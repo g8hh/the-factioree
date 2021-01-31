@@ -151,7 +151,7 @@ addLayer("l", {
 		total: new Decimal(0),
 	}},
 	layerShown() {
-		return false//player.i.clickables[11]
+		return player.i.clickables[11]
 	},
 	componentStyles: {
 		milestones() {
@@ -358,7 +358,7 @@ addLayer("d", {
 		total: new Decimal(0)
 	}},
 	layerShown() {
-		return false//player.i.clickables[11]
+		return player.i.clickables[11]
 	},
 	componentStyles: {
 		milestones() {
