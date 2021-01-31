@@ -114,7 +114,7 @@ addLayer("i", {
 	position: 0,
 	branches: ["mo"],
 	layerShown() {
-		return (hasChallenge("mo", 41)&&hasChallenge("mo", 42))||player.d.unlocked||player.l.unlocked
+		return false//(hasChallenge("mo", 41)&&hasChallenge("mo", 42))||player.d.unlocked||player.l.unlocked
 	},
 	update(diff) {
 		if (player.i.clickables[11]) layers.i.pageData[4] = `Very well. I shall guide you on your journey.`;
@@ -151,7 +151,7 @@ addLayer("l", {
 		total: new Decimal(0),
 	}},
 	layerShown() {
-		return player.i.clickables[11]
+		return false//player.i.clickables[11]
 	},
 	componentStyles: {
 		milestones() {
@@ -358,7 +358,7 @@ addLayer("d", {
 		total: new Decimal(0)
 	}},
 	layerShown() {
-		return player.i.clickables[11]
+		return false//player.i.clickables[11]
 	},
 	componentStyles: {
 		milestones() {
