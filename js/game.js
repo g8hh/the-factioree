@@ -21,9 +21,9 @@ function getResetGain(layer, useType = null) {
 		return gain.floor().sub(player[layer].points).add(1).max(1);
 	} else if (type=="normal"){
 		if (tmp[layer].baseAmount.lt(tmp[layer].requires)) return new Decimal(0)
-		let gain = tmp[layer].baseAmount.div(tmp[layer].requires).pow(tmp[layer].exponent).times(tmp[layer].gainMult).pow(tmp[layer].gainExp)
+		let gain = tmp[layer].baseAmount.div(tmp[layer].requires).pow(tmp[layer].exponent)
 		if (gain.gte("e1e7")) gain = gain.sqrt().times("e5e6")
-		return gain.floor().max(0);
+		return gain.times(tmp[layer].gainMult).pow(tmp[layer].gainExp).floor().max(0);
 	} else if (type=="custom"){
 		return layers[layer].getResetGain()
 	} else {
@@ -49,9 +49,9 @@ function getNextAt(layer, canMax=false, useType = null) {
 		if (tmp[layer].roundUpCost) cost = cost.ceil()
 		return cost;
 	} else if (type=="normal"){
-		let next = tmp[layer].resetGain.add(1)
+		let next = tmp[layer].resetGain.add(1).root(tmp[layer].gainExp).div(tmp[layer].gainMult)
 		if (next.gte("e1e7")) next = next.div("e5e6").pow(2)
-		next = next.root(tmp[layer].gainExp).div(tmp[layer].gainMult).root(tmp[layer].exponent).times(tmp[layer].requires).max(tmp[layer].requires)
+		next = next.root(tmp[layer].exponent).times(tmp[layer].requires).max(tmp[layer].requires)
 		if (tmp[layer].roundUpCost) next = next.ceil()
 		return next;
 	} else if (type=="custom"){

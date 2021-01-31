@@ -17,6 +17,7 @@ function setupTemp() {
 	tmp = {}
 	tmp.pointGen = {}
 	tmp.displayThings = []
+	tmp.isMobile = false
 
 	setupTempData(layers, tmp)
 	for (layer in layers){
@@ -78,6 +79,7 @@ function updateTemp() {
 		if (isFunction(text)) text = text()
 		tmp.displayThings.push(text) 
 	}
+	tmp.isMobile = window.innerHeight*1.3 > window.innerWidth
 
 }
 

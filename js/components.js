@@ -287,7 +287,7 @@ function loadVue() {
 		<button 
 			v-if="tmp[layer].clickables && tmp[layer].clickables[data]!== undefined && tmp[layer].clickables[data].unlocked" 
 			v-bind:class="{ upg: true, can: tmp[layer].clickables[data].canClick, locked: !tmp[layer].clickables[data].canClick}"
-			v-bind:style="[(tmp[layer].clickables[data].canClick&&!tmp[layer].clickables[data].style.backgroundColor) ? {'background-color': tmp[layer].color} : {}, size ? {'height': size, 'width': size} : {}, tmp[layer].clickables[data].style]"
+			v-bind:style="[(tmp[layer].clickables[data].canClick&&(!tmp[layer].clickables.style||!tmp[layer].clickables[data].style.backgroundColor)) ? {'background-color': \`\${tmp[layer].color}88\`} : {}, size ? {'height': size, 'width': size} : {}, tmp[layer].clickables[data].style]"
 			v-on:click="clickClickable(layer, data)">
 			<span v-if= "tmp[layer].clickables[data].title"><h2 v-html="tmp[layer].clickables[data].title"></h2><br></span>
 			<span v-bind:style="{'white-space': 'pre-line'}" v-html="tmp[layer].clickables[data].display"></span>
@@ -413,11 +413,45 @@ function loadVue() {
 		</select></h3></span>`
 	})
 
-	Vue.component('research-dropdown', {
-		props: ['layer', 'data'],
-		template: `<span><h3 v-if="data.show">{{data.text}}: <select v-model="player[layer][data.internalName]">
-			<option v-for="option in data.options">{{option}}</option>
-		</select></h3></span>`
+	Vue.component('furnace-slider', {
+		data: {
+			player,
+			Decimal
+		},
+		template: `<input v-on:input="player.f.allocated = new Decimal($event.target.value)" type="range" min="0" :max="player.f.points.toString()" step="1" style="width: 30em" :value="player.f.allocated.toString()" v-if="player.f.points.gte(1)">`
+	})
+
+	Vue.component('manu-slider', {
+		data: {
+			player,
+			Decimal
+		},
+		template: `<input v-on:input="player.m.active = new Decimal($event.target.value)" type="range" min="0" :max="player.m.points.toString()" step="1" style="width: 30em" :value="player.m.active.toString()" v-if="player.m.points.gte(1)">`
+	})
+
+	Vue.component('plastic-slider', {
+		data: {
+			player,
+			Decimal
+		},
+		template: `<div style="display: flex; justify-content: center" v-if="player.p.buyables[11].gte(1)">
+			<div style="display: flex; flex-direction: column; margin: 3px; justify-content: flex-start;">
+			<span style="margin: 2px; text-align: left;">Structurally dangerous factories: </span>
+			<span style="margin: 2px; text-align: left;">Furnace smugglers: </span>
+			<span style="margin: 2px; text-align: left;">Uncontrolled burn: </span>
+			</div>
+			<div style="display: flex; flex-direction: column; margin: 3px;">
+			<span><input type="range" style="width: 15em" step="1" min="0" :max="player.p.buyables[11]" :value="player.p.structureData[1]" v-on:input="
+			player.p.structureData[1] = new Decimal($event.target.value); if (Decimal.gt($event.target.value, player.p.buyables[11].sub(player.p.structureData[2]).sub(player.p.structureData[3]))) {player.p.structureData[1] = player.p.buyables[11].sub(player.p.structureData[2]).sub(player.p.structureData[3])}
+			"/></span>
+			<span><input type="range" style="width: 15em" step="1" min="0" :max="player.p.buyables[11]" :value="player.p.structureData[2]" v-on:input="
+			player.p.structureData[2] = new Decimal($event.target.value); if (Decimal.gt($event.target.value, player.p.buyables[11].sub(player.p.structureData[1]).sub(player.p.structureData[3]))) {player.p.structureData[2] = player.p.buyables[11].sub(player.p.structureData[1]).sub(player.p.structureData[3])}
+			"/></span>
+			<span><input type="range" style="width: 15em" step="1" min="0" :max="player.p.buyables[11]" :value="player.p.structureData[3]" v-on:input="
+			player.p.structureData[3] = new Decimal($event.target.value); if (Decimal.gt($event.target.value, player.p.buyables[11].sub(player.p.structureData[1]).sub(player.p.structureData[2]))) {player.p.structureData[3] = player.p.buyables[11].sub(player.p.structureData[1]).sub(player.p.structureData[2])}
+			"/></span>
+			</div>
+		</div>`
 	})
 
 	Vue.component('prestige-display', {
@@ -427,6 +461,14 @@ function loadVue() {
 				<prestige-button v-bind:style="tmp[layer].componentStyles['prestige-button']" :layer="layer"></prestige-button>
 			</div>
 			<resource-display v-bind:style="tmp[layer].componentStyles['resource-display']" :layer="layer"></resource-display>`
+	})
+
+	Vue.component('upgrade-factory', {
+		data: {
+			player,
+			format
+		},
+		template: `<span v-if="player.mo.activeChallenge == 31" :style="{color: (player.e.upgrades.length+player.f.upgrades.length+player.p.upgrades.length+player.m.upgrades.length)>=20?'#ff0000':((player.e.upgrades.length+player.f.upgrades.length+player.p.upgrades.length+player.m.upgrades.length)>=15?'#ffff00':'#ffffff')}">Upgrade Factory purchases left: {{20-(player.e.upgrades.length+player.f.upgrades.length+player.p.upgrades.length+player.m.upgrades.length)}}</span>`
 	})
 
 	app = new Vue({
@@ -457,7 +499,7 @@ function loadVue() {
 			VERSION,
 			LAYERS,
 			hotkeys
-		},
+		}
 	})
 }
 

@@ -39,8 +39,6 @@ function format(decimal, precision=2) {
 		player.hasNaN = true;
 		console.log(format.caller)
 		try{console.log(format.caller.callee)}catch(e){console.log(e)}
-		console.log(layers.m.effect());
-		console.log(layers.m.effect().sqrt());
 		return "NaN"
 	}
 	if (decimal.sign<0) return "-"+format(decimal.neg(), precision)
@@ -431,7 +429,7 @@ function milestoneShown(layer, id) {
 function respecBuyables(layer) {
 	if (!layers[layer].buyables) return
 	if (!layers[layer].buyables.respec) return
-	if (!confirm("Are you sure you want to respec? This will force you to do a \"" + (tmp[layer].name ? tmp[layer].name : layer) + "\" reset as well!")) return
+	if (!confirm(tmp[layer].buyables.respecConfirm?tmp[layer].buyables.respecConfirm:"Are you sure you want to respec? This will force you to do a \"" + (tmp[layer].name ? tmp[layer].name : layer) + "\" reset as well!")) return
 	layers[layer].buyables.respec()
 	updateBuyableTemp(layer)
 }

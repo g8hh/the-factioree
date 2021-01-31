@@ -13,12 +13,12 @@ let modInfo = {
 // Set your version in num and name
 let VERSION = {
 	num: "0.5.0",
-	name: "A shit ton of content",
+	name: "Why did I choose this life",
 }
 
 // If you add new functions anywhere inside of a layer, and those functions have an effect when called, add them here.
 // (The ones here are examples, all official functions are already taken care of)
-var doNotCallTheseFunctionsEveryTick = ["extraFlame", "flameEffect"]
+var doNotCallTheseFunctionsEveryTick = []
 
 function getStartPoints(){
     return new Decimal(modInfo.initialStartPoints)
@@ -47,6 +47,7 @@ function getPointGen() {
 	if (player.mo.pollution) gain = gain.pow(0.5);
 	if (player.mo.pollution > 11) gain = gain.div(player.f.embers.add(1).pow(0.5));
 	if (hasUpgrade("mo", 24)) gain = gain.mul(upgradeEffect("mo", 24));
+	if (hasUpgrade("mo", 25)) gain = gain.mul(upgradeEffect("mo", 25));
 	if (hasUpgrade("ps", 12)) gain = gain.mul(upgradeEffect("ps", 12));
 	gain = gain.mul(tmp.r.buyables[11].effect);
 	gain = gain.mul(tmp.l.effect.oregain);

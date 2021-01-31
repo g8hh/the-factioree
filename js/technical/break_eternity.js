@@ -786,7 +786,7 @@
       return cost.div(currentRpS).add(cost.div(deltaRpS));
     };
     
-    Decimal.prototype.normalize = function () {
+    Decimal.prototype.normalize = function (def = 0) {
       /*
       PSEUDOCODE:
       Whenever we are partially 0 (sign is 0 or mag and layer is 0), make it fully 0.
