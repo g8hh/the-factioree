@@ -86,7 +86,7 @@ addLayer("mo", {
 		},
 		15: {
 			title: "Monopoly Over Manufacturing",
-			description: "Post-100 manufacturer exponent scaling is 30% weaker.",
+			description: "Post-100 manufacturer scaling is 30% weaker.",
 			cost: 10000
 		},
 		16: {
@@ -111,7 +111,7 @@ addLayer("mo", {
 			}
 		},
 		23: {
-			title: "Layers of Not Horrendousness",
+			title: "Monopoly Over Layers",
 			description: "Unlock two new layers.",
 			cost: 5000000,
 			unlocked() {
@@ -148,7 +148,7 @@ addLayer("mo", {
 				return player.mo.burningWaste.gt(10)||hasUpgrade("mo", 25)||hasUpgrade("l", 11)
 			},
 			effect() {
-				return hasUpgrade("l", 11)?player.mo.ocean.add(1).pow(2000):player.mo.waste.add(1).pow(1000)
+				return hasUpgrade("l", 11)?player.mo.ocean.add(1).pow(2000):new Decimal(1)
 			},
 			effectDisplay() {
 				return hasUpgrade("l", 11)?`x${format(this.effect())}`:undefined
