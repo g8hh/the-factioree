@@ -390,7 +390,7 @@ addLayer("m", {
 			if (inChallenge("mo", 21)) player.m.moChallLeft = new Decimal(0);
 		},
 		showRespec() {
-			return !hasUpgrade("mo", 12);
+			return !hasUpgrade("mo", 12) || inChallenge("mo", 21) || inChallenge("mo", 22);
 		},
 		respecText: "Respec factories"
 	},
